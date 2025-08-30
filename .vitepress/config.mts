@@ -23,8 +23,11 @@ export default defineConfig({
         text: "Guides",
         link: "/guides",
         items: [
-          { text: "First Guide", link: "/guides/first" },
-          { text: "Second Guide", link: "/guides/second" },
+          { text: "User Based Billing", link: "/guides/user-based-billing" },
+          {
+            text: "Organization Based Billing",
+            link: "/guides/organization-based-billing",
+          },
         ],
       },
     ],

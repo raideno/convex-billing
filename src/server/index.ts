@@ -33,7 +33,7 @@ export { billingTables } from "./tables";
 
 export type { Configuration };
 
-export const convexBilling = (configuration_: Configuration) => {
+export const internalConvexBilling = (configuration_: Configuration) => {
   const configuration = configuration_;
 
   let store: Persistence = new KVStore(configuration);
