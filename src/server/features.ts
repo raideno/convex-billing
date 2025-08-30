@@ -2,22 +2,21 @@
 
 import Stripe from "stripe";
 
-import { Configuration, extractFromMetadata, Implementation } from "./helpers";
+import {
+  InternalConfiguration,
+  extractFromMetadata,
+  Implementation,
+} from "./helpers";
 
 export const extractFeaturesFromMetadata = (
-  configuration: Configuration,
+  configuration: InternalConfiguration,
   metadata: Record<string, any>
-) =>
-  extractFromMetadata(
-    configuration.metadata_features_key_prefix,
-    metadata,
-    configuration.default_features
-  );
+) => extractFromMetadata(configuration.metadata_features_key_prefix, metadata);
 
 export const getFeaturesImplementation: Implementation<{
   priceId: string;
 }> = async (args, kv, context, configuration) => {
-  const stripe = new Stripe(configuration.stripe_secret_key, {
+  const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });
 

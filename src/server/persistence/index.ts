@@ -1,7 +1,7 @@
 // persistence/index.ts
 
 import { GenericActionCtx, GenericMutationCtx } from "convex/server";
-import { Configuration } from "../helpers";
+import { InternalConfiguration } from "../helpers";
 
 export type Period = { start: number; end: number };
 
@@ -92,4 +92,6 @@ export abstract class Persistence {
   ): Promise<boolean>;
 }
 
-export type PersistenceFactory = (configuration: Configuration) => Persistence;
+export type PersistenceFactory = (
+  configuration: InternalConfiguration
+) => Persistence;

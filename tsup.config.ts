@@ -3,7 +3,6 @@ import { defineConfig } from "tsup";
 export default defineConfig({
   entry: {
     index: "src/index.ts",
-    react: "src/react/index.ts",
     server: "src/server/index.ts",
   },
   sourcemap: false,
@@ -14,5 +13,5 @@ export default defineConfig({
   splitting: false,
   shims: false,
   minify: false,
-  tsconfig: "tsconfig.lib.json",
+  tsconfig: "tsconfig.json",
 });

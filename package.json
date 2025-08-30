@@ -1,6 +1,6 @@
 {
   "name": "@raideno/convex-billing",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Easy stripe billing for convex apps.",
   "keywords": [
     "billing",
@@ -20,10 +20,6 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./react": {
-      "import": "./dist/react.js",
-      "types": "./dist/react.d.ts"
-    },
     "./server": {
       "import": "./dist/server.js",
       "types": "./dist/server.d.ts"
@@ -42,7 +38,8 @@
     "docs:build": "vitepress build",
     "docs:preview": "vitepress preview",
     "clean": "rimraf dist",
-    "lib:build": "tsup"
+    "lib:build": "tsup",
+    "lint": "eslint ."
   },
   "type": "module",
   "dependencies": {
@@ -53,10 +50,15 @@
     "stripe": "^18.5.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.34.0",
     "@types/node": "^24.3.0",
+    "eslint": "^9.34.0",
+    "globals": "^16.3.0",
+    "jiti": "^2.5.1",
     "tsc": "^2.0.4",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2",
+    "typescript-eslint": "^8.41.0",
     "vitepress": "^1.6.4"
   }
 }

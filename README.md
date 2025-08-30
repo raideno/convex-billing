@@ -33,40 +33,28 @@ export const {
   getLimits,
   getFeatures,
 } = internalConvexBilling({
-  // Set these with: npx convex env set NAME "value"
   redis: {
     url: process.env.UPSTASH_URL!,
     write_token: process.env.UPSTASH_WRITE_TOKEN!,
     read_token: process.env.UPSTASH_READ_TOKEN!,
   },
-
-  stripe_secret_key: process.env.STRIPE_SECRET_KEY!,
-  stripe_webhook_secret: process.env.STRIPE_WEBHOOK_SECRET!,
-  stripe_publishable_key: process.env.STRIPE_PUBLISHABLE_KEY!,
-
-  credits_initial_usage_value: 0,
-
-  metadata_limits_key_prefix: "limits:",
-  metadata_features_key_prefix: "features:",
-
-  default_limits: {
-    "limits:standard-credits": 1000,
-    "limits:premium-credits": 100,
+  stripe: {
+    secret_key: process.env.STRIPE_SECRET_KEY!,
+    webhook_secret: process.env.STRIPE_WEBHOOK_SECRET!,
+    publishable_key: process.env.STRIPE_PUBLISHABLE_KEY!,
   },
 
-  default_features: {
-    "features:24/7 Support": 1,
-    "features:Standard Credits": 1000,
-    "features:Premium Credits": 100,
+  defaults: {
+    portal_return_url: "http://localhost:3000/return-from-portal",
+    checkout_success_url: "http://localhost:3000/return-from-success",
+    checkout_cancel_url: "http://localhost:3000/return-from-canceled",
+    checkout_return_url: "http://localhost:3000/return-from-payment",
+    // NOTE: required only if using the getLimits action
+    limits: {
+      "limits:standard-credits": 1000,
+      "limits:premium-credits": 100,
+    },
   },
-
-  default_portal_return_url: "http://localhost:3000/return-from-portal",
-  default_checkout_success_url: "http://localhost:3000/return-from-success",
-  default_checkout_cancel_url: "http://localhost:3000/return-from-canceled",
-  default_checkout_return_url: "http://localhost:3000/return-from-payment",
-
-  // Optional: your default price to show/select in UI
-  default_price_id: "...",
 });
 ```
 
@@ -231,6 +219,12 @@ Keys:
 - usage:customer:{stripeCustomerId}:{period.start}:{period.end}:{name} -> number
 
 Usage keys have a TTL set to expire at the billing period end.
+
+## TODOs
+
+- [ ] Add documentation part to setup syncing call on checkout return endpoint.
+- [ ] Implement default plan.
+- [ ] Implement one time payment endpoint.
 
 ## Notes
 

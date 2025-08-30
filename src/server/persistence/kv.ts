@@ -2,7 +2,7 @@
 
 import { Redis } from "@upstash/redis";
 
-import { Configuration, STRIPE_SUB_CACHE } from "../helpers";
+import { InternalConfiguration, STRIPE_SUB_CACHE } from "../helpers";
 import {
   Persistence,
   getUsageParams,
@@ -15,9 +15,9 @@ import {
 
 export class KVStore implements Persistence {
   public readonly kv: Redis;
-  private readonly configuration: Configuration;
+  private readonly configuration: InternalConfiguration;
 
-  constructor(configuration: Configuration) {
+  constructor(configuration: InternalConfiguration) {
     this.configuration = configuration;
     this.kv = new Redis({
       url: configuration.redis!.url,

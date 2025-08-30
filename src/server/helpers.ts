@@ -21,7 +21,7 @@ export const fullfilWithDefaults = (
 export const extractFromMetadata = (
   prefix: string,
   metadata: Record<string, any>,
-  defaults: Record<string, number>
+  defaults: Record<string, number> = {}
 ) => {
   metadata = fullfilWithDefaults(metadata, defaults);
 
@@ -61,38 +61,59 @@ export type STRIPE_SUB_CACHE =
       status: "none";
     };
 
-export interface Configuration {
+export interface InternalConfiguration {
   redis: {
     url: string;
     write_token: string;
     read_token: string;
   };
 
-  stripe_secret_key: string;
-  stripe_webhook_secret: string;
-  stripe_publishable_key: string;
+  stripe: {
+    secret_key: string;
+    webhook_secret: string;
+    publishable_key: string;
+  };
+
+  defaults: {
+    portal_return_url: string;
+    checkout_success_url: string;
+    checkout_cancel_url: string;
+    checkout_return_url: string;
+    limits?: Record<string, number>;
+  };
 
   credits_initial_usage_value: number;
 
   metadata_limits_key_prefix: string;
   metadata_features_key_prefix: string;
-
-  default_limits: Record<string, number>;
-  default_features: Record<string, number>;
-
-  default_portal_return_url: string;
-
-  default_checkout_success_url: string;
-  default_checkout_cancel_url: string;
-  default_checkout_return_url: string;
-
-  // TODO: customer's default plan when they sign up. put it as optional
-  default_price_id: string;
 }
+
+export type WithOptional<T, K extends keyof T> = Omit<T, K> &
+  Partial<Pick<T, K>>;
+
+export type InputConfiguration = WithOptional<
+  InternalConfiguration,
+  | "metadata_limits_key_prefix"
+  | "metadata_features_key_prefix"
+  | "credits_initial_usage_value"
+>;
+
+export const normalizeConfiguration = (
+  config: InputConfiguration
+): InternalConfiguration => {
+  return {
+    ...config,
+    metadata_limits_key_prefix: config.metadata_limits_key_prefix ?? "limits:",
+    metadata_features_key_prefix:
+      config.metadata_features_key_prefix ?? "features:",
+
+    credits_initial_usage_value: config.credits_initial_usage_value ?? 0,
+  };
+};
 
 export type Implementation<T extends Record<string, any>> = (
   args: T,
   kv: Persistence,
   context: Context,
-  configuration: Configuration
+  configuration: InternalConfiguration
 ) => Promise<any>;

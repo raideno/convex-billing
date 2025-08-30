@@ -2,22 +2,26 @@
 
 import Stripe from "stripe";
 
-import { Configuration, extractFromMetadata, Implementation } from "./helpers";
+import {
+  InternalConfiguration,
+  extractFromMetadata,
+  Implementation,
+} from "./helpers";
 
 export const extractLimitsFromMetadata = (
-  configuration: Configuration,
+  configuration: InternalConfiguration,
   metadata: Record<string, any>
 ) =>
   extractFromMetadata(
     configuration.metadata_limits_key_prefix,
     metadata,
-    configuration.default_limits
+    configuration.defaults.limits
   );
 
 export const getLimitsImplementation: Implementation<{
   priceId: string;
 }> = async (args, kv, context, configuration) => {
-  const stripe = new Stripe(configuration.stripe_secret_key, {
+  const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });
 

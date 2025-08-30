@@ -6,13 +6,17 @@ import { httpActionGeneric } from "convex/server";
 
 import { Persistence } from "./persistence";
 import { extractLimitsFromMetadata } from "./limits";
-import { Configuration, Implementation, STRIPE_SUB_CACHE } from "./helpers";
+import {
+  InternalConfiguration,
+  Implementation,
+  STRIPE_SUB_CACHE,
+} from "./helpers";
 
 export const getPortalImplementation: Implementation<{
   entityId: string;
   returnUrl?: string;
 }> = async (args, kv, context, configuration) => {
-  const stripe = new Stripe(configuration.stripe_secret_key, {
+  const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });
 
@@ -29,7 +33,7 @@ export const getPortalImplementation: Implementation<{
 
   const portal = await stripe.billingPortal.sessions.create({
     customer: stripeCustomerId,
-    return_url: args.returnUrl || configuration.default_portal_return_url,
+    return_url: args.returnUrl || configuration.defaults.portal_return_url,
   });
 
   return { url: portal.url };
@@ -42,7 +46,7 @@ export const checkoutImplementation: Implementation<{
   cancelUrl?: string;
   returnUrl?: string;
 }> = async (args, kv, context, configuration) => {
-  const stripe = new Stripe(configuration.stripe_secret_key, {
+  const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });
 
@@ -67,9 +71,9 @@ export const checkoutImplementation: Implementation<{
         quantity: 1,
       },
     ],
-    success_url: args.successUrl || configuration.default_checkout_success_url,
-    cancel_url: args.cancelUrl || configuration.default_checkout_cancel_url,
-    return_url: args.returnUrl || configuration.default_checkout_return_url,
+    success_url: args.successUrl || configuration.defaults.checkout_success_url,
+    cancel_url: args.cancelUrl || configuration.defaults.checkout_cancel_url,
+    return_url: args.returnUrl || configuration.defaults.checkout_return_url,
   });
 
   return { url: checkout.url };
@@ -80,7 +84,7 @@ export const createStripeCustomerImplementation: Implementation<{
   email?: string;
   metadata?: Record<string, any>;
 }> = async (args, kv, context, configuration) => {
-  const stripe = new Stripe(configuration.stripe_secret_key, {
+  const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });
 
@@ -116,7 +120,7 @@ export const createStripeCustomerImplementation: Implementation<{
 export const syncImplementation: Implementation<{
   stripeCustomerId: string;
 }> = async (args, kv, context, configuration) => {
-  const stripe = new Stripe(configuration.stripe_secret_key, {
+  const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });
 
@@ -176,7 +180,7 @@ export const syncImplementation: Implementation<{
 
 export const getSubscriptionImplementation: Implementation<{
   entityId: string;
-}> = async (args, kv, context, configuration) => {
+}> = async (args, kv, context) => {
   const stripeCustomerId = await kv.getStripeCustomerIdByEntityId(
     context,
     args.entityId
@@ -199,7 +203,7 @@ export const getSubscriptionImplementation: Implementation<{
 };
 
 export const buildWebhookImplementation = (
-  configuration: Configuration,
+  configuration: InternalConfiguration,
   kv: Persistence
 ) =>
   httpActionGeneric(async (context, request) => {
@@ -208,7 +212,7 @@ export const buildWebhookImplementation = (
 
     if (!signature) return new Response("No signature", { status: 400 });
 
-    const stripe = new Stripe(configuration.stripe_secret_key, {
+    const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
     });
 
@@ -220,7 +224,7 @@ export const buildWebhookImplementation = (
       const event = await stripe.webhooks.constructEventAsync(
         body,
         signature,
-        configuration.stripe_webhook_secret
+        configuration.stripe.webhook_secret
       );
 
       if (!allowedEvents.includes(event.type))
@@ -281,7 +285,7 @@ export const getPlansImplementation: Implementation<{}> = async (
   context,
   configuration
 ) => {
-  const stripe = new Stripe(configuration.stripe_secret_key, {
+  const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });
 

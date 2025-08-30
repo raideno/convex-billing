@@ -1,12 +1,17 @@
 // index.ts
 
-import {
-  HttpRouter,
-  internalActionGeneric,
-  PublicHttpAction,
-} from "convex/server";
+import { HttpRouter, internalActionGeneric } from "convex/server";
 import { v } from "convex/values";
 
+import {
+  consumeImplementation,
+  getConsumptionImplementation,
+} from "./consumption";
+import { getFeaturesImplementation } from "./features";
+import { InputConfiguration, normalizeConfiguration } from "./helpers";
+import { getLimitsImplementation } from "./limits";
+import { Persistence } from "./persistence";
+import { KVStore } from "./persistence/kv";
 import {
   buildWebhookImplementation,
   checkoutImplementation,
@@ -17,39 +22,24 @@ import {
   syncImplementation,
 } from "./stripe";
 
-import { Configuration } from "./helpers";
-import { KVStore } from "./persistence/kv";
-import { Persistence } from "./persistence";
-import { getLimitsImplementation } from "./limits";
-import { getFeaturesImplementation } from "./features";
-import {
-  consumeImplementation,
-  getConsumptionImplementation,
-} from "./consumption";
-
 export * from "./persistence";
 
 export { billingTables } from "./tables";
 
-export type { Configuration };
+export type { InputConfiguration, InternalConfiguration } from "./helpers";
 
-export const internalConvexBilling = (configuration_: Configuration) => {
-  const configuration = configuration_;
+export const internalConvexBilling = (configuration_: InputConfiguration) => {
+  const configuration = normalizeConfiguration(configuration_);
 
-  let store: Persistence = new KVStore(configuration);
+  const store: Persistence = new KVStore(configuration);
 
   return {
     billing: {
       addHttpRoutes: (http: HttpRouter) => {
-        // https://modest-chipmunk-615.convex.cloud
-        // https://modest-chipmunk-615.convex.site/stripe/webhook
         http.route({
           path: "/stripe/webhook",
           method: "POST",
-          handler: buildWebhookImplementation(
-            configuration,
-            store
-          ) as PublicHttpAction,
+          handler: buildWebhookImplementation(configuration, store),
         });
       },
     },
