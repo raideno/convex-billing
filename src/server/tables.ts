@@ -3,7 +3,7 @@
 import { v } from "convex/values";
 import { defineTable } from "convex/server";
 
-export const tables = {
+export const billingTables = {
   kv: defineTable({
     key: v.string(),
     value: v.any(),

@@ -20,6 +20,12 @@ import { KVStore } from "./persistence/kv";
 import { Persistence } from "./persistence";
 import { ConvexStore } from "./persistence/convex";
 
+export * from "./persistence";
+
+export { billingTables } from "./tables";
+
+export type { Configuration };
+
 export const convexBilling = (configuration_: Configuration) => {
   const configuration = configuration_;
 
@@ -41,27 +47,19 @@ export const convexBilling = (configuration_: Configuration) => {
       },
     },
     // --- --- --- stripe.ts
-    stripe: {
-      portal: buildPortal(configuration, store),
-      checkout: buildCheckout(configuration, store),
-      createStripeCustomer: buildCreateStripeCustomer(configuration, store),
-      sync: buildSync(configuration, store),
-      subscription: buildSubscription(configuration, store),
-      webhook: buildWebhook(configuration, store),
-      plans: buildPlans(configuration, store),
-    },
+    portal: buildPortal(configuration, store),
+    checkout: buildCheckout(configuration, store),
+    createStripeCustomer: buildCreateStripeCustomer(configuration, store),
+    sync: buildSync(configuration, store),
+    subscription: buildSubscription(configuration, store),
+    webhook: buildWebhook(configuration, store),
+    plans: buildPlans(configuration, store),
     // --- --- --- usage.ts
-    usage: {
-      get: buildGetUsage(configuration, store),
-      consume: buildConsume(configuration, store),
-    },
+    getUsage: buildGetUsage(configuration, store),
+    consume: buildConsume(configuration, store),
     // --- --- --- limits.ts
-    limits: {
-      get: buildGetLimits(configuration, store),
-    },
+    getLimits: buildGetLimits(configuration, store),
     // --- --- --- features.ts
-    features: {
-      get: buildGetFeatures(configuration, store),
-    },
+    getFeatures: buildGetFeatures(configuration, store),
   };
 };
