@@ -2,7 +2,7 @@
 
 import { Redis } from "@upstash/redis";
 
-import { InternalConfiguration, STRIPE_SUB_CACHE } from "../helpers";
+import { STRIPE_SUB_CACHE } from "../helpers";
 import {
   Persistence,
   getUsageParams,
@@ -11,17 +11,15 @@ import {
   incrementUsageByParams,
   incrementUsageByAndSetupIfNotAlreadyParams,
   Context,
-} from "./index";
+} from "./types";
 
 export class KVStore implements Persistence {
   public readonly kv: Redis;
-  private readonly configuration: InternalConfiguration;
 
-  constructor(configuration: InternalConfiguration) {
-    this.configuration = configuration;
+  constructor({ url, token }: { url: string; token: string }) {
     this.kv = new Redis({
-      url: configuration.redis!.url,
-      token: configuration.redis!.write_token,
+      url: url,
+      token: token,
     });
   }
 
@@ -70,7 +68,7 @@ export class KVStore implements Persistence {
 
   async getOrSetupUsage(
     _ctx: Context,
-    { stripeCustomerId, initialUsageValue, period, name }: getOrSetupUsage
+    { stripeCustomerId, period, name }: getOrSetupUsage
   ): Promise<number> {
     const usage = await this.getUsage(_ctx, {
       stripeCustomerId,
@@ -80,8 +78,6 @@ export class KVStore implements Persistence {
 
     if (usage !== null) return usage;
     return await this.setupUsage(_ctx, {
-      initialUsageValue:
-        initialUsageValue ?? this.configuration.credits_initial_usage_value,
       stripeCustomerId,
       period,
       name,
@@ -90,10 +86,9 @@ export class KVStore implements Persistence {
 
   async setupUsage(
     _ctx: Context,
-    { stripeCustomerId, initialUsageValue, name, period }: setupUsageParams
+    { stripeCustomerId, name, period }: setupUsageParams
   ): Promise<number> {
-    const init =
-      initialUsageValue ?? this.configuration.credits_initial_usage_value;
+    const init = 0;
 
     const key = `usage:customer:${stripeCustomerId}:${period.start}:${
       period.end
@@ -180,7 +175,7 @@ export class KVStore implements Persistence {
       // ARGV
       [
         // initial usage value (use config)
-        this.configuration.credits_initial_usage_value,
+        0,
         params.amount,
         // -1 = no limit
         params.limit ? params.limit.value : -1,

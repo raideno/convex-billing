@@ -4,7 +4,7 @@ import Stripe from "stripe";
 
 import { httpActionGeneric } from "convex/server";
 
-import { Persistence } from "./persistence";
+import { Persistence } from "./persistence/types";
 import { extractLimitsFromMetadata } from "./limits";
 import {
   InternalConfiguration,
@@ -15,15 +15,16 @@ import {
 export const getPortalImplementation: Implementation<{
   entityId: string;
   returnUrl?: string;
-}> = async (args, kv, context, configuration) => {
+}> = async (context, args, configuration) => {
   const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });
 
-  const stripeCustomerId = await kv.getStripeCustomerIdByEntityId(
-    context,
-    args.entityId
-  );
+  const stripeCustomerId =
+    await configuration.persistence.getStripeCustomerIdByEntityId(
+      context,
+      args.entityId
+    );
 
   if (!stripeCustomerId) {
     throw new Error(
@@ -45,15 +46,16 @@ export const checkoutImplementation: Implementation<{
   successUrl?: string;
   cancelUrl?: string;
   returnUrl?: string;
-}> = async (args, kv, context, configuration) => {
+}> = async (context, args, configuration) => {
   const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });
 
-  const stripeCustomerId = await kv.getStripeCustomerIdByEntityId(
-    context,
-    args.entityId
-  );
+  const stripeCustomerId =
+    await configuration.persistence.getStripeCustomerIdByEntityId(
+      context,
+      args.entityId
+    );
 
   if (!stripeCustomerId) {
     throw new Error(
@@ -83,15 +85,16 @@ export const createStripeCustomerImplementation: Implementation<{
   entityId: string;
   email?: string;
   metadata?: Record<string, any>;
-}> = async (args, kv, context, configuration) => {
+}> = async (context, args, configuration) => {
   const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });
 
-  let stripeCustomerId = await kv.getStripeCustomerIdByEntityId(
-    context,
-    args.entityId
-  );
+  let stripeCustomerId =
+    await configuration.persistence.getStripeCustomerIdByEntityId(
+      context,
+      args.entityId
+    );
 
   if (stripeCustomerId) {
     return { stripeCustomerId };
@@ -106,7 +109,7 @@ export const createStripeCustomerImplementation: Implementation<{
       },
     });
 
-    await kv.persistStripeCustomerId(context, {
+    await configuration.persistence.persistStripeCustomerId(context, {
       stripeCustomerId: stripeCustomer.id,
       entityId: args.entityId,
     });
@@ -119,7 +122,7 @@ export const createStripeCustomerImplementation: Implementation<{
 
 export const syncImplementation: Implementation<{
   stripeCustomerId: string;
-}> = async (args, kv, context, configuration) => {
+}> = async (context, args, configuration) => {
   const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });
@@ -135,7 +138,7 @@ export const syncImplementation: Implementation<{
 
   if (subscriptions.data.length === 0) {
     const data = { status: "none" };
-    await kv.persistSubscriptionData(context, {
+    await configuration.persistence.persistSubscriptionData(context, {
       stripeCustomerId,
       data,
     });
@@ -170,7 +173,7 @@ export const syncImplementation: Implementation<{
         : null,
   };
 
-  await kv.persistSubscriptionData(context, {
+  await configuration.persistence.persistSubscriptionData(context, {
     stripeCustomerId,
     data,
   });
@@ -180,20 +183,22 @@ export const syncImplementation: Implementation<{
 
 export const getSubscriptionImplementation: Implementation<{
   entityId: string;
-}> = async (args, kv, context) => {
-  const stripeCustomerId = await kv.getStripeCustomerIdByEntityId(
-    context,
-    args.entityId
-  );
+}> = async (context, args, configuration) => {
+  const stripeCustomerId =
+    await configuration.persistence.getStripeCustomerIdByEntityId(
+      context,
+      args.entityId
+    );
 
   if (!stripeCustomerId) {
     return { status: "none" } as STRIPE_SUB_CACHE;
   }
 
-  const data = await kv.getSubscriptionDataByStripeCustomerId(
-    context,
-    stripeCustomerId
-  );
+  const data =
+    await configuration.persistence.getSubscriptionDataByStripeCustomerId(
+      context,
+      stripeCustomerId
+    );
 
   if (!data) {
     return { status: "none" } as STRIPE_SUB_CACHE;
@@ -203,8 +208,7 @@ export const getSubscriptionImplementation: Implementation<{
 };
 
 export const buildWebhookImplementation = (
-  configuration: InternalConfiguration,
-  kv: Persistence
+  configuration: InternalConfiguration
 ) =>
   httpActionGeneric(async (context, request) => {
     const body = await request.text();
@@ -243,9 +247,8 @@ export const buildWebhookImplementation = (
       }
 
       await syncImplementation(
-        { stripeCustomerId: customerId },
-        kv,
         context,
+        { stripeCustomerId: customerId },
         configuration
       );
     } catch (error) {
@@ -281,7 +284,6 @@ const allowedEvents: Stripe.Event.Type[] = [
 // TODO: expose the limits and features metadata, like transform them
 export const getPlansImplementation: Implementation<{}> = async (
   args,
-  kv,
   context,
   configuration
 ) => {

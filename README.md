@@ -14,6 +14,7 @@ Create `billing.ts` and initialize the module.
 
 ```ts
 // billing.ts
+import { KVStore } from "@raideno/convex-billing/server/persistence";
 import { internalConvexBilling } from "@raideno/convex-billing/server";
 
 export const {
@@ -33,17 +34,15 @@ export const {
   getLimits,
   getFeatures,
 } = internalConvexBilling({
-  redis: {
+  redis: KVStore({
     url: process.env.UPSTASH_URL!,
-    write_token: process.env.UPSTASH_WRITE_TOKEN!,
-    read_token: process.env.UPSTASH_READ_TOKEN!,
-  },
+    token: process.env.UPSTASH_WRITE_TOKEN!,
+  }),
   stripe: {
     secret_key: process.env.STRIPE_SECRET_KEY!,
     webhook_secret: process.env.STRIPE_WEBHOOK_SECRET!,
     publishable_key: process.env.STRIPE_PUBLISHABLE_KEY!,
   },
-
   defaults: {
     portal_return_url: "http://localhost:3000/return-from-portal",
     checkout_success_url: "http://localhost:3000/return-from-success",

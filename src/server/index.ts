@@ -10,8 +10,6 @@ import {
 import { getFeaturesImplementation } from "./features";
 import { InputConfiguration, normalizeConfiguration } from "./helpers";
 import { getLimitsImplementation } from "./limits";
-import { Persistence } from "./persistence";
-import { KVStore } from "./persistence/kv";
 import {
   buildWebhookImplementation,
   checkoutImplementation,
@@ -22,7 +20,7 @@ import {
   syncImplementation,
 } from "./stripe";
 
-export * from "./persistence";
+export * from "./persistence/types";
 
 export { billingTables } from "./tables";
 
@@ -31,15 +29,13 @@ export type { InputConfiguration, InternalConfiguration } from "./helpers";
 export const internalConvexBilling = (configuration_: InputConfiguration) => {
   const configuration = normalizeConfiguration(configuration_);
 
-  const store: Persistence = new KVStore(configuration);
-
   return {
     billing: {
       addHttpRoutes: (http: HttpRouter) => {
         http.route({
           path: "/stripe/webhook",
           method: "POST",
-          handler: buildWebhookImplementation(configuration, store),
+          handler: buildWebhookImplementation(configuration),
         });
       },
     },
@@ -50,7 +46,7 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
         returnUrl: v.optional(v.string()),
       },
       handler: (context, args) =>
-        getPortalImplementation(args, store, context, configuration),
+        getPortalImplementation(context, args, configuration),
     }),
     checkout: internalActionGeneric({
       args: {
@@ -61,34 +57,34 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
         returnUrl: v.optional(v.string()),
       },
       handler: (context, args) =>
-        checkoutImplementation(args, store, context, configuration),
+        checkoutImplementation(context, args, configuration),
     }),
     createStripeCustomer: internalActionGeneric({
       args: {
         entityId: v.string(),
       },
       handler: (context, args) =>
-        createStripeCustomerImplementation(args, store, context, configuration),
+        createStripeCustomerImplementation(context, args, configuration),
     }),
     sync: internalActionGeneric({
       args: {
         stripeCustomerId: v.string(),
       },
       handler: (context, args) =>
-        syncImplementation(args, store, context, configuration),
+        syncImplementation(context, args, configuration),
     }),
     getSubscription: internalActionGeneric({
       args: {
         entityId: v.string(),
       },
       handler: (context, args) =>
-        getSubscriptionImplementation(args, store, context, configuration),
+        getSubscriptionImplementation(context, args, configuration),
     }),
-    webhook: buildWebhookImplementation(configuration, store),
+    webhook: buildWebhookImplementation(configuration),
     getPlans: internalActionGeneric({
       args: {},
       handler: (context, args) =>
-        getPlansImplementation(args, store, context, configuration),
+        getPlansImplementation(context, args, configuration),
     }),
     // --- --- --- usage.ts
     getConsumption: internalActionGeneric({
@@ -97,7 +93,7 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
         name: v.string(),
       },
       handler: (context, args) =>
-        getConsumptionImplementation(args, store, context, configuration),
+        getConsumptionImplementation(context, args, configuration),
     }),
     consume: internalActionGeneric({
       args: {
@@ -107,7 +103,7 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
         enforce: v.optional(v.boolean()),
       },
       handler: (context, args) =>
-        consumeImplementation(args, store, context, configuration),
+        consumeImplementation(context, args, configuration),
     }),
     // --- --- --- limits.ts
     getLimits: internalActionGeneric({
@@ -115,7 +111,7 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
         priceId: v.string(),
       },
       handler: (context, args) =>
-        getLimitsImplementation(args, store, context, configuration),
+        getLimitsImplementation(context, args, configuration),
     }),
     // --- --- --- features.ts
     getFeatures: internalActionGeneric({
@@ -123,7 +119,7 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
         priceId: v.string(),
       },
       handler: (context, args) =>
-        getFeaturesImplementation(args, store, context, configuration),
+        getFeaturesImplementation(context, args, configuration),
     }),
   };
 };

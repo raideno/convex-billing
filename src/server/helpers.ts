@@ -1,7 +1,7 @@
 // helpers.ts
 
 import Stripe from "stripe";
-import { Context, Persistence } from "./persistence";
+import { Context, Persistence } from "./persistence/types";
 
 export const fullfilWithDefaults = (
   metadata: Record<string, any>,
@@ -62,11 +62,7 @@ export type STRIPE_SUB_CACHE =
     };
 
 export interface InternalConfiguration {
-  redis: {
-    url: string;
-    write_token: string;
-    read_token: string;
-  };
+  persistence: Persistence;
 
   stripe: {
     secret_key: string;
@@ -112,8 +108,7 @@ export const normalizeConfiguration = (
 };
 
 export type Implementation<T extends Record<string, any>> = (
-  args: T,
-  kv: Persistence,
   context: Context,
+  args: T,
   configuration: InternalConfiguration
 ) => Promise<any>;
