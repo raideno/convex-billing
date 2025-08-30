@@ -79,8 +79,6 @@ export interface InternalConfiguration {
     limits?: Record<string, number>;
   };
 
-  credits_initial_usage_value: number;
-
   metadata_limits_key_prefix: string;
   metadata_features_key_prefix: string;
 }
@@ -90,9 +88,7 @@ export type WithOptional<T, K extends keyof T> = Omit<T, K> &
 
 export type InputConfiguration = WithOptional<
   InternalConfiguration,
-  | "metadata_limits_key_prefix"
-  | "metadata_features_key_prefix"
-  | "credits_initial_usage_value"
+  "metadata_limits_key_prefix" | "metadata_features_key_prefix"
 >;
 
 export const normalizeConfiguration = (
@@ -103,8 +99,6 @@ export const normalizeConfiguration = (
     metadata_limits_key_prefix: config.metadata_limits_key_prefix ?? "limits:",
     metadata_features_key_prefix:
       config.metadata_features_key_prefix ?? "features:",
-
-    credits_initial_usage_value: config.credits_initial_usage_value ?? 0,
   };
 };
 
