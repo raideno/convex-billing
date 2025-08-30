@@ -1,6 +1,6 @@
 {
   "name": "@raideno/convex-billing",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Easy stripe billing for convex apps.",
   "keywords": [
     "billing",
@@ -25,8 +25,8 @@
       "types": "./dist/server.d.ts"
     },
     "./server/persistence": {
-      "import": "./dist/persistence.js",
-      "types": "./dist/persistence.d.ts"
+      "import": "./dist/server/persistence.js",
+      "types": "./dist/server/persistence.d.ts"
     }
   },
   "homepage": "https://raideno.github.io/convex-billing",

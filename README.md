@@ -34,7 +34,7 @@ export const {
   getLimits,
   getFeatures,
 } = internalConvexBilling({
-  redis: KVStore({
+  redis: new KVStore({
     url: process.env.UPSTASH_URL!,
     token: process.env.UPSTASH_WRITE_TOKEN!,
   }),

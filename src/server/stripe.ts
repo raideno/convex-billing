@@ -4,13 +4,12 @@ import Stripe from "stripe";
 
 import { httpActionGeneric } from "convex/server";
 
-import { Persistence } from "./persistence/types";
-import { extractLimitsFromMetadata } from "./limits";
 import {
-  InternalConfiguration,
   Implementation,
+  InternalConfiguration,
   STRIPE_SUB_CACHE,
 } from "./helpers";
+import { extractLimitsFromMetadata } from "./limits";
 
 export const getPortalImplementation: Implementation<{
   entityId: string;

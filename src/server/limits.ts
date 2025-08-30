@@ -3,9 +3,9 @@
 import Stripe from "stripe";
 
 import {
-  InternalConfiguration,
   extractFromMetadata,
   Implementation,
+  InternalConfiguration,
 } from "./helpers";
 
 export const extractLimitsFromMetadata = (
