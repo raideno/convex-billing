@@ -14,16 +14,16 @@ import { convexBilling } from "@raideno/convex-billing/server";
 export const {
     billing,
     // --- --- --- stripe
-    portal,
+    getPortal,
     checkout,
     createStripeCustomer,
     sync,
-    subscription,
+    getSubscription,
     webhook,
-    plans,
+    getPlans,
     // --- --- --- usage
     getUsage,
-    consume,
+    getConsumption,
     // --- --- --- limits
     getLimits,
     // --- --- --- features

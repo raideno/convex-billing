@@ -70,7 +70,7 @@ export type STRIPE_SUB_CACHE =
     };
 
 export interface Configuration {
-  redis?: {
+  redis: {
     url: string;
     write_token: string;
     read_token: string;
