@@ -1,0 +1,61 @@
+{
+  "name": "@raideno/convex-billing",
+  "version": "0.0.1",
+  "description": "Easy stripe billing for convex apps.",
+  "keywords": [
+    "billing",
+    "stripe",
+    "payment",
+    "checkout",
+    "pricing",
+    "convex"
+  ],
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./react": {
+      "import": "./dist/react.js",
+      "types": "./dist/react.d.ts"
+    },
+    "./server": {
+      "import": "./dist/server.js",
+      "types": "./dist/server.d.ts"
+    }
+  },
+  "homepage": "https://raideno.github.io/convex-billing",
+  "bugs": "https://github.com/raideno/convex-billing/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/raideno/convex-billing"
+  },
+  "license": "Apache-2.0",
+  "author": "raideno",
+  "scripts": {
+    "docs:dev": "vitepress dev ./docs",
+    "docs:build": "vitepress build ./docs",
+    "docs:preview": "vitepress preview ./docs",
+    "clean": "rimraf dist",
+    "lib:build": "tsup"
+  },
+  "type": "module",
+  "dependencies": {
+    "@convex-dev/auth": "^0.0.88",
+    "@upstash/redis": "^1.35.3",
+    "convex": "^1.26.2",
+    "stripe": "^18.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "tsc": "^2.0.4",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2",
+    "vitepress": "^1.6.4"
+  }
+}
