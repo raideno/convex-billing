@@ -1,6 +1,6 @@
 {
   "name": "@raideno/convex-billing",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Easy stripe billing for convex apps.",
   "keywords": [
     "billing",
@@ -46,8 +46,9 @@
   },
   "type": "module",
   "dependencies": {
-    "@convex-dev/auth": "^0.0.88",
-    "@upstash/redis": "^1.35.3",
+    "@upstash/redis": "^1.35.3"
+  },
+  "peerDependencies": {
     "convex": "^1.26.2",
     "stripe": "^18.5.0"
   },

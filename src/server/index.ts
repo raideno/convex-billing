@@ -1,23 +1,28 @@
 // index.ts
 
-import { HttpRouter, PublicHttpAction } from "convex/server";
+import {
+  HttpRouter,
+  internalActionGeneric,
+  PublicHttpAction,
+} from "convex/server";
+import { v } from "convex/values";
 
 import {
-  buildCheckout,
-  buildCreateStripeCustomer,
-  buildPlans,
-  buildPortal,
-  buildSubscription,
-  buildSync,
-  buildWebhook,
+  buildWebhookImplementation,
+  checkoutImplementation,
+  createStripeCustomerImplementation,
+  getPlansImplementation,
+  getPortalImplementation,
+  getSubscriptionImplementation,
+  syncImplementation,
 } from "./stripe";
 
 import { Configuration } from "./helpers";
-import { buildGet as buildGetLimits } from "./limits";
-import { buildGet as buildGetFeatures } from "./features";
-import { buildConsume, buildGet as buildGetUsage } from "./usage";
 import { KVStore } from "./persistence/kv";
 import { Persistence } from "./persistence";
+import { getLimitsImplementation } from "./limits";
+import { getFeaturesImplementation } from "./features";
+import { getConsumeImplementation, getUsageImplementation } from "./usage";
 
 export * from "./persistence";
 
@@ -38,24 +43,94 @@ export const convexBilling = (configuration_: Configuration) => {
         http.route({
           path: "/stripe/webhook",
           method: "POST",
-          handler: buildWebhook(configuration, store) as PublicHttpAction,
+          handler: buildWebhookImplementation(
+            configuration,
+            store
+          ) as PublicHttpAction,
         });
       },
     },
     // --- --- --- stripe.ts
-    getPortal: buildPortal(configuration, store),
-    checkout: buildCheckout(configuration, store),
-    createStripeCustomer: buildCreateStripeCustomer(configuration, store),
-    sync: buildSync(configuration, store),
-    getSubscription: buildSubscription(configuration, store),
-    webhook: buildWebhook(configuration, store),
-    getPlans: buildPlans(configuration, store),
+    getPortal: internalActionGeneric({
+      args: {
+        entityId: v.string(),
+        returnUrl: v.optional(v.string()),
+      },
+      handler: (context, args) =>
+        getPortalImplementation(args, store, context, configuration),
+    }),
+    checkout: internalActionGeneric({
+      args: {
+        entityId: v.string(),
+        priceId: v.string(),
+        successUrl: v.optional(v.string()),
+        cancelUrl: v.optional(v.string()),
+        returnUrl: v.optional(v.string()),
+      },
+      handler: (context, args) =>
+        checkoutImplementation(args, store, context, configuration),
+    }),
+    createStripeCustomer: internalActionGeneric({
+      args: {
+        entityId: v.string(),
+      },
+      handler: (context, args) =>
+        createStripeCustomerImplementation(args, store, context, configuration),
+    }),
+    sync: internalActionGeneric({
+      args: {
+        stripeCustomerId: v.string(),
+      },
+      handler: (context, args) =>
+        syncImplementation(args, store, context, configuration),
+    }),
+    getSubscription: internalActionGeneric({
+      args: {
+        entityId: v.string(),
+      },
+      handler: (context, args) =>
+        getSubscriptionImplementation(args, store, context, configuration),
+    }),
+    webhook: buildWebhookImplementation(configuration, store),
+    getPlans: internalActionGeneric({
+      args: {},
+      handler: (context, args) =>
+        getPlansImplementation(args, store, context, configuration),
+    }),
     // --- --- --- usage.ts
-    getUsage: buildGetUsage(configuration, store),
-    getConsumption: buildConsume(configuration, store),
+    getUsage: internalActionGeneric({
+      args: {
+        entityId: v.string(),
+        name: v.string(),
+      },
+      handler: (context, args) =>
+        getUsageImplementation(args, store, context, configuration),
+    }),
+    getConsumption: internalActionGeneric({
+      args: {
+        entityId: v.string(),
+        amount: v.number(),
+        name: v.string(),
+        enforce: v.optional(v.boolean()),
+      },
+      handler: (context, args) =>
+        getConsumeImplementation(args, store, context, configuration),
+    }),
     // --- --- --- limits.ts
-    getLimits: buildGetLimits(configuration, store),
+    getLimits: internalActionGeneric({
+      args: {
+        priceId: v.string(),
+      },
+      handler: (context, args) =>
+        getLimitsImplementation(args, store, context, configuration),
+    }),
     // --- --- --- features.ts
-    getFeatures: buildGetFeatures(configuration, store),
+    getFeatures: internalActionGeneric({
+      args: {
+        priceId: v.string(),
+      },
+      handler: (context, args) =>
+        getFeaturesImplementation(args, store, context, configuration),
+    }),
   };
 };

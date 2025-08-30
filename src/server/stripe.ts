@@ -2,144 +2,120 @@
 
 import Stripe from "stripe";
 
-import { v } from "convex/values";
-import { httpActionGeneric, internalActionGeneric } from "convex/server";
+import { httpActionGeneric } from "convex/server";
 
+import { Persistence } from "./persistence";
 import { extractLimitsFromMetadata } from "./limits";
-import {
-  Configuration,
-  ConvexFunctionFactory,
-  STRIPE_SUB_CACHE,
-} from "./helpers";
-import { Context, Persistence } from "./persistence";
+import { Configuration, Implementation, STRIPE_SUB_CACHE } from "./helpers";
 
-export const buildPortal: ConvexFunctionFactory = (configuration, kv) =>
-  internalActionGeneric({
-    args: {
-      entityId: v.string(),
-      returnUrl: v.optional(v.string()),
-    },
-    handler: async (context, args) => {
-      const stripe = new Stripe(configuration.stripe_secret_key, {
-        apiVersion: "2025-08-27.basil",
-      });
-
-      const stripeCustomerId = await kv.getStripeCustomerIdByEntityId(
-        context,
-        args.entityId
-      );
-
-      if (!stripeCustomerId) {
-        throw new Error(
-          "No Stripe customer ID found for this entityId: " + args.entityId
-        );
-      }
-
-      const portal = await stripe.billingPortal.sessions.create({
-        customer: stripeCustomerId,
-        return_url: args.returnUrl || configuration.default_portal_return_url,
-      });
-
-      return { url: portal.url };
-    },
+export const getPortalImplementation: Implementation<{
+  entityId: string;
+  returnUrl?: string;
+}> = async (args, kv, context, configuration) => {
+  const stripe = new Stripe(configuration.stripe_secret_key, {
+    apiVersion: "2025-08-27.basil",
   });
 
-export const buildCheckout: ConvexFunctionFactory = (configuration, kv) =>
-  internalActionGeneric({
-    args: {
-      entityId: v.string(),
-      priceId: v.string(),
-      successUrl: v.optional(v.string()),
-      cancelUrl: v.optional(v.string()),
-      returnUrl: v.optional(v.string()),
-    },
-    handler: async (context, args) => {
-      const stripe = new Stripe(configuration.stripe_secret_key, {
-        apiVersion: "2025-08-27.basil",
-      });
+  const stripeCustomerId = await kv.getStripeCustomerIdByEntityId(
+    context,
+    args.entityId
+  );
 
-      const stripeCustomerId = await kv.getStripeCustomerIdByEntityId(
-        context,
-        args.entityId
-      );
+  if (!stripeCustomerId) {
+    throw new Error(
+      "No Stripe customer ID found for this entityId: " + args.entityId
+    );
+  }
 
-      if (!stripeCustomerId) {
-        throw new Error(
-          "No Stripe customer ID found for this entityId: " + args.entityId
-        );
-      }
-
-      const checkout = await stripe.checkout.sessions.create({
-        customer: stripeCustomerId,
-        ui_mode: "hosted",
-        mode: "subscription",
-        line_items: [
-          {
-            price: args.priceId,
-            quantity: 1,
-          },
-        ],
-        success_url:
-          args.successUrl || configuration.default_checkout_success_url,
-        cancel_url: args.cancelUrl || configuration.default_checkout_cancel_url,
-        return_url: args.returnUrl || configuration.default_checkout_return_url,
-      });
-
-      return { url: checkout.url };
-    },
+  const portal = await stripe.billingPortal.sessions.create({
+    customer: stripeCustomerId,
+    return_url: args.returnUrl || configuration.default_portal_return_url,
   });
 
-export const buildCreateStripeCustomer: ConvexFunctionFactory = (
-  configuration,
-  kv
-) =>
-  internalActionGeneric({
-    args: {
-      entityId: v.string(),
-      email: v.optional(v.string()),
-      metadata: v.optional(v.record(v.string(), v.any())),
-    },
-    handler: async (context, args) => {
-      const stripe = new Stripe(configuration.stripe_secret_key, {
-        apiVersion: "2025-08-27.basil",
-      });
+  return { url: portal.url };
+};
 
-      let stripeCustomerId = await kv.getStripeCustomerIdByEntityId(
-        context,
-        args.entityId
-      );
-
-      if (stripeCustomerId) {
-        return { stripeCustomerId };
-      }
-
-      if (!stripeCustomerId) {
-        const stripeCustomer = await stripe.customers.create({
-          email: args.email,
-          metadata: {
-            entityId: args.entityId,
-            ...(args.metadata || {}),
-          },
-        });
-
-        await kv.persistStripeCustomerId(context, {
-          stripeCustomerId: stripeCustomer.id,
-          entityId: args.entityId,
-        });
-
-        stripeCustomerId = stripeCustomer.id;
-      }
-
-      return { stripeCustomerId };
-    },
+export const checkoutImplementation: Implementation<{
+  entityId: string;
+  priceId: string;
+  successUrl?: string;
+  cancelUrl?: string;
+  returnUrl?: string;
+}> = async (args, kv, context, configuration) => {
+  const stripe = new Stripe(configuration.stripe_secret_key, {
+    apiVersion: "2025-08-27.basil",
   });
 
-export const sync_ = async (
-  kv: Persistence,
-  context: Context,
-  configuration: Configuration,
-  args: { stripeCustomerId: string }
-) => {
+  const stripeCustomerId = await kv.getStripeCustomerIdByEntityId(
+    context,
+    args.entityId
+  );
+
+  if (!stripeCustomerId) {
+    throw new Error(
+      "No Stripe customer ID found for this entityId: " + args.entityId
+    );
+  }
+
+  const checkout = await stripe.checkout.sessions.create({
+    customer: stripeCustomerId,
+    ui_mode: "hosted",
+    mode: "subscription",
+    line_items: [
+      {
+        price: args.priceId,
+        quantity: 1,
+      },
+    ],
+    success_url: args.successUrl || configuration.default_checkout_success_url,
+    cancel_url: args.cancelUrl || configuration.default_checkout_cancel_url,
+    return_url: args.returnUrl || configuration.default_checkout_return_url,
+  });
+
+  return { url: checkout.url };
+};
+
+export const createStripeCustomerImplementation: Implementation<{
+  entityId: string;
+  email?: string;
+  metadata?: Record<string, any>;
+}> = async (args, kv, context, configuration) => {
+  const stripe = new Stripe(configuration.stripe_secret_key, {
+    apiVersion: "2025-08-27.basil",
+  });
+
+  let stripeCustomerId = await kv.getStripeCustomerIdByEntityId(
+    context,
+    args.entityId
+  );
+
+  if (stripeCustomerId) {
+    return { stripeCustomerId };
+  }
+
+  if (!stripeCustomerId) {
+    const stripeCustomer = await stripe.customers.create({
+      email: args.email,
+      metadata: {
+        entityId: args.entityId,
+        ...(args.metadata || {}),
+      },
+    });
+
+    await kv.persistStripeCustomerId(context, {
+      stripeCustomerId: stripeCustomer.id,
+      entityId: args.entityId,
+    });
+
+    stripeCustomerId = stripeCustomer.id;
+  }
+
+  return { stripeCustomerId };
+};
+
+export const syncImplementation: Implementation<{
+  stripeCustomerId: string;
+}> = async (args, kv, context, configuration) => {
   const stripe = new Stripe(configuration.stripe_secret_key, {
     apiVersion: "2025-08-27.basil",
   });
@@ -198,22 +174,9 @@ export const sync_ = async (
   return data;
 };
 
-export const buildSync: ConvexFunctionFactory = (configuration, kv) =>
-  internalActionGeneric({
-    args: { stripeCustomerId: v.string() },
-    handler: async (context, args) => {
-      return await sync_(kv, context, configuration, {
-        stripeCustomerId: args.stripeCustomerId,
-      });
-    },
-  });
-
-export const subscription_ = async (
-  kv: Persistence,
-  context: Context,
-  configuration: Configuration,
-  args: { entityId: string }
-) => {
+export const getSubscriptionImplementation: Implementation<{
+  entityId: string;
+}> = async (args, kv, context, configuration) => {
   const stripeCustomerId = await kv.getStripeCustomerIdByEntityId(
     context,
     args.entityId
@@ -235,19 +198,10 @@ export const subscription_ = async (
   return data as STRIPE_SUB_CACHE;
 };
 
-export const buildSubscription: ConvexFunctionFactory = (configuration, kv) =>
-  internalActionGeneric({
-    args: {
-      entityId: v.string(),
-    },
-    handler: async (context, args) => {
-      return await subscription_(kv, context, configuration, {
-        entityId: args.entityId,
-      });
-    },
-  });
-
-export const buildWebhook: ConvexFunctionFactory = (configuration, kv) =>
+export const buildWebhookImplementation = (
+  configuration: Configuration,
+  kv: Persistence
+) =>
   httpActionGeneric(async (context, request) => {
     const body = await request.text();
     const signature = request.headers.get("Stripe-Signature");
@@ -284,7 +238,12 @@ export const buildWebhook: ConvexFunctionFactory = (configuration, kv) =>
         );
       }
 
-      await sync_(kv, context, configuration, { stripeCustomerId: customerId });
+      await syncImplementation(
+        { stripeCustomerId: customerId },
+        kv,
+        context,
+        configuration
+      );
     } catch (error) {
       console.error("[STRIPE HOOK](Error):", error);
 
@@ -316,40 +275,41 @@ const allowedEvents: Stripe.Event.Type[] = [
 ];
 
 // TODO: expose the limits and features metadata, like transform them
-export const buildPlans: ConvexFunctionFactory = (configuration, kv) =>
-  internalActionGeneric({
-    args: {},
-    handler: async (ctx, args) => {
-      const stripe = new Stripe(configuration.stripe_secret_key, {
-        apiVersion: "2025-08-27.basil",
-      });
-
-      // const products = await stripe.products.list({
-      //   active: true,
-      //   limit: 100,
-      // });
-
-      // TODO: instead return the products with their prices expanded
-      const prices = await stripe.prices.list({
-        active: true,
-        limit: 100,
-        expand: ["data.product"],
-      });
-
-      const plans = prices.data.map((price) => {
-        const product = price.product as Stripe.Product;
-        return {
-          stripePriceId: price.id,
-          stripeProductId: product.id,
-          name: product.name,
-          description: product.description,
-          currency: price.currency,
-          // NOTE: we divide by 100 cuz Stripe stores prices in the smallest currency unit (e.g., cents for USD)
-          amount: (price.unit_amount || 0) / 100,
-          interval: price.recurring?.interval, // "month" | "year"
-        };
-      });
-
-      return plans;
-    },
+export const getPlansImplementation: Implementation<{}> = async (
+  args,
+  kv,
+  context,
+  configuration
+) => {
+  const stripe = new Stripe(configuration.stripe_secret_key, {
+    apiVersion: "2025-08-27.basil",
   });
+
+  // const products = await stripe.products.list({
+  //   active: true,
+  //   limit: 100,
+  // });
+
+  // TODO: instead return the products with their prices expanded
+  const prices = await stripe.prices.list({
+    active: true,
+    limit: 100,
+    expand: ["data.product"],
+  });
+
+  const plans = prices.data.map((price) => {
+    const product = price.product as Stripe.Product;
+    return {
+      stripePriceId: price.id,
+      stripeProductId: product.id,
+      name: product.name,
+      description: product.description,
+      currency: price.currency,
+      // NOTE: we divide by 100 cuz Stripe stores prices in the smallest currency unit (e.g., cents for USD)
+      amount: (price.unit_amount || 0) / 100,
+      interval: price.recurring?.interval, // "month" | "year"
+    };
+  });
+
+  return plans;
+};

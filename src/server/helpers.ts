@@ -1,15 +1,7 @@
 // helpers.ts
 
 import Stripe from "stripe";
-
-import type {
-  RegisteredAction,
-  RegisteredMutation,
-  RegisteredQuery,
-  PublicHttpAction,
-} from "convex/server";
-
-import { Persistence } from "./persistence";
+import { Context, Persistence } from "./persistence";
 
 export const fullfilWithDefaults = (
   metadata: Record<string, any>,
@@ -98,13 +90,9 @@ export interface Configuration {
   default_price_id: string;
 }
 
-export type RegisteredFunction =
-  | RegisteredAction<any, any, any>
-  | RegisteredMutation<any, any, any>
-  | RegisteredQuery<any, any, any>
-  | PublicHttpAction;
-
-export type ConvexFunctionFactory = (
-  configuration: Configuration,
-  store: Persistence
-) => RegisteredFunction;
+export type Implementation<T extends Record<string, any>> = (
+  args: T,
+  kv: Persistence,
+  context: Context,
+  configuration: Configuration
+) => Promise<any>;

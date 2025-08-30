@@ -2,7 +2,7 @@
 
 First install the package using your favorite package manager:
 ```bash
-npm install @raideno/convex-billing
+npm install @raideno/convex-billing stripe convex
 ```
 
 Create a `billing.ts` to configure the billing library:

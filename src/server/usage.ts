@@ -3,96 +3,88 @@
 
 // usage.ts
 
-import { v } from "convex/values";
-import { internalActionGeneric } from "convex/server";
+import { Implementation } from "./helpers";
+import { getSubscriptionImplementation } from "./stripe";
 
-import { subscription_ } from "./stripe";
+export const getUsageImplementation: Implementation<{
+  entityId: string;
+  name: string;
+}> = async (args, kv, context, configuration) => {
+  const stripeCustomerId = await kv.getStripeCustomerIdByEntityId(
+    context,
+    args.entityId
+  );
 
-import { ConvexFunctionFactory } from "./helpers";
+  if (!stripeCustomerId)
+    throw new Error("No stripe customerId associated with user.");
 
-export const buildGet: ConvexFunctionFactory = (configuration, kv) =>
-  internalActionGeneric({
-    args: {
-      entityId: v.string(),
-      name: v.string(),
+  const subscription = await getSubscriptionImplementation(
+    {
+      entityId: args.entityId,
     },
-    handler: async (
-      context,
-      args
-    ): Promise<{ usage: number; limit: number; remaining: number }> => {
-      const stripeCustomerId = await kv.getStripeCustomerIdByEntityId(
-        context,
-        args.entityId
-      );
+    kv,
+    context,
+    configuration
+  );
 
-      if (!stripeCustomerId)
-        throw new Error("No stripe customerId associated with user.");
+  if (subscription.status === "none") throw new Error("no_active_subscription");
 
-      const subscription = await subscription_(kv, context, configuration, {
-        entityId: args.entityId,
-      });
-
-      if (subscription.status === "none")
-        throw new Error("no_active_subscription");
-
-      const usage = await kv.getOrSetupUsage(context, {
-        name: args.name,
-        stripeCustomerId: stripeCustomerId,
-        period: {
-          start: subscription.currentPeriodStart,
-          end: subscription.currentPeriodEnd,
-        },
-      });
-
-      const limit = subscription.limits[args.name];
-
-      const remaining = limit - usage;
-
-      return { usage, limit, remaining };
+  const usage = await kv.getOrSetupUsage(context, {
+    name: args.name,
+    stripeCustomerId: stripeCustomerId,
+    period: {
+      start: subscription.currentPeriodStart,
+      end: subscription.currentPeriodEnd,
     },
   });
+
+  const limit = subscription.limits[args.name];
+
+  const remaining = limit - usage;
+
+  return { usage, limit, remaining };
+};
 
 // TODO: get multiple credits usage at once
 
-export const buildConsume: ConvexFunctionFactory = (configuration, kv) =>
-  internalActionGeneric({
-    // NOTE: name is for the name of the credit being consumed
-    args: {
-      entityId: v.string(),
-      amount: v.number(),
-      name: v.string(),
-      enforce: v.optional(v.boolean()),
+export const getConsumeImplementation: Implementation<{
+  entityId: string;
+  amount: number;
+  name: string;
+  enforce?: boolean;
+}> = async (args, kv, context, configuration) => {
+  const stripeCustomerId = await kv.getStripeCustomerIdByEntityId(
+    context,
+    args.entityId
+  );
+
+  if (!stripeCustomerId)
+    throw new Error("No stripe customerId associated with user.");
+
+  const subscription = await getSubscriptionImplementation(
+    {
+      entityId: args.entityId,
     },
-    handler: async (context, args): Promise<boolean> => {
-      const stripeCustomerId = await kv.getStripeCustomerIdByEntityId(
-        context,
-        args.entityId
-      );
+    kv,
+    context,
+    configuration
+  );
 
-      if (!stripeCustomerId)
-        throw new Error("No stripe customerId associated with user.");
+  if (subscription.status === "none") throw new Error("no_active_subscription");
 
-      const subscription = await subscription_(kv, context, configuration, {
-        entityId: args.entityId,
-      });
-
-      if (subscription.status === "none")
-        throw new Error("no_active_subscription");
-
-      return await kv.incrementUsageByAndSetupIfNotAlready(context, {
-        stripeCustomerId,
-        period: {
-          start: subscription.currentPeriodStart,
-          end: subscription.currentPeriodEnd,
-        },
-        limit: args.enforce
-          ? {
-              value: subscription.limits[args.name],
-              inclusive: true,
-            }
-          : undefined,
-        amount: args.amount,
-        name: args.name,
-      });
+  return await kv.incrementUsageByAndSetupIfNotAlready(context, {
+    stripeCustomerId,
+    period: {
+      start: subscription.currentPeriodStart,
+      end: subscription.currentPeriodEnd,
     },
+    limit: args.enforce
+      ? {
+          value: subscription.limits[args.name],
+          inclusive: true,
+        }
+      : undefined,
+    amount: args.amount,
+    name: args.name,
   });
+};
