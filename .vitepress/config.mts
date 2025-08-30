@@ -3,11 +3,15 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
   base: "/convex-billing",
   title: "convex-billing",
+  rewrites: {
+    "docs/:page.md": ":page.md", // move docs/*.md to root
+    "docs/:dir/:page.md": ":dir/:page.md", // move docs/subdir/*.md up one level
+  },
   description: "Convex billing integration with stripe.",
   themeConfig: {
     nav: [
       { text: "Home", link: "/" },
-      { text: "Examples", link: "/examples" },
+      { text: "Guides", link: "/guides" },
     ],
 
     sidebar: [
@@ -16,11 +20,11 @@ export default defineConfig({
         items: [{ text: "Get Started", link: "/" }],
       },
       {
-        text: "Examples",
-        link: "/examples",
+        text: "Guides",
+        link: "/guides",
         items: [
-          { text: "First Examples", link: "/examples/first" },
-          { text: "Second Examples", link: "/examples/second" },
+          { text: "First Guide", link: "/guides/first" },
+          { text: "Second Guide", link: "/guides/second" },
         ],
       },
     ],
