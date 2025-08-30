@@ -22,8 +22,8 @@ export const {
     webhook,
     getPlans,
     // --- --- --- usage
-    getUsage,
     getConsumption,
+    consume,
     // --- --- --- limits
     getLimits,
     // --- --- --- features

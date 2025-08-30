@@ -22,7 +22,10 @@ import { KVStore } from "./persistence/kv";
 import { Persistence } from "./persistence";
 import { getLimitsImplementation } from "./limits";
 import { getFeaturesImplementation } from "./features";
-import { getConsumeImplementation, getUsageImplementation } from "./usage";
+import {
+  consumeImplementation,
+  getConsumptionImplementation,
+} from "./consumption";
 
 export * from "./persistence";
 
@@ -98,15 +101,15 @@ export const convexBilling = (configuration_: Configuration) => {
         getPlansImplementation(args, store, context, configuration),
     }),
     // --- --- --- usage.ts
-    getUsage: internalActionGeneric({
+    getConsumption: internalActionGeneric({
       args: {
         entityId: v.string(),
         name: v.string(),
       },
       handler: (context, args) =>
-        getUsageImplementation(args, store, context, configuration),
+        getConsumptionImplementation(args, store, context, configuration),
     }),
-    getConsumption: internalActionGeneric({
+    consume: internalActionGeneric({
       args: {
         entityId: v.string(),
         amount: v.number(),
@@ -114,7 +117,7 @@ export const convexBilling = (configuration_: Configuration) => {
         enforce: v.optional(v.boolean()),
       },
       handler: (context, args) =>
-        getConsumeImplementation(args, store, context, configuration),
+        consumeImplementation(args, store, context, configuration),
     }),
     // --- --- --- limits.ts
     getLimits: internalActionGeneric({

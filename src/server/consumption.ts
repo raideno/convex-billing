@@ -1,12 +1,12 @@
 // TODO: right now credits are per subscription and thus reset at each billing period
 // We could have a concept of lifetime credits that don't reset such as an organization that have a limit of file storage or something like that
 
-// usage.ts
+// consumption.ts
 
 import { Implementation } from "./helpers";
 import { getSubscriptionImplementation } from "./stripe";
 
-export const getUsageImplementation: Implementation<{
+export const getConsumptionImplementation: Implementation<{
   entityId: string;
   name: string;
 }> = async (args, kv, context, configuration) => {
@@ -47,7 +47,7 @@ export const getUsageImplementation: Implementation<{
 
 // TODO: get multiple credits usage at once
 
-export const getConsumeImplementation: Implementation<{
+export const consumeImplementation: Implementation<{
   entityId: string;
   amount: number;
   name: string;
