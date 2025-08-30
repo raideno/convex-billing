@@ -16,7 +16,7 @@ export const getPortalImplementation: Implementation<
     entityId: string;
     returnUrl?: string;
   },
-  { url: string }
+  Promise<{ url: string }>
 > = async (context, args, configuration) => {
   const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
@@ -50,7 +50,7 @@ export const checkoutImplementation: Implementation<
     cancelUrl?: string;
     returnUrl?: string;
   },
-  { url: string | null }
+  Promise<{ url: string | null }>
 > = async (context, args, configuration) => {
   const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
@@ -92,7 +92,7 @@ export const createStripeCustomerImplementation: Implementation<
     email?: string;
     metadata?: Record<string, any>;
   },
-  { stripeCustomerId: string }
+  Promise<{ stripeCustomerId: string }>
 > = async (context, args, configuration) => {
   const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
@@ -132,7 +132,7 @@ export const syncImplementation: Implementation<
   {
     stripeCustomerId: string;
   },
-  STRIPE_SUB_CACHE
+  Promise<STRIPE_SUB_CACHE>
 > = async (context, args, configuration) => {
   const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
@@ -196,7 +196,7 @@ export const getSubscriptionImplementation: Implementation<
   {
     entityId: string;
   },
-  STRIPE_SUB_CACHE
+  Promise<STRIPE_SUB_CACHE>
 > = async (context, args, configuration) => {
   const stripeCustomerId =
     await configuration.persistence.getStripeCustomerIdByEntityId(
@@ -298,15 +298,17 @@ const allowedEvents: Stripe.Event.Type[] = [
 // TODO: expose the limits and features metadata, like transform them
 export const getPlansImplementation: Implementation<
   {},
-  {
-    stripePriceId: string;
-    stripeProductId: string;
-    name: string;
-    description: string | null;
-    currency: string;
-    amount: number;
-    interval: Stripe.Price.Recurring.Interval | undefined;
-  }[]
+  Promise<
+    {
+      stripePriceId: string;
+      stripeProductId: string;
+      name: string;
+      description: string | null;
+      currency: string;
+      amount: number;
+      interval: Stripe.Price.Recurring.Interval | undefined;
+    }[]
+  >
 > = async (args, context, configuration) => {
   const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",

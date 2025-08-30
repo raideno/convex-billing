@@ -8,7 +8,7 @@ export const getConsumptionImplementation: Implementation<
     entityId: string;
     name: string;
   },
-  { usage: number; limit: number; remaining: number }
+  Promise<{ usage: number; limit: number; remaining: number }>
 > = async (context, args, configuration) => {
   const stripeCustomerId =
     await configuration.persistence.getStripeCustomerIdByEntityId(
@@ -54,7 +54,7 @@ export const consumeImplementation: Implementation<
     name: string;
     enforce?: boolean;
   },
-  boolean
+  Promise<boolean>
 > = async (context, args, configuration) => {
   const stripeCustomerId =
     await configuration.persistence.getStripeCustomerIdByEntityId(

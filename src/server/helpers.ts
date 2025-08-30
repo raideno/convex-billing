@@ -106,4 +106,4 @@ export type Implementation<T extends Record<string, any>, R> = (
   context: Context,
   args: T,
   configuration: InternalConfiguration
-) => Promise<R> | R;
+) => R;
