@@ -18,9 +18,12 @@ export const extractLimitsFromMetadata = (
     configuration.defaults.limits
   );
 
-export const getLimitsImplementation: Implementation<{
-  priceId: string;
-}> = async (context, args, configuration) => {
+export const getLimitsImplementation: Implementation<
+  {
+    priceId: string;
+  },
+  Record<string, any>
+> = async (context, args, configuration) => {
   const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });

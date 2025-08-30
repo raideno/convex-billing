@@ -11,10 +11,13 @@ import {
 } from "./helpers";
 import { extractLimitsFromMetadata } from "./limits";
 
-export const getPortalImplementation: Implementation<{
-  entityId: string;
-  returnUrl?: string;
-}> = async (context, args, configuration) => {
+export const getPortalImplementation: Implementation<
+  {
+    entityId: string;
+    returnUrl?: string;
+  },
+  { url: string }
+> = async (context, args, configuration) => {
   const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });
@@ -39,13 +42,16 @@ export const getPortalImplementation: Implementation<{
   return { url: portal.url };
 };
 
-export const checkoutImplementation: Implementation<{
-  entityId: string;
-  priceId: string;
-  successUrl?: string;
-  cancelUrl?: string;
-  returnUrl?: string;
-}> = async (context, args, configuration) => {
+export const checkoutImplementation: Implementation<
+  {
+    entityId: string;
+    priceId: string;
+    successUrl?: string;
+    cancelUrl?: string;
+    returnUrl?: string;
+  },
+  { url: string | null }
+> = async (context, args, configuration) => {
   const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });
@@ -80,11 +86,14 @@ export const checkoutImplementation: Implementation<{
   return { url: checkout.url };
 };
 
-export const createStripeCustomerImplementation: Implementation<{
-  entityId: string;
-  email?: string;
-  metadata?: Record<string, any>;
-}> = async (context, args, configuration) => {
+export const createStripeCustomerImplementation: Implementation<
+  {
+    entityId: string;
+    email?: string;
+    metadata?: Record<string, any>;
+  },
+  { stripeCustomerId: string }
+> = async (context, args, configuration) => {
   const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });
@@ -119,9 +128,12 @@ export const createStripeCustomerImplementation: Implementation<{
   return { stripeCustomerId };
 };
 
-export const syncImplementation: Implementation<{
-  stripeCustomerId: string;
-}> = async (context, args, configuration) => {
+export const syncImplementation: Implementation<
+  {
+    stripeCustomerId: string;
+  },
+  STRIPE_SUB_CACHE
+> = async (context, args, configuration) => {
   const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });
@@ -141,7 +153,7 @@ export const syncImplementation: Implementation<{
       stripeCustomerId,
       data,
     });
-    return data;
+    return data as STRIPE_SUB_CACHE;
   }
 
   // TODO: here we select the first cuz entities can only have one subscription
@@ -180,9 +192,12 @@ export const syncImplementation: Implementation<{
   return data;
 };
 
-export const getSubscriptionImplementation: Implementation<{
-  entityId: string;
-}> = async (context, args, configuration) => {
+export const getSubscriptionImplementation: Implementation<
+  {
+    entityId: string;
+  },
+  STRIPE_SUB_CACHE
+> = async (context, args, configuration) => {
   const stripeCustomerId =
     await configuration.persistence.getStripeCustomerIdByEntityId(
       context,
@@ -281,11 +296,18 @@ const allowedEvents: Stripe.Event.Type[] = [
 ];
 
 // TODO: expose the limits and features metadata, like transform them
-export const getPlansImplementation: Implementation<{}> = async (
-  args,
-  context,
-  configuration
-) => {
+export const getPlansImplementation: Implementation<
+  {},
+  {
+    stripePriceId: string;
+    stripeProductId: string;
+    name: string;
+    description: string | null;
+    currency: string;
+    amount: number;
+    interval: Stripe.Price.Recurring.Interval | undefined;
+  }[]
+> = async (args, context, configuration) => {
   const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });

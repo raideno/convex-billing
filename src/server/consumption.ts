@@ -3,10 +3,13 @@
 import { Implementation } from "./helpers";
 import { getSubscriptionImplementation } from "./stripe";
 
-export const getConsumptionImplementation: Implementation<{
-  entityId: string;
-  name: string;
-}> = async (context, args, configuration) => {
+export const getConsumptionImplementation: Implementation<
+  {
+    entityId: string;
+    name: string;
+  },
+  { usage: number; limit: number; remaining: number }
+> = async (context, args, configuration) => {
   const stripeCustomerId =
     await configuration.persistence.getStripeCustomerIdByEntityId(
       context,
@@ -44,12 +47,15 @@ export const getConsumptionImplementation: Implementation<{
 
 // TODO: get multiple credits usage at once
 
-export const consumeImplementation: Implementation<{
-  entityId: string;
-  amount: number;
-  name: string;
-  enforce?: boolean;
-}> = async (context, args, configuration) => {
+export const consumeImplementation: Implementation<
+  {
+    entityId: string;
+    amount: number;
+    name: string;
+    enforce?: boolean;
+  },
+  boolean
+> = async (context, args, configuration) => {
   const stripeCustomerId =
     await configuration.persistence.getStripeCustomerIdByEntityId(
       context,

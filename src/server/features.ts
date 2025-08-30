@@ -13,9 +13,12 @@ export const extractFeaturesFromMetadata = (
   metadata: Record<string, any>
 ) => extractFromMetadata(configuration.metadata_features_key_prefix, metadata);
 
-export const getFeaturesImplementation: Implementation<{
-  priceId: string;
-}> = async (context, args, configuration) => {
+export const getFeaturesImplementation: Implementation<
+  {
+    priceId: string;
+  },
+  Record<string, any>
+> = async (context, args, configuration) => {
   const stripe = new Stripe(configuration.stripe.secret_key, {
     apiVersion: "2025-08-27.basil",
   });

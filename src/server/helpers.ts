@@ -102,8 +102,8 @@ export const normalizeConfiguration = (
   };
 };
 
-export type Implementation<T extends Record<string, any>> = (
+export type Implementation<T extends Record<string, any>, R> = (
   context: Context,
   args: T,
   configuration: InternalConfiguration
-) => Promise<any>;
+) => Promise<R> | R;
