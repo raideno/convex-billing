@@ -2,6 +2,8 @@ import { anyApi } from "convex/server";
 
 import { STRIPE_SUB_CACHE } from "../helpers";
 import { Context, Persistence } from "./types";
+import { Infer } from "convex/values";
+import { StoreInputValidator } from "../store";
 
 export type StoreInput =
   | {
@@ -40,12 +42,12 @@ export class ConvexStore implements Persistence {
     params: { stripeCustomerId: string; data: STRIPE_SUB_CACHE }
   ): Promise<void> {
     await ctx.runMutation(this.storeRef, {
-      input: {
+      data: {
         type: "persistSubscriptionData",
         stripeCustomerId: params.stripeCustomerId,
         data: params.data,
       },
-    });
+    } as Infer<typeof StoreInputValidator>);
   }
 
   async getSubscriptionDataByStripeCustomerId(
@@ -53,11 +55,13 @@ export class ConvexStore implements Persistence {
     stripeCustomerId: string
   ): Promise<STRIPE_SUB_CACHE | null> {
     const res = (await ctx.runMutation(this.storeRef, {
-      input: {
+      data: {
         type: "getSubscriptionDataByStripeCustomerId",
         stripeCustomerId,
       },
-    })) as { value: STRIPE_SUB_CACHE | null };
+    } as Infer<typeof StoreInputValidator>)) as {
+      value: STRIPE_SUB_CACHE | null;
+    };
     return res?.value ?? null;
   }
 
@@ -66,12 +70,12 @@ export class ConvexStore implements Persistence {
     params: { stripeCustomerId: string; entityId: string }
   ): Promise<void> {
     await ctx.runMutation(this.storeRef, {
-      input: {
+      data: {
         type: "persistStripeCustomerId",
         entityId: params.entityId,
         stripeCustomerId: params.stripeCustomerId,
       },
-    });
+    } as Infer<typeof StoreInputValidator>);
   }
 
   async getStripeCustomerIdByEntityId(
@@ -79,11 +83,11 @@ export class ConvexStore implements Persistence {
     entityId: string
   ): Promise<string | null> {
     const res = (await ctx.runMutation(this.storeRef, {
-      input: {
+      data: {
         type: "getStripeCustomerIdByEntityId",
         entityId,
       },
-    })) as { value: string | null };
+    } as Infer<typeof StoreInputValidator>)) as { value: string | null };
     return res?.value ?? null;
   }
 }

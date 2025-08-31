@@ -45,7 +45,7 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
       },
     },
     store: internalMutationGeneric({
-      args: StoreInputValidator,
+      args: v.any(),
       handler: (context, args) =>
         storeImplementation(context, args, configuration),
     }),
