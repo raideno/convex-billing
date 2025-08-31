@@ -36,11 +36,12 @@ Create a hosted checkout session for a specific Stripe Price id.
 ```ts
 import { internal } from "./_generated/api";
 
-export const startCheckout = async (ctx: any, userId: string, priceId: string) => {
+export const startCheckout = async (ctx: any, userId: string, priceId: string, successUrl: string, cancelUrl: string) => {
   const { url } = await ctx.runAction(internal.billing.checkout, {
     entityId: userId,
     priceId,
-    // optionally override success/cancel/return URLs configured in billing
+    successUrl,
+    cancelUrl,
   });
 
   return url; // redirect the browser to this URL
@@ -52,9 +53,10 @@ export const startCheckout = async (ctx: any, userId: string, priceId: string) =
 ```ts
 import { internal } from "./_generated/api";
 
-export const openPortal = async (ctx: any, userId: string) => {
+export const openPortal = async (ctx: any, userId: string, returnUrl: string) => {
   const { url } = await ctx.runAction(internal.billing.getPortal, {
     entityId: userId,
+    returnUrl
   });
   return url;
 };

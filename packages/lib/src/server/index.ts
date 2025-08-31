@@ -1,5 +1,3 @@
-// index.ts
-
 import { HttpRouter, internalActionGeneric } from "convex/server";
 import { v } from "convex/values";
 
@@ -7,6 +5,7 @@ import { getFeaturesImplementation } from "./features";
 import { InputConfiguration, normalizeConfiguration } from "./helpers";
 import { getLimitsImplementation } from "./limits";
 import {
+  buildRedirectImplementation,
   buildWebhookImplementation,
   checkoutImplementation,
   createStripeCustomerImplementation,
@@ -33,13 +32,18 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
           method: "POST",
           handler: buildWebhookImplementation(configuration),
         });
+        http.route({
+          pathPrefix: "/stripe/return/",
+          method: "GET",
+          handler: buildRedirectImplementation(configuration),
+        });
       },
     },
     // --- --- --- stripe.ts
     getPortal: internalActionGeneric({
       args: {
         entityId: v.string(),
-        returnUrl: v.optional(v.string()),
+        returnUrl: v.string(),
       },
       handler: (context, args) =>
         getPortalImplementation(context, args, configuration),
@@ -48,9 +52,8 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
       args: {
         entityId: v.string(),
         priceId: v.string(),
-        successUrl: v.optional(v.string()),
-        cancelUrl: v.optional(v.string()),
-        returnUrl: v.optional(v.string()),
+        successUrl: v.string(),
+        cancelUrl: v.string(),
       },
       handler: (context, args) =>
         checkoutImplementation(context, args, configuration),

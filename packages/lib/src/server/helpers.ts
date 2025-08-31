@@ -1,5 +1,3 @@
-// helpers.ts
-
 import Stripe from "stripe";
 
 import { Context, Persistence } from "./persistence/types";
@@ -71,11 +69,9 @@ export interface InternalConfiguration {
     publishable_key: string;
   };
 
+  convex: { projectId: string };
+
   defaults: {
-    portal_return_url: string;
-    checkout_success_url: string;
-    checkout_cancel_url: string;
-    checkout_return_url: string;
     limits?: Record<string, number>;
   };
 

@@ -34,18 +34,23 @@ import { internal } from "./_generated/api";
 export const startOrgCheckout = async (
   ctx: any,
   orgId: string,
-  priceId: string
+  priceId: string,
+  successUrl: string,
+  cancelUrl: string
 ) => {
   const { url } = await ctx.runAction(internal.billing.checkout, {
     entityId: orgId,
     priceId,
+    successUrl,
+    cancelUrl,
   });
   return url;
 };
 
-export const openOrgPortal = async (ctx: any, orgId: string) => {
+export const openOrgPortal = async (ctx: any, orgId: string, returnUrl: string) => {
   const { url } = await ctx.runAction(internal.billing.getPortal, {
     entityId: orgId,
+    returnUrl
   });
   return url;
 };

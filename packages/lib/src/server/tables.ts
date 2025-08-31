@@ -1,5 +1,3 @@
-// tables.ts
-
 import {
   DataModelFromSchemaDefinition,
   defineSchema,

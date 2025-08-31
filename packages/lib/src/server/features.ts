@@ -1,5 +1,3 @@
-// features.ts
-
 import Stripe from "stripe";
 
 import {

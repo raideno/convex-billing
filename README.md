@@ -47,7 +47,6 @@ export const {
   createStripeCustomer,
   sync,
   getSubscription,
-  webhook,
   getPlans,
   // --- metadata
   getLimits,
@@ -62,12 +61,10 @@ export const {
     webhook_secret: process.env.STRIPE_WEBHOOK_SECRET!,
     publishable_key: process.env.STRIPE_PUBLISHABLE_KEY!,
   },
+  // https://<convex-project-id>.convex.site
+  // https://<convex-project-id>.convex.cloud
+  convex: { projectId: "chimpunk-6289" },
   defaults: {
-    portal_return_url: "http://localhost:3000/return-from-portal",
-    checkout_success_url: "http://localhost:3000/return-from-success",
-    checkout_cancel_url: "http://localhost:3000/return-from-canceled",
-    checkout_return_url: "http://localhost:3000/return-from-payment",
-    // NOTE: required only if using the getLimits action
     limits: {
       "limits:standard-credits": 1000,
       "limits:premium-credits": 100,
@@ -89,6 +86,7 @@ import { billing } from "./billing";
 const http = httpRouter();
 
 // registers POST /stripe/webhook
+// registers POST /stripe/return/*
 billing.addHttpRoutes(http);
 
 export default http;
@@ -157,10 +155,6 @@ export const createOrganization = query({
 });
 ```
 
-In your `checkout_cancel_url`, `checkout_success_url`, `checkout_return_url`, and `portal_return_url` handlers you should call the `sync` action to update the cached subscription state. This is not strictly necessary as the webhook will eventually sync the state before the user comes back to your app but it's better to do it in case the webhook is delayed.
-
-- [ ] This will be entirely handled by the library in the future by first redirecting to the convex backend and then redirecting to the provided url.
-
 **NOTE:** Limits and features are extracted from Price metadata using the configured prefixes (`limits:*`, `features:*`). Missing keys fall back to defaults for limits.
 
 ## Stripe Events
@@ -195,11 +189,15 @@ import { internal } from "./_generated/api";
 export const startCheckout = async (
   ctx: any,
   entityId: string,
-  priceId: string
+  priceId: string,
+  successUrl: string,
+  cancelUrl: string
 ) => {
   const { url } = await ctx.runAction(internal.billing.checkout, {
     entityId,
     priceId,
+    successUrl,
+    cancelUrl,
   });
   return url; // redirect
 };
@@ -208,8 +206,8 @@ export const startCheckout = async (
 Open the Stripe customer portal.
 
 ```ts
-export const openPortal = async (ctx: any, entityId: string) => {
-  const { url } = await ctx.runAction(internal.billing.getPortal, { entityId });
+export const openPortal = async (ctx: any, entityId: string, returnUrl: string) => {
+  const { url } = await ctx.runAction(internal.billing.getPortal, { entityId, returnUrl });
   return url;
 };
 ```
@@ -248,7 +246,6 @@ export const readFeatures = async (ctx: any, priceId: string) => {
 
 ## TODOs
 
-- [ ] ~~Add documentation part to setup syncing call on checkout return endpoint.~~ Set the redirect after checkout to convex backend instead were we'll call the sync and after that we redirect to the provided url. This will make it so the user don't have to call sync manually.
 - [ ] Implement default plan.
 - [ ] Implement one time payment endpoint.
 - [ ] Show an example app for subscription and one time payments with credits usage.
