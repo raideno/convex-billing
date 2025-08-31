@@ -1,4 +1,8 @@
-import { HttpRouter, internalActionGeneric } from "convex/server";
+import {
+  HttpRouter,
+  internalActionGeneric,
+  internalMutationGeneric,
+} from "convex/server";
 import { v } from "convex/values";
 
 import { getFeaturesImplementation } from "./features";
@@ -14,6 +18,7 @@ import {
   getSubscriptionImplementation,
   syncImplementation,
 } from "./stripe";
+import { storeImplementation, StoreInputValidator } from "./store";
 
 export * from "./persistence/types";
 
@@ -39,6 +44,11 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
         });
       },
     },
+    store: internalMutationGeneric({
+      args: StoreInputValidator,
+      handler: (context, args) =>
+        storeImplementation(context, args, configuration),
+    }),
     // --- --- --- stripe.ts
     getPortal: internalActionGeneric({
       args: {

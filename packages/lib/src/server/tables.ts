@@ -19,11 +19,13 @@ export const billingTables = {
 
 const defaultSchema = defineSchema(billingTables);
 
-export type AuthDataModel = DataModelFromSchemaDefinition<typeof defaultSchema>;
-export type ActionCtx = GenericActionCtx<AuthDataModel>;
-export type MutationCtx = GenericMutationCtx<AuthDataModel>;
-export type QueryCtx = GenericQueryCtx<AuthDataModel>;
-export type Doc<T extends TableNamesInDataModel<AuthDataModel>> = GenericDoc<
-  AuthDataModel,
+export type BillingDataModel = DataModelFromSchemaDefinition<
+  typeof defaultSchema
+>;
+export type ActionCtx = GenericActionCtx<BillingDataModel>;
+export type MutationCtx = GenericMutationCtx<BillingDataModel>;
+export type QueryCtx = GenericQueryCtx<BillingDataModel>;
+export type Doc<T extends TableNamesInDataModel<BillingDataModel>> = GenericDoc<
+  BillingDataModel,
   T
 >;

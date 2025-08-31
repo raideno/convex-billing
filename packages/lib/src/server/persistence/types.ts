@@ -1,7 +1,7 @@
 import { GenericActionCtx, GenericMutationCtx } from "convex/server";
-import { InternalConfiguration } from "../helpers";
 
-export type Period = { start: number; end: number };
+import { InternalConfiguration } from "../helpers";
+import { BillingDataModel } from "../tables";
 
 export type Context =
   // | GenericQueryCtx<any>

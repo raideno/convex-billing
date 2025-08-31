@@ -1,10 +1,9 @@
-// convex/billing/store.ts
+import { Infer, v } from "convex/values";
 
-import { internalMutationGeneric } from "convex/server";
-import { v } from "convex/values";
+import { InternalConfiguration } from "./helpers";
 import { MutationCtx } from "./tables";
 
-const StoreInputValidator = v.union(
+export const StoreInputValidator = v.union(
   v.object({
     type: v.literal("persistStripeCustomerId"),
     entityId: v.string(),
@@ -25,38 +24,39 @@ const StoreInputValidator = v.union(
   })
 );
 
-export const store = internalMutationGeneric({
-  args: { input: StoreInputValidator },
-  handler: async (ctx: MutationCtx, { input }) => {
-    switch (input.type) {
-      case "persistStripeCustomerId": {
-        const key = `stripe:entity:${input.entityId}`;
-        await upsertKv(ctx, key, input.stripeCustomerId);
-        return { ok: true } as const;
-      }
-      case "getStripeCustomerIdByEntityId": {
-        const key = `stripe:entity:${input.entityId}`;
-        const value = await readKv<string | null>(ctx, key);
-        return { value } as const;
-      }
-      case "persistSubscriptionData": {
-        const key = `subscription:customer:${input.stripeCustomerId}`;
-        await upsertKv(ctx, key, input.data);
-        return { ok: true } as const;
-      }
-      case "getSubscriptionDataByStripeCustomerId": {
-        const key = `subscription:customer:${input.stripeCustomerId}`;
-        const value = await readKv<any | null>(ctx, key);
-        return { value } as const;
-      }
-      default: {
-        // Exhaustive guard
-        const _never: never = input;
-        throw new Error("Unknown store type");
-      }
+export const storeImplementation = async (
+  context: MutationCtx,
+  args: Infer<typeof StoreInputValidator>,
+  configuration: InternalConfiguration
+) => {
+  switch (args.type) {
+    case "persistStripeCustomerId": {
+      const key = `stripe:entity:${args.entityId}`;
+      await upsertKv(context, key, args.stripeCustomerId);
+      return { ok: true } as const;
     }
-  },
-});
+    case "getStripeCustomerIdByEntityId": {
+      const key = `stripe:entity:${args.entityId}`;
+      const value = await readKv<string | null>(context, key);
+      return { value } as const;
+    }
+    case "persistSubscriptionData": {
+      const key = `subscription:customer:${args.stripeCustomerId}`;
+      await upsertKv(context, key, args.data);
+      return { ok: true } as const;
+    }
+    case "getSubscriptionDataByStripeCustomerId": {
+      const key = `subscription:customer:${args.stripeCustomerId}`;
+      const value = await readKv<any | null>(context, key);
+      return { value } as const;
+    }
+    default: {
+      // Exhaustive guard
+      const _never: never = args;
+      throw new Error("Unknown store type");
+    }
+  }
+};
 
 async function upsertKv(
   ctx: MutationCtx,

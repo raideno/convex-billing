@@ -35,6 +35,7 @@ import { internalConvexBilling } from "@raideno/convex-billing/server";
 
 export const {
   billing,
+  store,
   // --- stripe
   getPortal,
   checkout,

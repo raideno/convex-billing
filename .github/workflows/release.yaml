@@ -10,7 +10,28 @@ permissions:
   id-token: write
 
 jobs:
-  release:
+  # release:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+
+  #     - name: ensure tag matches package.json version
+  #       run: |
+  #         PKG_VERSION=$(node -p "require('./packages/lib/package.json').version")
+  #         TAG=${GITHUB_REF_NAME}
+  #         if [ "v$PKG_VERSION" != "$TAG" ]; then
+  #           echo "Tag $TAG does not match package.json version v$PKG_VERSION"
+  #           exit 1
+  #         fi
+
+  #     - name: create github release
+  #       uses: softprops/action-gh-release@v2
+  #       with:
+  #         tag_name: ${{ github.ref_name }}
+  #         generate_release_notes: true
+
+  publish:
+    # needs: release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,17 +45,6 @@ jobs:
             exit 1
           fi
 
-      - name: create github release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref_name }}
-          generate_release_notes: true
-
-  publish:
-    needs: release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20

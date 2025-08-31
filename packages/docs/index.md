@@ -14,18 +14,12 @@ npm install @raideno/convex-billing stripe
 
 ## Configure
 
-You'll first need a Redis instance. It'll be used to cache subscription state.
-Upstash offers a free tier with a generous quota.
-You can customize this persistence layer by implementing the `Persistence` interface and provide it to the `internalConvexBilling` function.
-
-You'll also need a Stripe account were products with recurring prices are configured.
+You'll need a Stripe account were products with recurring prices are configured.
 You also need to setup webhooks with pointing towards `https://<your-convex-app>.convex.site/stripe/webhook`.
 Enable the [following events](#stripe-events).
 
 First setup the environment variables in your convex backend:
 ```bash
-npx convex env set UPSTASH_URL "<secret>"
-npx convex env set UPSTASH_WRITE_TOKEN "<secret>"
 npx convex env set STRIPE_SECRET_KEY "<secret>"
 npx convex env set STRIPE_WEBHOOK_SECRET "<secret>"
 npx convex env set STRIPE_PUBLISHABLE_KEY "<secret>"
@@ -36,38 +30,33 @@ Create `convex/billing.ts` file and initialize the module.
 ```ts
 // convex/billing.ts
 
-import { KVStore } from "@raideno/convex-billing/server/persistence";
+import { KVStore, ConvexStore } from "@raideno/convex-billing/server/persistence";
 import { internalConvexBilling } from "@raideno/convex-billing/server";
 
 export const {
   billing,
+  store,
   // --- stripe
   getPortal,
   checkout,
   createStripeCustomer,
   sync,
   getSubscription,
-  webhook,
   getPlans,
   // --- metadata
   getLimits,
   getFeatures,
 } = internalConvexBilling({
-  persistence: new KVStore({
-    url: process.env.UPSTASH_URL!,
-    token: process.env.UPSTASH_WRITE_TOKEN!,
-  }),
+  persistence: new ConvexStore(),
   stripe: {
     secret_key: process.env.STRIPE_SECRET_KEY!,
     webhook_secret: process.env.STRIPE_WEBHOOK_SECRET!,
     publishable_key: process.env.STRIPE_PUBLISHABLE_KEY!,
   },
+  // https://<convex-project-id>.convex.site
+  // https://<convex-project-id>.convex.cloud
+  convex: { projectId: "chimpunk-6289" },
   defaults: {
-    portal_return_url: "http://localhost:3000/return-from-portal",
-    checkout_success_url: "http://localhost:3000/return-from-success",
-    checkout_cancel_url: "http://localhost:3000/return-from-canceled",
-    checkout_return_url: "http://localhost:3000/return-from-payment",
-    // NOTE: required only if using the getLimits action
     limits: {
       "limits:standard-credits": 1000,
       "limits:premium-credits": 100,
@@ -76,7 +65,7 @@ export const {
 });
 ```
 
-**NOTE:** All the exposed actions are internal. You can create wrappers to expose them as public actions if needed.
+**NOTE:** All the exposed actions are internal. You can create wrappers to expose them as public actions if needed. The persistence layer serves to sync the subscription data from Stripe to the Convex database. Two persistence implementations are provided: `KVStore` using Upstash Redis and `ConvexStore` using your Convex database itself. You can also implement your own persistence layer by implementing the `Persistence` interface.
 
 Register the webhook HTTP route.
 
@@ -89,6 +78,7 @@ import { billing } from "./billing";
 const http = httpRouter();
 
 // registers POST /stripe/webhook
+// registers POST /stripe/return/*
 billing.addHttpRoutes(http);
 
 export default http;
@@ -157,10 +147,6 @@ export const createOrganization = query({
 });
 ```
 
-In your `checkout_cancel_url`, `checkout_success_url`, `checkout_return_url`, and `portal_return_url` handlers you should call the `sync` action to update the cached subscription state. This is not strictly necessary as the webhook will eventually sync the state before the user comes back to your app but it's better to do it in case the webhook is delayed.
-
-- [ ] This will be entirely handled by the library in the future by first redirecting to the convex backend and then redirecting to the provided url.
-
 **NOTE:** Limits and features are extracted from Price metadata using the configured prefixes (`limits:*`, `features:*`). Missing keys fall back to defaults for limits.
 
 ## Stripe Events
@@ -195,11 +181,15 @@ import { internal } from "./_generated/api";
 export const startCheckout = async (
   ctx: any,
   entityId: string,
-  priceId: string
+  priceId: string,
+  successUrl: string,
+  cancelUrl: string
 ) => {
   const { url } = await ctx.runAction(internal.billing.checkout, {
     entityId,
     priceId,
+    successUrl,
+    cancelUrl,
   });
   return url; // redirect
 };
@@ -208,8 +198,8 @@ export const startCheckout = async (
 Open the Stripe customer portal.
 
 ```ts
-export const openPortal = async (ctx: any, entityId: string) => {
-  const { url } = await ctx.runAction(internal.billing.getPortal, { entityId });
+export const openPortal = async (ctx: any, entityId: string, returnUrl: string) => {
+  const { url } = await ctx.runAction(internal.billing.getPortal, { entityId, returnUrl });
   return url;
 };
 ```
@@ -248,7 +238,6 @@ export const readFeatures = async (ctx: any, priceId: string) => {
 
 ## TODOs
 
-- [ ] ~~Add documentation part to setup syncing call on checkout return endpoint.~~ Set the redirect after checkout to convex backend instead were we'll call the sync and after that we redirect to the provided url. This will make it so the user don't have to call sync manually.
 - [ ] Implement default plan.
 - [ ] Implement one time payment endpoint.
 - [ ] Show an example app for subscription and one time payments with credits usage.
