@@ -1,5 +1,3 @@
-// persistence/types.ts
-
 import { GenericActionCtx, GenericMutationCtx } from "convex/server";
 import { InternalConfiguration } from "../helpers";
 

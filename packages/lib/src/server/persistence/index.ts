@@ -1,5 +1,3 @@
-// persistence/index.ts
-
 export * from "./kv";
 export * from "./types";
-// export * from "./convex";
+export * from "./convex";

@@ -1,5 +1,3 @@
-// persistence/kv.ts
-
 import { Redis } from "@upstash/redis";
 
 import { STRIPE_SUB_CACHE } from "../helpers";

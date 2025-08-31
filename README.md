@@ -14,18 +14,12 @@ npm install @raideno/convex-billing stripe
 
 ## Configure
 
-You'll first need a Redis instance. It'll be used to cache subscription state.
-Upstash offers a free tier with a generous quota.
-You can customize this persistence layer by implementing the `Persistence` interface and provide it to the `internalConvexBilling` function.
-
-You'll also need a Stripe account were products with recurring prices are configured.
+You'll need a Stripe account were products with recurring prices are configured.
 You also need to setup webhooks with pointing towards `https://<your-convex-app>.convex.site/stripe/webhook`.
 Enable the [following events](#stripe-events).
 
 First setup the environment variables in your convex backend:
 ```bash
-npx convex env set UPSTASH_URL "<secret>"
-npx convex env set UPSTASH_WRITE_TOKEN "<secret>"
 npx convex env set STRIPE_SECRET_KEY "<secret>"
 npx convex env set STRIPE_WEBHOOK_SECRET "<secret>"
 npx convex env set STRIPE_PUBLISHABLE_KEY "<secret>"
@@ -36,7 +30,7 @@ Create `convex/billing.ts` file and initialize the module.
 ```ts
 // convex/billing.ts
 
-import { KVStore } from "@raideno/convex-billing/server/persistence";
+import { KVStore, ConvexStore } from "@raideno/convex-billing/server/persistence";
 import { internalConvexBilling } from "@raideno/convex-billing/server";
 
 export const {
@@ -52,10 +46,7 @@ export const {
   getLimits,
   getFeatures,
 } = internalConvexBilling({
-  persistence: new KVStore({
-    url: process.env.UPSTASH_URL!,
-    token: process.env.UPSTASH_WRITE_TOKEN!,
-  }),
+  persistence: new ConvexStore(),
   stripe: {
     secret_key: process.env.STRIPE_SECRET_KEY!,
     webhook_secret: process.env.STRIPE_WEBHOOK_SECRET!,
@@ -73,7 +64,7 @@ export const {
 });
 ```
 
-**NOTE:** All the exposed actions are internal. You can create wrappers to expose them as public actions if needed.
+**NOTE:** All the exposed actions are internal. You can create wrappers to expose them as public actions if needed. The persistence layer serves to sync the subscription data from Stripe to the Convex database. Two persistence implementations are provided: `KVStore` using Upstash Redis and `ConvexStore` using your Convex database itself. You can also implement your own persistence layer by implementing the `Persistence` interface.
 
 Register the webhook HTTP route.
 
