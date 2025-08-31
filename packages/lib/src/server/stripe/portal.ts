@@ -26,7 +26,7 @@ export const getPortalImplementation: Implementation<
     );
   }
 
-  const returnUrl = buildSignedReturnUrl(
+  const returnUrl = await buildSignedReturnUrl(
     configuration,
     "portal",
     args.entityId,

@@ -28,13 +28,13 @@ export const checkoutImplementation: Implementation<
     );
   }
 
-  const successUrl = buildSignedReturnUrl(
+  const successUrl = await buildSignedReturnUrl(
     configuration,
     "checkout-success",
     args.entityId,
     args.successUrl
   );
-  const cancelUrl = buildSignedReturnUrl(
+  const cancelUrl = await buildSignedReturnUrl(
     configuration,
     "checkout-cancel",
     args.entityId,

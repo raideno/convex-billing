@@ -31,7 +31,7 @@ export type StoreOutput =
 export class ConvexStore implements Persistence {
   private readonly storeRef: any;
 
-  constructor({ storeRef = anyApi.billing.store }: { storeRef?: any }) {
+  constructor(storeRef?: any) {
     this.storeRef = storeRef;
   }
 

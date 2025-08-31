@@ -1,5 +1,4 @@
 import { httpActionGeneric } from "convex/server";
-import { createHmac, timingSafeEqual } from "crypto";
 
 import { InternalConfiguration } from "../helpers";
 import { syncImplementation } from "./sync";
@@ -16,23 +15,71 @@ export function backendBaseUrl(configuration: InternalConfiguration): string {
   return `https://${configuration.convex.projectId}.convex.site`;
 }
 
-export function toBase64Url(input: Buffer | string): string {
-  const buffer = Buffer.isBuffer(input) ? input : Buffer.from(input);
-  return buffer
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/g, "");
+export function toBase64Url(input: ArrayBuffer | string): string {
+  const buffer =
+    typeof input === "string"
+      ? new TextEncoder().encode(input)
+      : new Uint8Array(input);
+
+  let binary = "";
+  for (let i = 0; i < buffer.length; i++) {
+    binary += String.fromCharCode(buffer[i]);
+  }
+  const base64 = btoa(binary);
+
+  return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
 
-export function fromBase64Url(input: string): Buffer {
+export function fromBase64Url(input: string): Uint8Array {
   const b64 = input.replace(/-/g, "+").replace(/_/g, "/");
   const padding = b64.length % 4 === 0 ? 0 : 4 - (b64.length % 4);
-  return Buffer.from(b64 + "=".repeat(padding), "base64");
+  const padded = b64 + "=".repeat(padding);
+
+  const binary = atob(padded);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
 }
 
-export function signData(secret: string, data: string): Buffer {
-  return createHmac("sha256", secret).update(data).digest();
+export async function signData(
+  secret: string,
+  data: string
+): Promise<ArrayBuffer> {
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(secret);
+  const messageData = encoder.encode(data);
+
+  // Import the secret as a CryptoKey
+  const key = await crypto.subtle.importKey(
+    "raw",
+    keyData,
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+
+  return await crypto.subtle.sign("HMAC", key, messageData);
+}
+
+export async function timingSafeEqual(
+  a: ArrayBufferLike,
+  b: ArrayBufferLike
+): Promise<boolean> {
+  if (a.byteLength !== b.byteLength) {
+    return false;
+  }
+
+  const aArray = new Uint8Array(a);
+  const bArray = new Uint8Array(b);
+
+  let result = 0;
+  for (let i = 0; i < aArray.length; i++) {
+    result |= aArray[i] ^ bArray[i];
+  }
+
+  return result === 0;
 }
 
 export interface ReturnPayloadV1 {
@@ -43,13 +90,13 @@ export interface ReturnPayloadV1 {
   targetUrl: string;
 }
 
-export function buildSignedReturnUrl(
+export async function buildSignedReturnUrl(
   configuration: InternalConfiguration,
   origin: ReturnOrigin,
   entityId: string,
   targetUrl: string,
   ttlMs = 15 * 60 * 1000
-): string {
+): Promise<string> {
   const payload: ReturnPayloadV1 = {
     v: 1,
     origin,
@@ -58,7 +105,7 @@ export function buildSignedReturnUrl(
     exp: Date.now() + ttlMs,
   };
   const data = toBase64Url(JSON.stringify(payload));
-  const expected = signData(configuration.stripe.webhook_secret, data);
+  const expected = await signData(configuration.stripe.webhook_secret, data);
   const signature = toBase64Url(expected);
   const base = `${backendBaseUrl(configuration)}/stripe/return/${origin}`;
 
@@ -106,16 +153,24 @@ export const buildRedirectImplementation = (
       targetUrl: string;
     };
     try {
-      const expected = signData(configuration.stripe.webhook_secret, data);
+      const expected = await signData(
+        configuration.stripe.webhook_secret,
+        data
+      );
       const provided = fromBase64Url(signature);
 
-      if (provided.length !== expected.length) {
+      if (provided.byteLength !== expected.byteLength) {
         return new Response("Invalid signature", { status: 400 });
       }
-      if (!timingSafeEqual(provided, expected)) {
+
+      const isValid = await timingSafeEqual(provided.buffer, expected);
+      if (!isValid) {
         return new Response("Invalid signature", { status: 400 });
       }
-      decoded = JSON.parse(fromBase64Url(data).toString("utf8"));
+
+      const decodedBytes = fromBase64Url(data);
+      const decoder = new TextDecoder();
+      decoded = JSON.parse(decoder.decode(decodedBytes));
     } catch {
       return new Response("Invalid token", { status: 400 });
     }
