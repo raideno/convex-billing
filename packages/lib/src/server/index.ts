@@ -3,10 +3,6 @@
 import { HttpRouter, internalActionGeneric } from "convex/server";
 import { v } from "convex/values";
 
-import {
-  consumeImplementation,
-  getConsumptionImplementation,
-} from "./consumption";
 import { getFeaturesImplementation } from "./features";
 import { InputConfiguration, normalizeConfiguration } from "./helpers";
 import { getLimitsImplementation } from "./limits";
@@ -85,25 +81,6 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
       args: {},
       handler: (context, args) =>
         getPlansImplementation(context, args, configuration),
-    }),
-    // --- --- --- usage.ts
-    getConsumption: internalActionGeneric({
-      args: {
-        entityId: v.string(),
-        name: v.string(),
-      },
-      handler: (context, args) =>
-        getConsumptionImplementation(context, args, configuration),
-    }),
-    consume: internalActionGeneric({
-      args: {
-        entityId: v.string(),
-        amount: v.number(),
-        name: v.string(),
-        enforce: v.optional(v.boolean()),
-      },
-      handler: (context, args) =>
-        consumeImplementation(context, args, configuration),
     }),
     // --- --- --- limits.ts
     getLimits: internalActionGeneric({

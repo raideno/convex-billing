@@ -5,7 +5,7 @@ outline: deep
 # Organization Based Billing
 
 This guide shows how to bill at the organization level. Use the organization id
-as `entityId`. All members share the same subscription and usage counters.
+as `entityId`. All members share the same subscription.
 
 ## Create a Stripe Customer when an organization is created
 
@@ -48,46 +48,6 @@ export const openOrgPortal = async (ctx: any, orgId: string) => {
     entityId: orgId,
   });
   return url;
-};
-```
-
-## Guard usage by membership
-
-Before consuming org credits, check that the caller is a member of the org and
-authorized to perform the action.
-
-```ts
-import { internal } from "./_generated/api";
-
-export const consumeOrgCredits = async (
-  ctx: any,
-  orgId: string,
-  userId: string,
-  amount: number
-) => {
-  // your own membership/role checks here...
-
-  const ok = await ctx.runAction(internal.billing.consume, {
-    entityId: orgId,
-    name: "limits:standard-credits",
-    amount,
-    enforce: true,
-  });
-
-  if (!ok) throw new Error("limit_reached");
-};
-```
-
-## Show usage in org dashboards
-
-```ts
-import { internal } from "./_generated/api";
-
-export const getOrgUsage = async (ctx: any, orgId: string) => {
-  return await ctx.runAction(internal.billing.getConsumption, {
-    entityId: orgId,
-    name: "limits:standard-credits",
-  });
 };
 ```
 

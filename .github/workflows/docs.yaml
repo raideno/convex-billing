@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      - run: npm ci --force
       - run: npm run build --workspace docs
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -3,7 +3,7 @@
 > [!WARNING]
 > This library is still under development. Since it handles payments, please use it with caution.
 
-Stripe subscriptions, usage limits, and consumption for Convex apps.
+Stripe subscriptions, limits and features for Convex apps.
 Implemented according to the best practices listed in [Stripe Recommendations](https://github.com/t3dotgg/stripe-recommendations).
 
 ## Install
@@ -14,7 +14,7 @@ npm install @raideno/convex-billing stripe
 
 ## Configure
 
-You'll first need a Redis instance. It'll be used to cache subscription state and usage counters.
+You'll first need a Redis instance. It'll be used to cache subscription state.
 Upstash offers a free tier with a generous quota.
 You can customize this persistence layer by implementing the `Persistence` interface and provide it to the `internalConvexBilling` function.
 
@@ -49,9 +49,6 @@ export const {
   getSubscription,
   webhook,
   getPlans,
-  // --- usage
-  getConsumption,
-  consume,
   // --- metadata
   getLimits,
   getFeatures,
@@ -225,37 +222,6 @@ export const readSubscription = async (ctx: any, entityId: string) => {
     entityId,
   });
   return sub; // { status: "none" } if not found
-};
-```
-
-Consume credits with optional enforcement against plan limits.
-
-```ts
-export const consume = async (
-  ctx: any,
-  entityId: string,
-  amount: number
-) => {
-  const ok = await ctx.runAction(internal.billing.consume, {
-    entityId,
-    name: "limits:standard-credits",
-    amount,
-    enforce: true,
-  });
-  if (!ok) throw new Error("limit_reached");
-};
-```
-
-Read usage, limit, and remaining for a counter.
-
-```ts
-export const getUsage = async (ctx: any, entityId: string) => {
-  const res = await ctx.runAction(internal.billing.getConsumption, {
-    entityId,
-    name: "limits:standard-credits",
-  });
-  // res = { usage, limit, remaining }
-  return res;
 };
 ```
 

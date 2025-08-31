@@ -80,51 +80,6 @@ export const getSubscription = async (ctx: any, userId: string) => {
 If you need a fresh sync from Stripe, call `internal.billing.sync` with the
 Stripe customer id, then read `getSubscription` again.
 
-## Record usage
-
-Choose a counter name (e.g., `limits:standard-credits`). The name should match a
-limit key in your Stripe metadata.
-
-```ts
-import { internal } from "./_generated/api";
-
-export const consumeCredits = async (
-  ctx: any,
-  userId: string,
-  amount: number
-) => {
-  const ok = await ctx.runAction(internal.billing.consume, {
-    entityId: userId,
-    name: "limits:standard-credits",
-    amount,
-    enforce: true, // set to false to allow going over the limit
-  });
-
-  if (!ok) {
-    // enforce=true: will be false if increment would exceed the limit
-    throw new Error("limit_reached");
-  }
-};
-```
-
-## Read usage  limit  remaining
-
-```ts
-import { internal } from "./_generated/api";
-
-export const getUsage = async (ctx: any, userId: string) => {
-  const { usage, limit, remaining } = await ctx.runAction(
-    internal.billing.getConsumption,
-    {
-      entityId: userId,
-      name: "limits:standard-credits",
-    }
-  );
-
-  return { usage, limit, remaining };
-};
-```
-
 ## Stripe metadata
 
 On the Stripe Price object, set:
