@@ -1,7 +1,7 @@
 {
-  "name": "@raideno/convex-billing",
+  "name": "docs",
   "version": "0.0.0",
-  "description": "Easy stripe billing for convex apps.",
+  "description": "Documentation for @raideno/convex-billing",
   "keywords": [
     "billing",
     "stripe",
@@ -23,17 +23,15 @@
   },
   "license": "Apache-2.0",
   "author": "raideno",
-  "scripts": {},
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
   "type": "module",
   "dependencies": {},
   "peerDependencies": {},
   "devDependencies": {
-    "@eslint/js": "^9.34.0",
-    "@types/node": "^24.3.0",
-    "eslint": "^9.34.0",
-    "globals": "^16.3.0",
-    "tsc": "^2.0.4",
-    "typescript": "^5.9.2",
-    "typescript-eslint": "^8.41.0"
+    "vitepress": "^1.6.4"
   }
 }

@@ -17,7 +17,7 @@ jobs:
 
       - name: ensure tag matches package.json version
         run: |
-          PKG_VERSION=$(node -p "require('./package.json').version")
+          PKG_VERSION=$(node -p "require('./packages/lib/package.json').version")
           TAG=${GITHUB_REF_NAME}
           if [ "v$PKG_VERSION" != "$TAG" ]; then
             echo "Tag $TAG does not match package.json version v$PKG_VERSION"
@@ -41,15 +41,7 @@ jobs:
           registry-url: https://registry.npmjs.org
           cache: npm
       - run: npm ci
-      - run: npm run lib:build
-      - name: ensure tag matches package.json version
-        run: |
-          PKG_VERSION=$(node -p "require('./package.json').version")
-          TAG=${GITHUB_REF_NAME}
-          if [ "v$PKG_VERSION" != "$TAG" ]; then
-            echo "Tag $TAG does not match package.json version v$PKG_VERSION"
-            exit 1
-          fi
-      - run: npm publish --provenance --access public
+      - run: npm run build --workspace @raideno/convex-billing
+      - run: npm publish --workspace @raideno/convex-billing --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

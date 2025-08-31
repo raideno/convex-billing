@@ -1,10 +1,15 @@
 *.local*
 
+
+node_modules
+.DS_Store
+dist
+.env.local
+
 # .vitepress
 .vitepress/cache
+.vitepress/dist
 
-# docs/.vitepress
-docs/.vitepress/cache
 
 ### Node ###
 # Logs

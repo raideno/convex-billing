@@ -17,6 +17,6 @@ jobs:
           registry-url: https://registry.npmjs.org
           cache: npm
       - run: npm ci
-      - run: npm run lib:build
-      - run: npm run docs:build
+      - run: npm run build --workspace @raideno/convex-billing
+      - run: npm run build --workspace docs
       - run: npm test --if-present

@@ -24,10 +24,10 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npm run docs:build
+      - run: npm run build --workspace docs
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .vitepress/dist
+          path: ./packages/docs/.vitepress/dist
   deploy:
     needs: build
     runs-on: ubuntu-latest
