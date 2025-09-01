@@ -6,21 +6,19 @@ import {
 import { v } from "convex/values";
 
 import { InputConfiguration, normalizeConfiguration } from "./helpers";
-import { getMetadataImplementation } from "./metadata";
 import { storeImplementation } from "./store";
 import {
   buildRedirectImplementation,
   buildWebhookImplementation,
   checkoutImplementation,
   createStripeCustomerImplementation,
-  getPlansImplementation,
   getPortalImplementation,
   getSubscriptionImplementation,
-  syncImplementation,
+  syncSubscriptionImplementation,
 } from "./stripe";
 
 export * from "./persistence/types";
-export * from "./tables";
+export * from "./schema";
 
 export * from "./helpers";
 
@@ -80,7 +78,7 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
         stripeCustomerId: v.string(),
       },
       handler: (context, args) =>
-        syncImplementation(context, args, configuration),
+        syncSubscriptionImplementation(context, args, configuration),
     }),
     getSubscription: internalActionGeneric({
       args: {
@@ -90,18 +88,5 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
         getSubscriptionImplementation(context, args, configuration),
     }),
     webhook: buildWebhookImplementation(configuration),
-    getPlans: internalActionGeneric({
-      args: {},
-      handler: (context, args) =>
-        getPlansImplementation(context, args, configuration),
-    }),
-    // --- --- --- metadata.ts
-    getMetadata: internalActionGeneric({
-      args: {
-        priceId: v.string(),
-      },
-      handler: (context, args) =>
-        getMetadataImplementation(context, args, configuration),
-    }),
   };
 };

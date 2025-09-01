@@ -17,7 +17,7 @@ ReactDOM.render(
   <StrictMode>
     {/* <ConvexProvider client={convex}> */}
     <ConvexAuthProvider client={convex}>
-      <Theme>
+      <Theme appearance="dark">
         <App />
       </Theme>
     </ConvexAuthProvider>

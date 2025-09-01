@@ -1,4 +1,7 @@
-import { internalConvexBilling } from "@raideno/convex-billing/src/server";
+import {
+  internalConvexBilling,
+  STRIPE_SUB_CACHE,
+} from "@raideno/convex-billing/server";
 
 import configuration from "./billing.config";
 
@@ -12,6 +15,6 @@ export const {
   sync,
   getSubscription: getSubscription_, // *
   webhook,
-  getPlans: getPlans_, // *
-  getMetadata,
 } = internalConvexBilling(configuration);
+
+export type { STRIPE_SUB_CACHE };

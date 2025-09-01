@@ -1,5 +1,5 @@
 {
-    "name": "example",
+    "name": "demo",
     "description": "Example app using @raideno/convex-billing",
     "version": "0.0.0",
     "scripts": {

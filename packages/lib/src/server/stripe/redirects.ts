@@ -1,7 +1,7 @@
 import { httpActionGeneric } from "convex/server";
 
 import { InternalConfiguration } from "../helpers";
-import { syncImplementation } from "./sync";
+import { syncSubscriptionImplementation } from "./sync";
 
 export const RETURN_ORIGINS = {
   portal: "portal",
@@ -201,7 +201,11 @@ export const buildRedirectImplementation = (
     // TODO: we should probably alert if there is no customerId
     // TODO: should we create one ? it should be impossible to be here without one i guess
     if (stripeCustomerId) {
-      await syncImplementation(context, { stripeCustomerId }, configuration);
+      await syncSubscriptionImplementation(
+        context,
+        { stripeCustomerId },
+        configuration
+      );
     }
 
     const targetUrl = decoded.targetUrl;

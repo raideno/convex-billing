@@ -27,6 +27,7 @@ export const getPortal = action({
 
     return await context.runAction(internal.billing.private.getPortal_, {
       entityId: args.restaurantId,
+      returnUrl: "http://localhost:3000/return-from-portal",
     });
   },
 });
@@ -53,6 +54,8 @@ export const checkout = action({
     return await context.runAction(internal.billing.private.checkout_, {
       entityId: args.restaurantId,
       priceId: args.priceId,
+      successUrl: "http://localhost:3000/return-from-checkout-success",
+      cancelUrl: "http://localhost:3000/return-from-checkout-cancel",
     });
   },
 });
@@ -78,43 +81,6 @@ export const getSubscription = action({
 
     return await context.runAction(internal.billing.private.getSubscription_, {
       entityId: args.restaurantId,
-    });
-  },
-});
-
-export const getPlans = action({
-  args: {},
-  handler: async (
-    context
-  ): Promise<
-    {
-      stripePriceId: string;
-      stripeProductId: string;
-      name: string;
-      description: string | null;
-      currency: string;
-      amount: number;
-      interval: Stripe.Price.Recurring.Interval | undefined;
-    }[]
-  > => {
-    return await context.runAction(internal.billing.private.getPlans_);
-  },
-});
-
-export const getLimits = action({
-  args: { priceId: v.string() },
-  handler: async (context, args): Promise<Record<string, any>> => {
-    return await context.runAction(internal.billing.private.getLimits_, {
-      priceId: args.priceId,
-    });
-  },
-});
-
-export const getFeatures = action({
-  args: { priceId: v.string() },
-  handler: async (context, args): Promise<Record<string, any>> => {
-    return await context.runAction(internal.billing.private.getFeatures_, {
-      priceId: args.priceId,
     });
   },
 });

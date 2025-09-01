@@ -25,6 +25,22 @@ npx convex env set STRIPE_WEBHOOK_SECRET "<secret>"
 npx convex env set STRIPE_PUBLISHABLE_KEY "<secret>"
 ```
 
+Add the required tables into your `convex/schema.ts` file.
+
+```ts
+// convex/billing.ts
+
+import { v } from "convex/values";
+import { defineSchema, defineTable } from "convex/server";
+import { billingTables } from "@raideno/convex-billing/server";
+
+export default defineSchema({
+  ...billingTables,
+  // your other tables...,
+});
+
+```
+
 Create `convex/billing.ts` file and initialize the module.
 
 ```ts
@@ -40,11 +56,7 @@ export const {
   getPortal,
   checkout,
   createStripeCustomer,
-  sync,
   getSubscription,
-  getPlans,
-  // --- metadata
-  getMetadata,
 } = internalConvexBilling({
   persistence: new ConvexStore(),
   stripe: {
@@ -60,7 +72,7 @@ export const {
 
 **NOTE:** All the exposed actions are internal. You can create wrappers to expose them as public actions if needed. The persistence layer serves to sync the subscription data from Stripe to the Convex database. Two persistence implementations are provided: `KVStore` using Upstash Redis and `ConvexStore` using your Convex database itself. You can also implement your own persistence layer by implementing the `Persistence` interface.
 
-Register the webhook HTTP route.
+Register the HTTP routes (webhooks and callback url).
 
 ```ts
 // convex/http.ts
@@ -140,7 +152,7 @@ export const createOrganization = query({
 });
 ```
 
-**NOTE:** You can use the plan's price metadata in order to store limits and features and retrieve them on your application using the getMetadata function.
+**NOTE:** You can use the plan's price metadata in order to store limits and features and retrieve them on your application from the synced tables.
 
 ## Stripe Events
 
@@ -205,15 +217,6 @@ export const readSubscription = async (ctx: any, entityId: string) => {
     entityId,
   });
   return sub; // { status: "none" } if not found
-};
-```
-
-Discover plans (Stripe Prices with expanded Product).
-
-```ts
-export const listPlans = async (ctx: any) => {
-  const plans = await ctx.runAction(internal.billing.getPlans, {});
-  return plans;
 };
 ```
 

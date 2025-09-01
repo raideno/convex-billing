@@ -13,7 +13,7 @@
   "workspaces": [
     "packages/lib",
     "packages/docs",
-    "packages/example"
+    "packages/demo"
   ],
   "homepage": "https://raideno.github.io/convex-billing",
   "bugs": "https://github.com/raideno/convex-billing/issues",

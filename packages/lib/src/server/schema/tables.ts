@@ -9,13 +9,22 @@ import {
 } from "convex/server";
 import { v } from "convex/values";
 
-import { GenericDoc } from "./types";
+import { GenericDoc } from "../types";
+import { nullablenumber, nullablestring } from "./helpers";
+import { PriceSchema } from "./price";
+import { ProductSchema } from "./product";
 
 export const billingTables = {
   convex_billing_kv: defineTable({
     key: v.string(),
     value: v.string(),
   }),
+  // --- --- ---
+  // TODO: add indexes
+  convex_billing_products: defineTable(ProductSchema),
+  // TODO: add indexes
+  convex_billing_prices: defineTable(PriceSchema),
+  // --- --- ---
   convex_billing_customers: defineTable({
     entityId: v.string(),
     stripeCustomerId: v.string(),
@@ -24,16 +33,16 @@ export const billingTables = {
     stripeCustomerId: v.string(),
     data: v.union(
       v.object({
-        subscriptionId: v.union(v.string(), v.null()),
+        subscriptionId: nullablestring(),
         status: v.string(),
-        priceId: v.union(v.string(), v.null()),
-        currentPeriodStart: v.union(v.number(), v.null()),
-        currentPeriodEnd: v.union(v.number(), v.null()),
+        priceId: nullablestring(),
+        currentPeriodStart: nullablenumber(),
+        currentPeriodEnd: nullablenumber(),
         cancelAtPeriodEnd: v.boolean(),
         paymentMethod: v.union(
           v.object({
-            brand: v.union(v.string(), v.null()),
-            last4: v.union(v.string(), v.null()),
+            brand: nullablestring(),
+            last4: nullablestring(),
           }),
           v.null()
         ),

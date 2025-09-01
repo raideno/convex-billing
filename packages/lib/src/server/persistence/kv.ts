@@ -1,6 +1,6 @@
 import { Redis } from "@upstash/redis";
 
-import { STRIPE_SUB_CACHE } from "../tables";
+import { STRIPE_SUB_CACHE } from "../schema/tables";
 import { Context, Persistence } from "./types";
 
 export class KVStore implements Persistence {

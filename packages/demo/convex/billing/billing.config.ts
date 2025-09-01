@@ -1,5 +1,5 @@
-import { InputConfiguration } from "@raideno/convex-billing/src/server";
-import { ConvexStore } from "@raideno/convex-billing/src/server/persistence";
+import { InputConfiguration } from "@raideno/convex-billing/server";
+import { ConvexStore } from "@raideno/convex-billing/server/persistence";
 
 export default {
   persistence: new ConvexStore("billing/private:store"),

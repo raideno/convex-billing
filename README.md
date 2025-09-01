@@ -56,11 +56,7 @@ export const {
   getPortal,
   checkout,
   createStripeCustomer,
-  sync,
   getSubscription,
-  getPlans,
-  // --- metadata
-  getMetadata,
 } = internalConvexBilling({
   persistence: new ConvexStore(),
   stripe: {
@@ -156,7 +152,7 @@ export const createOrganization = query({
 });
 ```
 
-**NOTE:** You can use the plan's price metadata in order to store limits and features and retrieve them on your application using the getMetadata function.
+**NOTE:** You can use the plan's price metadata in order to store limits and features and retrieve them on your application from the synced tables.
 
 ## Stripe Events
 
@@ -224,20 +220,35 @@ export const readSubscription = async (ctx: any, entityId: string) => {
 };
 ```
 
-Discover plans (Stripe Prices with expanded Product).
-
-```ts
-export const listPlans = async (ctx: any) => {
-  const plans = await ctx.runAction(internal.billing.getPlans, {});
-  return plans;
-};
-```
-
 ## TODOs
 
 - [ ] Implement default plan.
 - [ ] Implement one time payment endpoint.
 - [ ] Show an example app for subscription and one time payments with credits usage.
+
+## Development
+
+Clone the repository:
+
+```bash
+git clone git@github.com:raideno/convex-billing.git
+cd convex-billing
+```
+
+Install the dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+# automatically rebuild lib on changes
+npm run dev --workspace @raideno/convex-billing
+# run the demo app
+npm run dev --workspace demo
+```
 
 ## Contributions
 

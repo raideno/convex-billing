@@ -1,8 +1,9 @@
 import { anyApi } from "convex/server";
 import { Infer } from "convex/values";
+import Stripe from "stripe";
 
+import { STRIPE_SUB_CACHE } from "../schema/tables";
 import { StoreInputValidator } from "../store";
-import { STRIPE_SUB_CACHE } from "../tables";
 import { Context, Persistence } from "./types";
 
 export type StoreInput =
@@ -38,10 +39,10 @@ export class ConvexStore implements Persistence {
   }
 
   async persistSubscriptionData(
-    ctx: Context,
+    context: Context,
     params: { stripeCustomerId: string; data: STRIPE_SUB_CACHE }
   ): Promise<void> {
-    await ctx.runMutation(this.storeRef, {
+    await context.runMutation(this.storeRef, {
       data: {
         type: "persistSubscriptionData",
         stripeCustomerId: params.stripeCustomerId,
@@ -51,10 +52,10 @@ export class ConvexStore implements Persistence {
   }
 
   async getSubscriptionDataByStripeCustomerId(
-    ctx: Context,
+    context: Context,
     stripeCustomerId: string
   ): Promise<STRIPE_SUB_CACHE | null> {
-    const res = (await ctx.runMutation(this.storeRef, {
+    const res = (await context.runMutation(this.storeRef, {
       data: {
         type: "getSubscriptionDataByStripeCustomerId",
         stripeCustomerId,
@@ -66,10 +67,10 @@ export class ConvexStore implements Persistence {
   }
 
   async persistStripeCustomerId(
-    ctx: Context,
+    context: Context,
     params: { stripeCustomerId: string; entityId: string }
   ): Promise<void> {
-    await ctx.runMutation(this.storeRef, {
+    await context.runMutation(this.storeRef, {
       data: {
         type: "persistStripeCustomerId",
         entityId: params.entityId,
@@ -79,15 +80,36 @@ export class ConvexStore implements Persistence {
   }
 
   async getStripeCustomerIdByEntityId(
-    ctx: Context,
+    context: Context,
     entityId: string
   ): Promise<string | null> {
-    const res = (await ctx.runMutation(this.storeRef, {
+    const res = (await context.runMutation(this.storeRef, {
       data: {
         type: "getStripeCustomerIdByEntityId",
         entityId,
       },
     } as Infer<typeof StoreInputValidator>)) as { value: string | null };
     return res?.value ?? null;
+  }
+
+  async persistProducts(
+    context: Context,
+    products: Stripe.Product[]
+  ): Promise<void> {
+    await context.runMutation(this.storeRef, {
+      data: {
+        type: "persistProducts",
+        products,
+      },
+    } as Infer<typeof StoreInputValidator>);
+  }
+
+  async persistPrices(context: Context, prices: Stripe.Price[]): Promise<void> {
+    await context.runMutation(this.storeRef, {
+      data: {
+        type: "persistPrices",
+        prices,
+      },
+    } as Infer<typeof StoreInputValidator>);
   }
 }

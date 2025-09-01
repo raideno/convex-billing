@@ -7,8 +7,7 @@ const http = httpRouter();
 
 auth.addHttpRoutes(http);
 
-// https://modest-chipmunk-615.convex.cloud
-// https://modest-chipmunk-615.convex.site/stripe/webhook
+// https://amicable-marmot-910.convex.site/stripe/webhook
 billing.addHttpRoutes(http);
 
 export default http;

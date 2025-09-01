@@ -1,9 +1,66 @@
 import Stripe from "stripe";
 
 import { Implementation } from "../helpers";
-import { STRIPE_SUB_CACHE } from "../tables";
+import { STRIPE_SUB_CACHE } from "../schema/tables";
+import { ConvexStore } from "../persistence";
 
-export const syncImplementation: Implementation<
+export const syncAllPricesImplementation: Implementation<any, any> = async (
+  context,
+  args,
+  configuration
+) => {
+  const stripe = new Stripe(configuration.stripe.secret_key, {
+    apiVersion: "2025-08-27.basil",
+  });
+
+  const response = await stripe.prices.list({
+    limit: 100,
+  });
+
+  if (response.has_more)
+    console.warn("There are more than 100 prices, pagination not implemented");
+
+  const prices = response.data;
+
+  if (configuration.persistence.constructor.name === "ConvexStore")
+    await (configuration.persistence as ConvexStore).persistPrices(
+      context,
+      prices
+    );
+
+  return prices;
+};
+
+export const syncAllProductsImplementation: Implementation<any, any> = async (
+  context,
+  args,
+  configuration
+) => {
+  const stripe = new Stripe(configuration.stripe.secret_key, {
+    apiVersion: "2025-08-27.basil",
+  });
+
+  const response = await stripe.products.list({
+    limit: 100,
+  });
+
+  if (response.has_more)
+    console.warn(
+      "There are more than 100 products, pagination not implemented"
+    );
+
+  const products = response.data;
+
+  if (configuration.persistence.constructor.name === "ConvexStore")
+    await (configuration.persistence as ConvexStore).persistProducts(
+      context,
+      products
+    );
+
+  return products;
+};
+
+export const syncSubscriptionImplementation: Implementation<
   {
     stripeCustomerId: string;
   },

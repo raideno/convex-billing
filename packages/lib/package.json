@@ -29,11 +29,6 @@
       "types": "./dist/server/persistence.d.ts"
     }
   },
-  "workspaces": [
-    "packages/lib",
-    "packages/docs",
-    "packages/example"
-  ],
   "homepage": "https://raideno.github.io/convex-billing",
   "bugs": "https://github.com/raideno/convex-billing/issues",
   "repository": {
@@ -44,7 +39,8 @@
   "author": "raideno",
   "scripts": {
     "clean": "rimraf dist",
-    "build": "tsup"
+    "build": "tsup",
+    "dev": "tsup --watch"
   },
   "type": "module",
   "dependencies": {
