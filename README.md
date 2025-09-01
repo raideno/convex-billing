@@ -25,9 +25,11 @@ npx convex env set STRIPE_WEBHOOK_SECRET "<secret>"
 npx convex env set STRIPE_PUBLISHABLE_KEY "<secret>"
 ```
 
-Add the required tables into your `schema.ts` file.
+Add the required tables into your `convex/schema.ts` file.
 
 ```ts
+// convex/billing.ts
+
 import { v } from "convex/values";
 import { defineSchema, defineTable } from "convex/server";
 import { billingTables } from "@raideno/convex-billing/server";

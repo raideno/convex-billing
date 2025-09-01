@@ -5,8 +5,9 @@ import {
 } from "convex/server";
 import { v } from "convex/values";
 
-import { getMetadataImplementation } from "./metadata";
 import { InputConfiguration, normalizeConfiguration } from "./helpers";
+import { getMetadataImplementation } from "./metadata";
+import { storeImplementation } from "./store";
 import {
   buildRedirectImplementation,
   buildWebhookImplementation,
@@ -17,7 +18,6 @@ import {
   getSubscriptionImplementation,
   syncImplementation,
 } from "./stripe";
-import { storeImplementation, StoreInputValidator } from "./store";
 
 export * from "./persistence/types";
 export * from "./tables";

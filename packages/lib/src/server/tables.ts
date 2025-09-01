@@ -30,7 +30,6 @@ export const billingTables = {
         currentPeriodStart: v.union(v.number(), v.null()),
         currentPeriodEnd: v.union(v.number(), v.null()),
         cancelAtPeriodEnd: v.boolean(),
-        metadata: v.union(v.record(v.string(), v.string()), v.null()),
         paymentMethod: v.union(
           v.object({
             brand: v.union(v.string(), v.null()),
