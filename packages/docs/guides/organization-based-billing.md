@@ -55,8 +55,3 @@ export const openOrgPortal = async (ctx: any, orgId: string, returnUrl: string) 
   return url;
 };
 ```
-
-## Stripe metadata
-
-Same rules as user billing. Keep limits and features on the Stripe Price using
-the same prefixes and key names.

@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 
-import { Implementation, STRIPE_SUB_CACHE } from "../helpers";
-import { extractLimitsFromMetadata } from "../limits";
+import { Implementation } from "../helpers";
+import { STRIPE_SUB_CACHE } from "../tables";
 
 export const syncImplementation: Implementation<
   {
@@ -34,11 +34,6 @@ export const syncImplementation: Implementation<
   // TODO: here we select the first cuz entities can only have one subscription
   const subscription = subscriptions.data[0];
 
-  const limits = extractLimitsFromMetadata(
-    configuration,
-    subscription.items.data[0].price.metadata
-  );
-
   const data: STRIPE_SUB_CACHE = {
     subscriptionId: subscription.id,
     status: subscription.status,
@@ -48,7 +43,7 @@ export const syncImplementation: Implementation<
     // TODO: be sure of the items thing
     currentPeriodStart: subscription.items.data[0].current_period_start,
     cancelAtPeriodEnd: subscription.cancel_at_period_end,
-    limits: limits,
+    metadata: subscription.items.data[0].price.metadata,
     paymentMethod:
       subscription.default_payment_method &&
       typeof subscription.default_payment_method !== "string"

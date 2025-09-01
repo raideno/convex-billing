@@ -1,7 +1,6 @@
 import { GenericActionCtx, GenericMutationCtx } from "convex/server";
 
 import { InternalConfiguration } from "../helpers";
-import { BillingDataModel } from "../tables";
 
 export type Context =
   // | GenericQueryCtx<any>

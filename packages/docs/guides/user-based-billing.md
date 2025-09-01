@@ -11,7 +11,6 @@ This guide shows how to run billing for individual users. Use each user's id as
 
 - You installed the package and configured `internalConvexBilling(...)` with
   Stripe and KV credentials.
-- Your Stripe Price metadata defines limits and features (see below).
 
 ## Create a Stripe Customer when a user is created
 
@@ -81,14 +80,3 @@ export const getSubscription = async (ctx: any, userId: string) => {
 
 If you need a fresh sync from Stripe, call `internal.billing.sync` with the
 Stripe customer id, then read `getSubscription` again.
-
-## Stripe metadata
-
-On the Stripe Price object, set:
-
-- `limits:standard-credits`: number (e.g., 1000)
-- `features:Standard Credits`: number (if you want to expose this in a plan
-  card)
-
-You can define multiple counters and features. Defaults are filled from your
-configuration if missing.

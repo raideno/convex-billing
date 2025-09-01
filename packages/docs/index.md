@@ -44,8 +44,7 @@ export const {
   getSubscription,
   getPlans,
   // --- metadata
-  getLimits,
-  getFeatures,
+  getMetadata,
 } = internalConvexBilling({
   persistence: new ConvexStore(),
   stripe: {
@@ -56,12 +55,6 @@ export const {
   // https://<convex-project-id>.convex.site
   // https://<convex-project-id>.convex.cloud
   convex: { projectId: "chimpunk-6289" },
-  defaults: {
-    limits: {
-      "limits:standard-credits": 1000,
-      "limits:premium-credits": 100,
-    },
-  },
 });
 ```
 
@@ -147,7 +140,7 @@ export const createOrganization = query({
 });
 ```
 
-**NOTE:** Limits and features are extracted from Price metadata using the configured prefixes (`limits:*`, `features:*`). Missing keys fall back to defaults for limits.
+**NOTE:** You can use the plan's price metadata in order to store limits and features and retrieve them on your application using the getMetadata function.
 
 ## Stripe Events
 
@@ -221,18 +214,6 @@ Discover plans (Stripe Prices with expanded Product).
 export const listPlans = async (ctx: any) => {
   const plans = await ctx.runAction(internal.billing.getPlans, {});
   return plans;
-};
-```
-
-Read limits or features for a Price id from metadata.
-
-```ts
-export const readLimits = async (ctx: any, priceId: string) => {
-  return await ctx.runAction(internal.billing.getLimits, { priceId });
-};
-
-export const readFeatures = async (ctx: any, priceId: string) => {
-  return await ctx.runAction(internal.billing.getFeatures, { priceId });
 };
 ```
 

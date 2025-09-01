@@ -1,9 +1,9 @@
 import { anyApi } from "convex/server";
-
-import { STRIPE_SUB_CACHE } from "../helpers";
-import { Context, Persistence } from "./types";
 import { Infer } from "convex/values";
+
 import { StoreInputValidator } from "../store";
+import { STRIPE_SUB_CACHE } from "../tables";
+import { Context, Persistence } from "./types";
 
 export type StoreInput =
   | {
@@ -33,7 +33,7 @@ export type StoreOutput =
 export class ConvexStore implements Persistence {
   private readonly storeRef: any;
 
-  constructor(storeRef?: any) {
+  constructor(storeRef: any = anyApi.billing.store) {
     this.storeRef = storeRef;
   }
 

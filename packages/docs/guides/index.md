@@ -12,11 +12,6 @@ These guides show how to integrate subscriptions using Stripe + Convex with this
   a user id or an organization id.
 - Stripe Customer is created once per entity and stored in KV.
 - Subscription data is cached in KV and kept in sync by a Stripe webhook and a
-  periodic/manual `sync` call.
-- Limits and features are read from Stripe Price metadata using prefixes:
-  - Limits prefix: `limits:`
-  - Features prefix: `features:`
-- Consumption can be enforced against the active subscription limit.
 
 ## Pick a guide
 

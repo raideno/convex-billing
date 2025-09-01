@@ -33,23 +33,57 @@ export const storeImplementation = async (
 ) => {
   switch (args.data.type) {
     case "persistStripeCustomerId": {
-      const key = `stripe:entity:${args.data.entityId}`;
-      await upsertKv(context, key, args.data.stripeCustomerId);
+      const entityId = args.data.entityId;
+      const existing = await context.db
+        .query("convex_billing_customers")
+        .filter((q) => q.eq(q.field("entityId"), entityId))
+        .unique();
+
+      if (existing) {
+        await context.db.patch(existing._id, {
+          stripeCustomerId: args.data.stripeCustomerId,
+        });
+      } else {
+        await context.db.insert("convex_billing_customers", {
+          entityId: args.data.entityId,
+          stripeCustomerId: args.data.stripeCustomerId,
+        });
+      }
       return { ok: true } as const;
     }
     case "getStripeCustomerIdByEntityId": {
-      const key = `stripe:entity:${args.data.entityId}`;
-      const value = await readKv<string | null>(context, key);
+      const entityId = args.data.entityId;
+      const existing = await context.db
+        .query("convex_billing_customers")
+        .filter((q) => q.eq(q.field("entityId"), entityId))
+        .unique();
+      const value = existing ? existing.stripeCustomerId : null;
       return { value } as const;
     }
     case "persistSubscriptionData": {
-      const key = `subscription:customer:${args.data.stripeCustomerId}`;
-      await upsertKv(context, key, args.data);
+      const stripeCustomerId = args.data.stripeCustomerId;
+      const existing = await context.db
+        .query("convex_billing_subscriptions")
+        .filter((q) => q.eq(q.field("stripeCustomerId"), stripeCustomerId))
+        .unique();
+
+      if (existing) {
+        await context.db.patch(existing._id, { data: args.data.data });
+      } else {
+        await context.db.insert("convex_billing_subscriptions", {
+          stripeCustomerId: args.data.stripeCustomerId,
+          data: args.data.data,
+        });
+      }
       return { ok: true } as const;
     }
     case "getSubscriptionDataByStripeCustomerId": {
-      const key = `subscription:customer:${args.data.stripeCustomerId}`;
-      const value = await readKv<any | null>(context, key);
+      const stripeCustomerId = args.data.stripeCustomerId;
+      const existing = await context.db
+        .query("convex_billing_subscriptions")
+        .filter((q) => q.eq(q.field("stripeCustomerId"), stripeCustomerId))
+        .unique();
+      const value = existing ? existing.data : null;
       return { value } as const;
     }
     default: {
@@ -57,37 +91,3 @@ export const storeImplementation = async (
     }
   }
 };
-
-async function upsertKv(
-  ctx: MutationCtx,
-  key: string,
-  value: unknown
-): Promise<void> {
-  const existing = await ctx.db
-    .query("kv")
-    .filter((q) => q.eq(q.field("key"), key))
-    .unique();
-
-  const serialized = JSON.stringify(value);
-
-  if (existing) {
-    await ctx.db.patch(existing._id, { value: serialized });
-  } else {
-    await ctx.db.insert("kv", { key, value: serialized });
-  }
-}
-
-async function readKv<T>(ctx: MutationCtx, key: string): Promise<T | null> {
-  const existing = await ctx.db
-    .query("kv")
-    .filter((q) => q.eq(q.field("key"), key))
-    .unique();
-
-  if (!existing) return null;
-
-  try {
-    return JSON.parse(existing.value) as T;
-  } catch {
-    return null;
-  }
-}

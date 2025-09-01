@@ -25,6 +25,20 @@ npx convex env set STRIPE_WEBHOOK_SECRET "<secret>"
 npx convex env set STRIPE_PUBLISHABLE_KEY "<secret>"
 ```
 
+Add the required tables into your `schema.ts` file.
+
+```ts
+import { v } from "convex/values";
+import { defineSchema, defineTable } from "convex/server";
+import { billingTables } from "@raideno/convex-billing/server";
+
+export default defineSchema({
+  ...billingTables,
+  // your other tables...,
+});
+
+```
+
 Create `convex/billing.ts` file and initialize the module.
 
 ```ts
@@ -44,8 +58,7 @@ export const {
   getSubscription,
   getPlans,
   // --- metadata
-  getLimits,
-  getFeatures,
+  getMetadata,
 } = internalConvexBilling({
   persistence: new ConvexStore(),
   stripe: {
@@ -56,18 +69,12 @@ export const {
   // https://<convex-project-id>.convex.site
   // https://<convex-project-id>.convex.cloud
   convex: { projectId: "chimpunk-6289" },
-  defaults: {
-    limits: {
-      "limits:standard-credits": 1000,
-      "limits:premium-credits": 100,
-    },
-  },
 });
 ```
 
 **NOTE:** All the exposed actions are internal. You can create wrappers to expose them as public actions if needed. The persistence layer serves to sync the subscription data from Stripe to the Convex database. Two persistence implementations are provided: `KVStore` using Upstash Redis and `ConvexStore` using your Convex database itself. You can also implement your own persistence layer by implementing the `Persistence` interface.
 
-Register the webhook HTTP route.
+Register the HTTP routes (webhooks and callback url).
 
 ```ts
 // convex/http.ts
@@ -147,7 +154,7 @@ export const createOrganization = query({
 });
 ```
 
-**NOTE:** Limits and features are extracted from Price metadata using the configured prefixes (`limits:*`, `features:*`). Missing keys fall back to defaults for limits.
+**NOTE:** You can use the plan's price metadata in order to store limits and features and retrieve them on your application using the getMetadata function.
 
 ## Stripe Events
 
@@ -221,18 +228,6 @@ Discover plans (Stripe Prices with expanded Product).
 export const listPlans = async (ctx: any) => {
   const plans = await ctx.runAction(internal.billing.getPlans, {});
   return plans;
-};
-```
-
-Read limits or features for a Price id from metadata.
-
-```ts
-export const readLimits = async (ctx: any, priceId: string) => {
-  return await ctx.runAction(internal.billing.getLimits, { priceId });
-};
-
-export const readFeatures = async (ctx: any, priceId: string) => {
-  return await ctx.runAction(internal.billing.getFeatures, { priceId });
 };
 ```
 

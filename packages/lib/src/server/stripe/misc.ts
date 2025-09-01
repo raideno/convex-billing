@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 
-import { Implementation, STRIPE_SUB_CACHE } from "../helpers";
+import { Implementation } from "../helpers";
+import { STRIPE_SUB_CACHE } from "../tables";
 
 export const getSubscriptionImplementation: Implementation<
   {

@@ -5,9 +5,8 @@ import {
 } from "convex/server";
 import { v } from "convex/values";
 
-import { getFeaturesImplementation } from "./features";
+import { getMetadataImplementation } from "./metadata";
 import { InputConfiguration, normalizeConfiguration } from "./helpers";
-import { getLimitsImplementation } from "./limits";
 import {
   buildRedirectImplementation,
   buildWebhookImplementation,
@@ -21,8 +20,9 @@ import {
 import { storeImplementation, StoreInputValidator } from "./store";
 
 export * from "./persistence/types";
+export * from "./tables";
 
-export { billingTables } from "./tables";
+export * from "./helpers";
 
 export type { InputConfiguration, InternalConfiguration } from "./helpers";
 
@@ -95,21 +95,13 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
       handler: (context, args) =>
         getPlansImplementation(context, args, configuration),
     }),
-    // --- --- --- limits.ts
-    getLimits: internalActionGeneric({
+    // --- --- --- metadata.ts
+    getMetadata: internalActionGeneric({
       args: {
         priceId: v.string(),
       },
       handler: (context, args) =>
-        getLimitsImplementation(context, args, configuration),
-    }),
-    // --- --- --- features.ts
-    getFeatures: internalActionGeneric({
-      args: {
-        priceId: v.string(),
-      },
-      handler: (context, args) =>
-        getFeaturesImplementation(context, args, configuration),
+        getMetadataImplementation(context, args, configuration),
     }),
   };
 };

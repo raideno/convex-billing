@@ -8,14 +8,46 @@ import {
   TableNamesInDataModel,
 } from "convex/server";
 import { v } from "convex/values";
+
 import { GenericDoc } from "./types";
 
 export const billingTables = {
-  kv: defineTable({
+  convex_billing_kv: defineTable({
     key: v.string(),
     value: v.string(),
   }),
+  convex_billing_customers: defineTable({
+    entityId: v.string(),
+    stripeCustomerId: v.string(),
+  }).index("byEntityId", ["entityId"]),
+  convex_billing_subscriptions: defineTable({
+    stripeCustomerId: v.string(),
+    data: v.union(
+      v.object({
+        subscriptionId: v.union(v.string(), v.null()),
+        status: v.string(),
+        priceId: v.union(v.string(), v.null()),
+        currentPeriodStart: v.union(v.number(), v.null()),
+        currentPeriodEnd: v.union(v.number(), v.null()),
+        cancelAtPeriodEnd: v.boolean(),
+        metadata: v.union(v.record(v.string(), v.string()), v.null()),
+        paymentMethod: v.union(
+          v.object({
+            brand: v.union(v.string(), v.null()),
+            last4: v.union(v.string(), v.null()),
+          }),
+          v.null()
+        ),
+      }),
+      v.object({
+        status: v.literal("none"),
+      })
+    ),
+  }).index("byStripeCustomerId", ["stripeCustomerId"]),
 };
+
+export type STRIPE_SUB_CACHE =
+  BillingDataModel["convex_billing_subscriptions"]["document"]["data"];
 
 const defaultSchema = defineSchema(billingTables);
 
