@@ -2,6 +2,8 @@ import Stripe from "stripe";
 
 import { Implementation } from "../helpers";
 import { buildSignedReturnUrl } from "./redirects";
+import { Infer } from "convex/values";
+import { StoreInputValidator } from "../store";
 
 export const getPortalImplementation: Implementation<
   {
@@ -14,11 +16,10 @@ export const getPortalImplementation: Implementation<
     apiVersion: "2025-08-27.basil",
   });
 
-  const stripeCustomerId =
-    await configuration.persistence.getStripeCustomerIdByEntityId(
-      context,
-      args.entityId
-    );
+  const stripeCustomerId = await context.runMutation(configuration.store, {
+    type: "getStripeCustomerIdByEntityId",
+    entityId: args.entityId,
+  } as Infer<typeof StoreInputValidator>);
 
   if (!stripeCustomerId) {
     throw new Error(

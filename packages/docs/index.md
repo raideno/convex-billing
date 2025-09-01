@@ -58,7 +58,6 @@ export const {
   createStripeCustomer,
   getSubscription,
 } = internalConvexBilling({
-  persistence: new ConvexStore(),
   stripe: {
     secret_key: process.env.STRIPE_SECRET_KEY!,
     webhook_secret: process.env.STRIPE_WEBHOOK_SECRET!,
@@ -70,7 +69,7 @@ export const {
 });
 ```
 
-**NOTE:** All the exposed actions are internal. You can create wrappers to expose them as public actions if needed. The persistence layer serves to sync the subscription data from Stripe to the Convex database. Two persistence implementations are provided: `KVStore` using Upstash Redis and `ConvexStore` using your Convex database itself. You can also implement your own persistence layer by implementing the `Persistence` interface.
+**NOTE:** All the exposed actions are internal. You can create wrappers to expose them as public actions if needed.
 
 Register the HTTP routes (webhooks and callback url).
 
@@ -156,25 +155,37 @@ export const createOrganization = query({
 
 ## Stripe Events
 
-- Recommended events (handled and synced):
-  - checkout.session.completed
-  - customer.subscription.created
-  - customer.subscription.updated
-  - customer.subscription.deleted
-  - customer.subscription.paused
-  - customer.subscription.resumed
-  - customer.subscription.pending_update_applied
-  - customer.subscription.pending_update_expired
-  - customer.subscription.trial_will_end
-  - invoice.paid
-  - invoice.payment_failed
-  - invoice.payment_action_required
-  - invoice.upcoming
-  - invoice.marked_uncollectible
-  - invoice.payment_succeeded
-  - payment_intent.succeeded
-  - payment_intent.payment_failed
-  - payment_intent.canceled
+Recommended events (handled and synced):
+
+For subscriptions syncing:
+- checkout.session.completed
+- customer.subscription.created
+- customer.subscription.updated
+- customer.subscription.deleted
+- customer.subscription.paused
+- customer.subscription.resumed
+- customer.subscription.pending_update_applied
+- customer.subscription.pending_update_expired
+- customer.subscription.trial_will_end
+- invoice.paid
+- invoice.payment_failed
+- invoice.payment_action_required
+- invoice.upcoming
+- invoice.marked_uncollectible
+- invoice.payment_succeeded
+- payment_intent.succeeded
+- payment_intent.payment_failed
+- payment_intent.canceled
+
+For products syncing:
+- product.created
+- product.updated
+- product.deleted
+
+For prices syncing:
+- price.created
+- price.updated
+- price.deleted
 
 ## Usage
 
@@ -225,6 +236,30 @@ export const readSubscription = async (ctx: any, entityId: string) => {
 - [ ] Implement default plan.
 - [ ] Implement one time payment endpoint.
 - [ ] Show an example app for subscription and one time payments with credits usage.
+
+## Development
+
+Clone the repository:
+
+```bash
+git clone git@github.com:raideno/convex-billing.git
+cd convex-billing
+```
+
+Install the dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+# automatically rebuild lib on changes
+npm run dev --workspace @raideno/convex-billing
+# run the demo app
+npm run dev --workspace demo
+```
 
 ## Contributions
 

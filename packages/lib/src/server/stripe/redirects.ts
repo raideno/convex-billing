@@ -2,6 +2,8 @@ import { httpActionGeneric } from "convex/server";
 
 import { InternalConfiguration } from "../helpers";
 import { syncSubscriptionImplementation } from "./sync";
+import { StoreInputValidator } from "../store";
+import { Infer } from "convex/values";
 
 export const RETURN_ORIGINS = {
   portal: "portal",
@@ -192,11 +194,10 @@ export const buildRedirectImplementation = (
       return new Response("Invalid target", { status: 400 });
     }
 
-    const stripeCustomerId =
-      await configuration.persistence.getStripeCustomerIdByEntityId(
-        context,
-        decoded.entityId
-      );
+    const stripeCustomerId = await context.runMutation(configuration.store, {
+      type: "getStripeCustomerIdByEntityId",
+      entityId: decoded.entityId,
+    } as Infer<typeof StoreInputValidator>);
 
     // TODO: we should probably alert if there is no customerId
     // TODO: should we create one ? it should be impossible to be here without one i guess

@@ -17,7 +17,6 @@ import {
   syncSubscriptionImplementation,
 } from "./stripe";
 
-export * from "./persistence/types";
 export * from "./schema";
 
 export * from "./helpers";

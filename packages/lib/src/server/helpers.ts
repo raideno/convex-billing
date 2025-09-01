@@ -1,8 +1,12 @@
-import { Context, Persistence } from "./persistence/types";
+import { anyApi } from "convex/server";
+
+import { GenericActionCtx, GenericMutationCtx } from "convex/server";
+
+export type Context =
+  // | GenericQueryCtx<any>
+  GenericActionCtx<any> | GenericMutationCtx<any>;
 
 export interface InternalConfiguration {
-  persistence: Persistence;
-
   stripe: {
     secret_key: string;
     webhook_secret: string;
@@ -10,18 +14,21 @@ export interface InternalConfiguration {
   };
 
   convex: { projectId: string };
+
+  store: any;
 }
 
 export type WithOptional<T, K extends keyof T = never> = Omit<T, K> &
   Partial<Pick<T, K>>;
 
-export type InputConfiguration = WithOptional<InternalConfiguration>;
+export type InputConfiguration = WithOptional<InternalConfiguration, "store">;
 
 export const normalizeConfiguration = (
   config: InputConfiguration
 ): InternalConfiguration => {
   return {
     ...config,
+    store: config.store || anyApi.billing.store,
   };
 };
 

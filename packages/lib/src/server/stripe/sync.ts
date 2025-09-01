@@ -2,7 +2,8 @@ import Stripe from "stripe";
 
 import { Implementation } from "../helpers";
 import { STRIPE_SUB_CACHE } from "../schema/tables";
-import { ConvexStore } from "../persistence";
+import { Infer } from "convex/values";
+import { StoreInputValidator } from "../store";
 
 export const syncAllPricesImplementation: Implementation<any, any> = async (
   context,
@@ -22,11 +23,10 @@ export const syncAllPricesImplementation: Implementation<any, any> = async (
 
   const prices = response.data;
 
-  if (configuration.persistence.constructor.name === "ConvexStore")
-    await (configuration.persistence as ConvexStore).persistPrices(
-      context,
-      prices
-    );
+  await context.runMutation(configuration.store, {
+    type: "persistPrices",
+    prices: prices,
+  } as Infer<typeof StoreInputValidator>);
 
   return prices;
 };
@@ -51,11 +51,10 @@ export const syncAllProductsImplementation: Implementation<any, any> = async (
 
   const products = response.data;
 
-  if (configuration.persistence.constructor.name === "ConvexStore")
-    await (configuration.persistence as ConvexStore).persistProducts(
-      context,
-      products
-    );
+  await context.runMutation(configuration.store, {
+    type: "persistProducts",
+    products: products,
+  } as Infer<typeof StoreInputValidator>);
 
   return products;
 };
@@ -81,10 +80,12 @@ export const syncSubscriptionImplementation: Implementation<
 
   if (subscriptions.data.length === 0) {
     const data = { status: "none" };
-    await configuration.persistence.persistSubscriptionData(context, {
-      stripeCustomerId,
-      data,
-    });
+    await context.runMutation(configuration.store, {
+      type: "persistSubscriptionData",
+      stripeCustomerId: stripeCustomerId,
+      data: data,
+    } as Infer<typeof StoreInputValidator>);
+
     return data as STRIPE_SUB_CACHE;
   }
 
@@ -110,10 +111,11 @@ export const syncSubscriptionImplementation: Implementation<
         : null,
   };
 
-  await configuration.persistence.persistSubscriptionData(context, {
-    stripeCustomerId,
-    data,
-  });
+  await context.runMutation(configuration.store, {
+    type: "persistSubscriptionData",
+    stripeCustomerId: stripeCustomerId,
+    data: data,
+  } as Infer<typeof StoreInputValidator>);
 
   return data;
 };
