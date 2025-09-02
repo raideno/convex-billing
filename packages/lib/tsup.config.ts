@@ -4,7 +4,6 @@ export default defineConfig({
   entry: {
     index: "src/index.ts",
     server: "src/server/index.ts",
-    "server/persistence": "src/server/persistence/index.ts",
   },
   sourcemap: false,
   clean: true,

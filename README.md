@@ -46,17 +46,15 @@ Create `convex/billing.ts` file and initialize the module.
 ```ts
 // convex/billing.ts
 
-import { KVStore, ConvexStore } from "@raideno/convex-billing/server/persistence";
 import { internalConvexBilling } from "@raideno/convex-billing/server";
 
 export const {
   billing,
   store,
   // --- stripe
-  getPortal,
+  portal,
   checkout,
   createStripeCustomer,
-  getSubscription,
 } = internalConvexBilling({
   stripe: {
     secret_key: process.env.STRIPE_SECRET_KEY!,
@@ -215,24 +213,14 @@ Open the Stripe customer portal.
 
 ```ts
 export const openPortal = async (ctx: any, entityId: string, returnUrl: string) => {
-  const { url } = await ctx.runAction(internal.billing.getPortal, { entityId, returnUrl });
+  const { url } = await ctx.runAction(internal.billing.portal, { entityId, returnUrl });
   return url;
-};
-```
-
-Read the cached subscription snapshot.
-
-```ts
-export const readSubscription = async (ctx: any, entityId: string) => {
-  const sub = await ctx.runAction(internal.billing.getSubscription, {
-    entityId,
-  });
-  return sub; // { status: "none" } if not found
 };
 ```
 
 ## TODOs
 
+- [ ] A function that takes a stripe subscription object and returns a simpler representation just like theo's one.
 - [ ] Implement default plan.
 - [ ] Implement one time payment endpoint.
 - [ ] Show an example app for subscription and one time payments with credits usage.

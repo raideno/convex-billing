@@ -1,19 +1,14 @@
 import { v } from "convex/values";
 
-import { define } from ".";
-import { InternalConfiguration } from "../helpers";
-import { MutationCtx } from "../schema";
+import { InternalConfiguration } from "../types";
+import { defineMutationImplementation } from "../helpers";
 
-export const getStripeCustomerIdByEntityId = define({
-  type: "getStripeCustomerIdByEntityId",
+export const getStripeCustomerIdByEntityId = defineMutationImplementation({
+  name: "getStripeCustomerIdByEntityId",
   args: {
     entityId: v.string(),
   },
-  handler: async (
-    context: MutationCtx,
-    args,
-    configuration: InternalConfiguration
-  ) => {
+  handler: async (context, args, configuration) => {
     const entityId = args.entityId;
     const existing = await context.db
       .query("convex_billing_customers")

@@ -23,10 +23,6 @@
     "./server": {
       "import": "./dist/server.js",
       "types": "./dist/server.d.ts"
-    },
-    "./server/persistence": {
-      "import": "./dist/server/persistence.js",
-      "types": "./dist/server/persistence.d.ts"
     }
   },
   "homepage": "https://raideno.github.io/convex-billing",

@@ -1,27 +1,18 @@
-import { anyApi } from "convex/server";
+import {
+  anyApi,
+  GenericActionCtx,
+  GenericMutationCtx,
+  GenericQueryCtx,
+} from "convex/server";
 
-import { GenericActionCtx, GenericMutationCtx } from "convex/server";
-
-export type Context =
-  // | GenericQueryCtx<any>
-  GenericActionCtx<any> | GenericMutationCtx<any>;
-
-export interface InternalConfiguration {
-  stripe: {
-    secret_key: string;
-    webhook_secret: string;
-    publishable_key: string;
-  };
-
-  convex: { projectId: string };
-
-  store: any;
-}
-
-export type WithOptional<T, K extends keyof T = never> = Omit<T, K> &
-  Partial<Pick<T, K>>;
-
-export type InputConfiguration = WithOptional<InternalConfiguration, "store">;
+import {
+  ArgSchema,
+  InferArgs,
+  InputConfiguration,
+  InternalConfiguration,
+} from "./types";
+import { BillingDataModel } from "./schema";
+import { v } from "convex/values";
 
 export const normalizeConfiguration = (
   config: InputConfiguration
@@ -31,9 +22,36 @@ export const normalizeConfiguration = (
     store: config.store || anyApi.billing.store,
   };
 };
+export const defineActionImplementation = <S extends ArgSchema, R>(spec: {
+  args: S;
+  name: string;
+  handler: (
+    context: GenericActionCtx<BillingDataModel>,
+    args: InferArgs<S>,
+    configuration: InternalConfiguration
+  ) => R;
+}) => spec;
 
-export type Implementation<T extends Record<string, any>, R> = (
-  context: Context,
-  args: T,
-  configuration: InternalConfiguration
-) => R;
+export const defineMutationImplementation = <S extends ArgSchema, R>(spec: {
+  args: S;
+  name: string;
+  handler: (
+    context: GenericMutationCtx<BillingDataModel>,
+    args: InferArgs<S>,
+    configuration: InternalConfiguration
+  ) => R;
+}) => spec;
+
+export const defineQueryImplementation = <S extends ArgSchema, R>(spec: {
+  args: S;
+  name: string;
+  handler: (
+    context: GenericQueryCtx<BillingDataModel>,
+    args: InferArgs<S>,
+    configuration: InternalConfiguration
+  ) => R;
+}) => spec;
+export const nullablestring = () => v.union(v.string(), v.null());
+export const nullableboolean = () => v.union(v.boolean(), v.null());
+export const nullablenumber = () => v.union(v.number(), v.null());
+export const metadata = () => v.record(v.string(), v.any());

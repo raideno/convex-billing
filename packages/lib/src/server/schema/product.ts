@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 
-import { metadata, nullableboolean, nullablestring } from "./helpers";
+import { metadata, nullableboolean, nullablestring } from "../helpers";
 
 export const ProductSchema = {
   productId: v.string(),

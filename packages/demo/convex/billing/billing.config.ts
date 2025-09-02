@@ -1,9 +1,8 @@
 import { InputConfiguration } from "@raideno/convex-billing/server";
-import { ConvexStore } from "@raideno/convex-billing/server/persistence";
+
+import { internal } from "../_generated/api";
 
 export default {
-  persistence: new ConvexStore("billing/private:store"),
-
   stripe: {
     secret_key: process.env.STRIPE_SECRET_KEY!,
     webhook_secret: process.env.STRIPE_WEBHOOK_SECRET!,
@@ -11,4 +10,7 @@ export default {
   },
 
   convex: { projectId: process.env.CONVEX_PROJECT_ID! },
+
+  store: "billing/private:store",
+  // store: internal.billing.private.store,
 } as InputConfiguration;

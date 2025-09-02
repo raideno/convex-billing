@@ -3,8 +3,6 @@ import { v } from "convex/values";
 
 import { internal } from "../_generated/api";
 import { action } from "../_generated/server";
-import { STRIPE_SUB_CACHE } from "./private";
-import Stripe from "stripe";
 
 export const getPortal = action({
   args: { restaurantId: v.string() },
@@ -56,31 +54,6 @@ export const checkout = action({
       priceId: args.priceId,
       successUrl: "http://localhost:3000/return-from-checkout-success",
       cancelUrl: "http://localhost:3000/return-from-checkout-cancel",
-    });
-  },
-});
-
-export const getSubscription = action({
-  args: { restaurantId: v.string() },
-  handler: async (context, args): Promise<STRIPE_SUB_CACHE> => {
-    const userId = await getAuthUserId(context);
-
-    if (!userId) throw new Error("Unauthorized");
-
-    const isAllowed = await (context as any).db
-      .query("restaurants")
-      .filter((q: any) =>
-        q.and(q.eq("_id", args.restaurantId as any), q.eq("owner_id", userId))
-      )
-      .unique();
-
-    if (!isAllowed)
-      throw new Error(
-        "You don't have permission to manage billing for this restaurant"
-      );
-
-    return await context.runAction(internal.billing.private.getSubscription_, {
-      entityId: args.restaurantId,
     });
   },
 });

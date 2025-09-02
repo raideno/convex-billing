@@ -1,11 +1,11 @@
 import { GenericActionCtx, httpActionGeneric } from "convex/server";
 import Stripe from "stripe";
 
-import { InternalConfiguration } from "../../helpers";
 import { BillingDataModel } from "../../schema";
+import { InternalConfiguration } from "../../types";
 import { PricesWebhooksHandler } from "./prices";
 import { ProductsWebhookHandler } from "./products";
-import { SubscriptionsWebhookHandler } from "./subscriptions";
+import { SubscriptionsWebhookHandler } from "./subscription";
 
 export const HANDLERS = [
   ProductsWebhookHandler,

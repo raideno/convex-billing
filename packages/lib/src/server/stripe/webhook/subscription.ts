@@ -1,8 +1,8 @@
 import { GenericActionCtx } from "convex/server";
 import Stripe from "stripe";
 
-import { InternalConfiguration } from "../../helpers";
 import { BillingDataModel } from "../../schema";
+import { InternalConfiguration } from "../../types";
 import { syncSubscriptionImplementation } from "../sync";
 import { WebhookHandler } from "./types";
 
@@ -33,17 +33,13 @@ export const SubscriptionsWebhookHandler: WebhookHandler = {
     configuration: InternalConfiguration
   ) => {
     const { customer: customerId } = event?.data?.object as {
-      customer: string; // Sadly TypeScript does not know this
+      customer: string;
     };
 
-    // This helps make it typesafe and also lets me know if my assumption is wrong
-    if (typeof customerId !== "string") {
-      throw new Error(
-        `[STRIPE HOOK][CANCER] ID isn't string.\nEvent type: ${event.type}`
-      );
-    }
+    if (typeof customerId !== "string")
+      throw new Error(`Customer ID ${customerId} isn't string.`);
 
-    await syncSubscriptionImplementation(
+    await syncSubscriptionImplementation.handler(
       context,
       { stripeCustomerId: customerId },
       configuration

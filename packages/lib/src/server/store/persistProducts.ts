@@ -1,11 +1,11 @@
 import { Infer, v } from "convex/values";
 import Stripe from "stripe";
 
-import { define } from ".";
 import { ProductObject } from "../schema/product";
+import { defineMutationImplementation } from "../helpers";
 
-export const persistProducts = define({
-  type: "persistProducts",
+export const persistProducts = defineMutationImplementation({
+  name: "persistProducts",
   args: {
     products: v.any(),
   },

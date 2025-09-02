@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 
 import { currencies } from "./currencies";
-import { metadata, nullablenumber, nullablestring } from "./helpers";
+import { metadata, nullablenumber, nullablestring } from "../helpers";
 
 export const PriceSchema = {
   priceId: v.string(),

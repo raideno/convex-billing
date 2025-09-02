@@ -1,9 +1,8 @@
-import { httpActionGeneric } from "convex/server";
+import { GenericActionCtx, httpActionGeneric } from "convex/server";
 
-import { InternalConfiguration } from "../helpers";
+import { BillingDataModel } from "../schema";
+import { InternalConfiguration, StoreImplementation } from "../types";
 import { syncSubscriptionImplementation } from "./sync";
-import { StoreInputValidator } from "../store";
-import { Infer } from "convex/values";
 
 export const RETURN_ORIGINS = {
   portal: "portal",
@@ -122,7 +121,8 @@ export async function buildSignedReturnUrl(
 export const buildRedirectImplementation = (
   configuration: InternalConfiguration
 ) =>
-  httpActionGeneric(async (context, request) => {
+  httpActionGeneric(async (context_, request) => {
+    const context = context_ as unknown as GenericActionCtx<BillingDataModel>;
     const url = new URL(request.url);
 
     const segments = url.pathname.split("/").filter(Boolean);
@@ -194,15 +194,20 @@ export const buildRedirectImplementation = (
       return new Response("Invalid target", { status: 400 });
     }
 
-    const stripeCustomerId = await context.runMutation(configuration.store, {
-      type: "getStripeCustomerIdByEntityId",
-      entityId: decoded.entityId,
-    } as Infer<typeof StoreInputValidator>);
+    const stripeCustomerId = (await context.runMutation(
+      configuration.store as StoreImplementation,
+      {
+        args: {
+          name: "getStripeCustomerIdByEntityId",
+          entityId: decoded.entityId,
+        },
+      }
+    )) as string | null;
 
     // TODO: we should probably alert if there is no customerId
     // TODO: should we create one ? it should be impossible to be here without one i guess
     if (stripeCustomerId) {
-      await syncSubscriptionImplementation(
+      await syncSubscriptionImplementation.handler(
         context,
         { stripeCustomerId },
         configuration

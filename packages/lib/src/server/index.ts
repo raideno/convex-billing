@@ -5,23 +5,22 @@ import {
 } from "convex/server";
 import { v } from "convex/values";
 
-import { InputConfiguration, normalizeConfiguration } from "./helpers";
-import { storeImplementation } from "./store";
+import { normalizeConfiguration } from "./helpers";
+import { storeImplementation, StoreInputValidator } from "./store";
 import {
   buildRedirectImplementation,
   buildWebhookImplementation,
   checkoutImplementation,
   createStripeCustomerImplementation,
   getPortalImplementation,
-  getSubscriptionImplementation,
-  syncSubscriptionImplementation,
 } from "./stripe";
+import { InputConfiguration } from "./types";
 
 export * from "./schema";
 
-export * from "./helpers";
+export * from "./types";
 
-export type { InputConfiguration, InternalConfiguration } from "./helpers";
+export * from "./helpers";
 
 export const internalConvexBilling = (configuration_: InputConfiguration) => {
   const configuration = normalizeConfiguration(configuration_);
@@ -42,18 +41,18 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
       },
     },
     store: internalMutationGeneric({
-      args: v.any(),
+      args: StoreInputValidator,
       handler: (context, args) =>
-        storeImplementation(context, args, configuration),
+        storeImplementation.handler(context, args, configuration),
     }),
     // --- --- --- stripe.ts
-    getPortal: internalActionGeneric({
+    portal: internalActionGeneric({
       args: {
         entityId: v.string(),
         returnUrl: v.string(),
       },
       handler: (context, args) =>
-        getPortalImplementation(context, args, configuration),
+        getPortalImplementation.handler(context, args, configuration),
     }),
     checkout: internalActionGeneric({
       args: {
@@ -63,29 +62,24 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
         cancelUrl: v.string(),
       },
       handler: (context, args) =>
-        checkoutImplementation(context, args, configuration),
+        checkoutImplementation.handler(context, args, configuration),
     }),
     createStripeCustomer: internalActionGeneric({
       args: {
         entityId: v.string(),
+        email: v.optional(v.string()),
+        metadata: v.optional(v.record(v.string(), v.any())),
       },
       handler: (context, args) =>
-        createStripeCustomerImplementation(context, args, configuration),
+        createStripeCustomerImplementation.handler(
+          context,
+          {
+            email: args.entityId,
+            entityId: args.entityId,
+            metadata: args.metadata,
+          },
+          configuration
+        ),
     }),
-    sync: internalActionGeneric({
-      args: {
-        stripeCustomerId: v.string(),
-      },
-      handler: (context, args) =>
-        syncSubscriptionImplementation(context, args, configuration),
-    }),
-    getSubscription: internalActionGeneric({
-      args: {
-        entityId: v.string(),
-      },
-      handler: (context, args) =>
-        getSubscriptionImplementation(context, args, configuration),
-    }),
-    webhook: buildWebhookImplementation(configuration),
   };
 };

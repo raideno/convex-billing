@@ -1,8 +1,8 @@
 import { v } from "convex/values";
-import { define } from ".";
+import { defineMutationImplementation } from "../helpers";
 
-export const persistStripeCustomerId = define({
-  type: "persistStripeCustomerId",
+export const persistStripeCustomerId = defineMutationImplementation({
+  name: "persistStripeCustomerId",
   args: {
     entityId: v.string(),
     stripeCustomerId: v.string(),

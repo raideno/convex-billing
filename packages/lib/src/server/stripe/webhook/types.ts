@@ -1,8 +1,8 @@
 import { GenericActionCtx } from "convex/server";
 import Stripe from "stripe";
 
-import { InternalConfiguration } from "../../helpers";
 import { BillingDataModel } from "../../schema";
+import { InternalConfiguration } from "../../types";
 
 export type WebhookHandler = {
   events: Stripe.Event.Type[];
