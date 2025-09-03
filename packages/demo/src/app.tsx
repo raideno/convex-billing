@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Link, Text } from "@radix-ui/themes";
+import { Box, Button, Card, Flex, Heading, Link, Text } from "@radix-ui/themes";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 
 import { AuthForm } from "./components/forms/auth-form";
@@ -22,6 +22,28 @@ export default function App() {
           </Link>
           .
         </Text>
+      </Box>
+      <Box mb={"8"}>
+        <Card>
+          <Flex direction={"column"} gap={"2"}>
+            <Link
+              href="https://raideno.github.io/convex-billing/"
+              target="_blank"
+            >
+              <Button variant="classic" className="w-full">
+                Documentation
+              </Button>
+            </Link>
+            <Link
+              href="https://github.com/raideno/convex-billing"
+              target="_blank"
+            >
+              <Button variant="classic" className="w-full">
+                Github
+              </Button>
+            </Link>
+          </Flex>
+        </Card>
       </Box>
       <Unauthenticated>
         <AuthForm />
