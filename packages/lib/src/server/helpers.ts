@@ -1,4 +1,4 @@
-import { anyApi, GenericActionCtx } from "convex/server";
+import { GenericActionCtx } from "convex/server";
 import { v } from "convex/values";
 
 import { Logger } from "./logger";

@@ -156,6 +156,7 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
     // --- --- --- stripe.ts
     portal: internalActionGeneric({
       args: {
+        createStripeCustomerIfMissing: v.optional(v.boolean()),
         entityId: v.string(),
         returnUrl: v.string(),
       },
@@ -164,6 +165,7 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
     }),
     checkout: internalActionGeneric({
       args: {
+        createStripeCustomerIfMissing: v.optional(v.boolean()),
         entityId: v.string(),
         priceId: v.string(),
         successUrl: v.string(),

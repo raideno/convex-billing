@@ -3,7 +3,8 @@ import {
   GenericDataModel,
   TableNamesInDataModel,
 } from "convex/server";
-import { GenericId, Infer, Validator } from "convex/values";
+import { GenericId, Infer, v, Validator } from "convex/values";
+
 import { Logger } from "./logger";
 
 export interface InternalConfiguration {
@@ -31,7 +32,16 @@ export type ArgSchema = Record<
   string,
   Validator<any, "optional" | "required", any>
 >;
-export type InferArgs<S extends ArgSchema> = { [K in keyof S]: Infer<S[K]> };
+
+export type InferArgs<S extends ArgSchema> = {
+  [K in keyof S as S[K] extends Validator<any, "required", any>
+    ? K
+    : never]: Infer<S[K]>;
+} & {
+  [K in keyof S as S[K] extends Validator<any, "optional", any>
+    ? K
+    : never]?: Infer<S[K]>;
+};
 
 /**
  * Convex document from a given table.
