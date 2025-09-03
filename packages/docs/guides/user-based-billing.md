@@ -21,7 +21,7 @@ auth callback, a mutation, or a background job.
 import { internal } from "./_generated/api";
 
 // Example: run after a user is created
-await ctx.scheduler.runAfter(0, internal.billing.createStripeCustomer, {
+await ctx.scheduler.runAfter(0, internal.billing.setup, {
   entityId: userId,
 });
 ```

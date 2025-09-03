@@ -13,7 +13,7 @@
   "workspaces": [
     "packages/lib",
     "packages/docs",
-    "packages/example"
+    "packages/demo"
   ],
   "homepage": "https://raideno.github.io/convex-billing",
   "bugs": "https://github.com/raideno/convex-billing/issues",
@@ -25,8 +25,6 @@
   "author": "raideno",
   "scripts": {},
   "type": "module",
-  "dependencies": {},
-  "peerDependencies": {},
   "devDependencies": {
     "@eslint/js": "^9.34.0",
     "@types/node": "^24.3.0",

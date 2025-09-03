@@ -1,0 +1,32 @@
+{
+    "name": "demo",
+    "description": "Example app using @raideno/convex-billing",
+    "version": "0.0.0",
+    "scripts": {
+        "dev": "npm-run-all dev:init --parallel dev:frontend dev:backend",
+        "build": "vite build",
+        "dev:backend": "convex dev",
+        "dev:frontend": "vite --open --clearScreen false",
+        "dev:init": "convex dev --until-success",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@convex-dev/auth": "^0.0.88",
+        "@radix-ui/themes": "^3.2.1",
+        "convex": "^1.26.2",
+        "react": "^19.1.1",
+        "react-dom": "^19.1.1",
+        "stripe": "^18.5.0",
+        "sonner": "^2.0.7"
+    },
+    "devDependencies": {
+        "@types/react": "^18.2.14",
+        "@types/react-dom": "^18.2.6",
+        "@typescript-eslint/eslint-plugin": "^5.61.0",
+        "@typescript-eslint/parser": "^5.61.0",
+        "@vitejs/plugin-react": "^4.0.1",
+        "npm-run-all": "^4.1.5",
+        "typescript": "^5.0.2",
+        "vite": "^4.4.0"
+    }
+}

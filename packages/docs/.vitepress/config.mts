@@ -1,13 +1,14 @@
 import { defineConfig } from "vitepress";
 
 export default defineConfig({
-  base: "/convex-billing",
+  base: "/convex-billing/",
   title: "convex-billing",
   description: "Convex billing integration with stripe.",
   themeConfig: {
     nav: [
       { text: "Home", link: "/" },
       { text: "Guides", link: "/guides" },
+      { text: "Demo", link: "/demo/" },
     ],
 
     sidebar: [

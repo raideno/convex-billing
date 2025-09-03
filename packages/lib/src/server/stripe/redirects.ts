@@ -1,7 +1,9 @@
-import { httpActionGeneric } from "convex/server";
+import { GenericActionCtx, httpActionGeneric } from "convex/server";
 
-import { InternalConfiguration } from "../helpers";
-import { syncImplementation } from "./sync";
+import { billingDispatchTyped } from "../operations/helpers";
+import { BillingDataModel } from "../schema";
+import { InternalConfiguration } from "../types";
+import { syncSubscriptionImplementation } from "./sync";
 
 export const RETURN_ORIGINS = {
   portal: "portal",
@@ -12,7 +14,7 @@ export const RETURN_ORIGINS = {
 export type ReturnOrigin = (typeof RETURN_ORIGINS)[keyof typeof RETURN_ORIGINS];
 
 export function backendBaseUrl(configuration: InternalConfiguration): string {
-  return `https://${configuration.convex.projectId}.convex.site`;
+  return process.env.CONVEX_SITE_URL!;
 }
 
 export function toBase64Url(input: ArrayBuffer | string): string {
@@ -120,7 +122,8 @@ export async function buildSignedReturnUrl(
 export const buildRedirectImplementation = (
   configuration: InternalConfiguration
 ) =>
-  httpActionGeneric(async (context, request) => {
+  httpActionGeneric(async (context_, request) => {
+    const context = context_ as unknown as GenericActionCtx<BillingDataModel>;
     const url = new URL(request.url);
 
     const segments = url.pathname.split("/").filter(Boolean);
@@ -192,16 +195,27 @@ export const buildRedirectImplementation = (
       return new Response("Invalid target", { status: 400 });
     }
 
-    const stripeCustomerId =
-      await configuration.persistence.getStripeCustomerIdByEntityId(
-        context,
-        decoded.entityId
-      );
+    const stripeCustomer = await billingDispatchTyped(
+      {
+        op: "selectOne",
+        table: "convex_billing_customers",
+        field: "entityId",
+        value: decoded.entityId,
+      },
+      context,
+      configuration
+    );
+
+    const stripeCustomerId = stripeCustomer?.doc?.stripeCustomerId || null;
 
     // TODO: we should probably alert if there is no customerId
     // TODO: should we create one ? it should be impossible to be here without one i guess
     if (stripeCustomerId) {
-      await syncImplementation(context, { stripeCustomerId }, configuration);
+      await syncSubscriptionImplementation.handler(
+        context,
+        { stripeCustomerId },
+        configuration
+      );
     }
 
     const targetUrl = decoded.targetUrl;

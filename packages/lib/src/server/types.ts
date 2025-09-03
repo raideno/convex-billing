@@ -1,13 +1,37 @@
 import {
   DocumentByName,
-  FunctionReference,
   GenericDataModel,
-  RegisteredAction,
-  RegisteredMutation,
-  RegisteredQuery,
   TableNamesInDataModel,
 } from "convex/server";
-import { GenericId } from "convex/values";
+import { GenericId, Infer, Validator } from "convex/values";
+import { Logger } from "./logger";
+
+export interface InternalConfiguration {
+  stripe: {
+    secret_key: string;
+    webhook_secret: string;
+  };
+
+  debug: boolean;
+
+  logger: Logger;
+
+  store: any;
+}
+
+export type WithOptional<T, K extends keyof T = never> = Omit<T, K> &
+  Partial<Pick<T, K>>;
+
+export type InputConfiguration = WithOptional<
+  InternalConfiguration,
+  "store" | "debug" | "logger"
+>;
+
+export type ArgSchema = Record<
+  string,
+  Validator<any, "optional" | "required", any>
+>;
+export type InferArgs<S extends ArgSchema> = { [K in keyof S]: Infer<S[K]> };
 
 /**
  * Convex document from a given table.
@@ -19,37 +43,3 @@ export type GenericDoc<
   _id: GenericId<TableName>;
   _creationTime: number;
 };
-
-/**
- * @internal
- */
-export type FunctionReferenceFromExport<Export> =
-  Export extends RegisteredQuery<infer Visibility, infer Args, infer Output>
-    ? FunctionReference<"query", Visibility, Args, ConvertReturnType<Output>>
-    : Export extends RegisteredMutation<
-          infer Visibility,
-          infer Args,
-          infer Output
-        >
-      ? FunctionReference<
-          "mutation",
-          Visibility,
-          Args,
-          ConvertReturnType<Output>
-        >
-      : Export extends RegisteredAction<
-            infer Visibility,
-            infer Args,
-            infer Output
-          >
-        ? FunctionReference<
-            "action",
-            Visibility,
-            Args,
-            ConvertReturnType<Output>
-          >
-        : never;
-
-type ConvertReturnType<T> = UndefinedToNull<Awaited<T>>;
-
-type UndefinedToNull<T> = T extends void ? null : T;
