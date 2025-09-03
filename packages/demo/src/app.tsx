@@ -31,11 +31,11 @@ export default function App() {
     password: "",
   });
 
-  const handleClick = async () => {
+  const handleClick = async (flow: "signIn" | "signUp") => {
     try {
       setLoading(true);
       if (data) {
-        const response = await auth.signIn("password", data);
+        const response = await auth.signIn("password", { ...data, flow });
 
         console.log("[response]:", response);
       } else {
@@ -78,8 +78,17 @@ export default function App() {
               type="password"
               placeholder="••••••••"
             />
-            <Button loading={loading} onClick={handleClick}>
+            <Button
+              loading={loading}
+              onClick={handleClick.bind(null, "signIn")}
+            >
               Sign In
+            </Button>
+            <Button
+              loading={loading}
+              onClick={handleClick.bind(null, "signUp")}
+            >
+              Sign Up
             </Button>
           </Flex>
           {/* <ul>

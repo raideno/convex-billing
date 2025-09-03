@@ -4,13 +4,13 @@ import Stripe from "stripe";
 import { BillingDataModel } from "../../schema";
 import { InternalConfiguration } from "../../types";
 import { PricesWebhooksHandler } from "./prices";
-import { ProductsWebhookHandler } from "./products";
-import { SubscriptionsWebhookHandler } from "./subscription";
+import { ProductsWebhooksHandler } from "./products";
+import { SubscriptionsWebhooksHandler } from "./subscription";
 
 export const HANDLERS = [
-  ProductsWebhookHandler,
+  ProductsWebhooksHandler,
   PricesWebhooksHandler,
-  SubscriptionsWebhookHandler,
+  SubscriptionsWebhooksHandler,
 ] as const;
 
 export const buildWebhookImplementation = (

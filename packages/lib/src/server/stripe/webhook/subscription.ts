@@ -6,7 +6,7 @@ import { InternalConfiguration } from "../../types";
 import { syncSubscriptionImplementation } from "../sync";
 import { WebhookHandler } from "./types";
 
-export const SubscriptionsWebhookHandler: WebhookHandler = {
+export const SubscriptionsWebhooksHandler: WebhookHandler = {
   events: [
     "checkout.session.completed",
     "customer.subscription.created",

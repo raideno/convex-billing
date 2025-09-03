@@ -59,7 +59,6 @@ export const {
   stripe: {
     secret_key: process.env.STRIPE_SECRET_KEY!,
     webhook_secret: process.env.STRIPE_WEBHOOK_SECRET!,
-    publishable_key: process.env.STRIPE_PUBLISHABLE_KEY!,
   },
   // https://<convex-project-id>.convex.site
   // https://<convex-project-id>.convex.cloud
@@ -220,6 +219,7 @@ export const openPortal = async (ctx: any, entityId: string, returnUrl: string) 
 
 ## TODOs
 
+- [ ] A function that takes a stripe subscription object and returns a simpler representation just like theo's one.
 - [ ] Implement default plan.
 - [ ] Implement one time payment endpoint.
 - [ ] Show an example app for subscription and one time payments with credits usage.

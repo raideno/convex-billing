@@ -1,7 +1,8 @@
 import { GenericActionCtx, httpActionGeneric } from "convex/server";
 
 import { BillingDataModel } from "../schema";
-import { InternalConfiguration, StoreImplementation } from "../types";
+import { billingDispatchTyped } from "../operations/helpers";
+import { InternalConfiguration } from "../types";
 import { syncSubscriptionImplementation } from "./sync";
 
 export const RETURN_ORIGINS = {
@@ -194,15 +195,18 @@ export const buildRedirectImplementation = (
       return new Response("Invalid target", { status: 400 });
     }
 
-    const stripeCustomerId = (await context.runMutation(
-      configuration.store as StoreImplementation,
+    const stripeCustomer = await billingDispatchTyped(
       {
-        args: {
-          name: "getStripeCustomerIdByEntityId",
-          entityId: decoded.entityId,
-        },
-      }
-    )) as string | null;
+        op: "selectOne",
+        table: "convex_billing_customers",
+        field: "entityId",
+        value: decoded.entityId,
+      },
+      context,
+      configuration
+    );
+
+    const stripeCustomerId = stripeCustomer?.doc?.stripeCustomerId || null;
 
     // TODO: we should probably alert if there is no customerId
     // TODO: should we create one ? it should be impossible to be here without one i guess

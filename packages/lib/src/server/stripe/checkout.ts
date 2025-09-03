@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import Stripe from "stripe";
 
 import { defineActionImplementation } from "../helpers";
-import { StoreImplementation } from "../types";
+import { billingDispatchTyped } from "../operations/helpers";
 import { buildSignedReturnUrl } from "./redirects";
 
 export const checkoutImplementation = defineActionImplementation({
@@ -22,15 +22,18 @@ export const checkoutImplementation = defineActionImplementation({
       apiVersion: "2025-08-27.basil",
     });
 
-    const stripeCustomerId = (await context.runMutation(
-      configuration.store as StoreImplementation,
+    const stripeCustomer = await billingDispatchTyped(
       {
-        args: {
-          name: "getStripeCustomerIdByEntityId",
-          entityId: args.entityId,
-        },
-      }
-    )) as string | null;
+        op: "selectOne",
+        table: "convex_billing_customers",
+        field: "entityId",
+        value: args.entityId,
+      },
+      context,
+      configuration
+    );
+
+    const stripeCustomerId = stripeCustomer?.doc?.stripeCustomerId || null;
 
     if (!stripeCustomerId) {
       throw new Error(

@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import Stripe from "stripe";
 
 import { defineActionImplementation } from "../helpers";
-import { StoreImplementation } from "../types";
+import { billingDispatchTyped } from "../operations/helpers";
 
 export const createStripeCustomerImplementation = defineActionImplementation({
   name: "createStripeCustomer",
@@ -16,15 +16,18 @@ export const createStripeCustomerImplementation = defineActionImplementation({
       apiVersion: "2025-08-27.basil",
     });
 
-    let stripeCustomerId = await context.runMutation(
-      configuration.store as StoreImplementation,
+    const stripeCustomer = await billingDispatchTyped(
       {
-        args: {
-          name: "getStripeCustomerIdByEntityId",
-          entityId: args.entityId,
-        },
-      }
+        op: "selectOne",
+        table: "convex_billing_customers",
+        field: "entityId",
+        value: args.entityId,
+      },
+      context,
+      configuration
     );
+
+    let stripeCustomerId = stripeCustomer?.doc?.stripeCustomerId || null;
 
     if (stripeCustomerId) {
       return { stripeCustomerId };
@@ -39,13 +42,20 @@ export const createStripeCustomerImplementation = defineActionImplementation({
         },
       });
 
-      await context.runMutation(configuration.store as StoreImplementation, {
-        args: {
-          name: "persistStripeCustomerId",
-          entityId: args.entityId,
-          stripeCustomerId: stripeCustomer.id,
+      await billingDispatchTyped(
+        {
+          op: "upsert",
+          table: "convex_billing_customers",
+          idField: "entityId",
+          data: {
+            entityId: args.entityId,
+            stripeCustomerId: stripeCustomer.id,
+            last_synced_at: Date.now(),
+          },
         },
-      });
+        context,
+        configuration
+      );
 
       stripeCustomerId = stripeCustomer.id;
     }

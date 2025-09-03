@@ -20,6 +20,7 @@ export const billingTables = {
   convex_billing_customers: defineTable({
     entityId: v.string(),
     stripeCustomerId: v.string(),
+    last_synced_at: v.number(),
   })
     .index("byEntityId", ["entityId"])
     .index("byStripeCustomerId", ["stripeCustomerId"]),

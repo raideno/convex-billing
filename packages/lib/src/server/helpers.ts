@@ -1,18 +1,13 @@
-import {
-  anyApi,
-  GenericActionCtx,
-  GenericMutationCtx,
-  GenericQueryCtx,
-} from "convex/server";
+import { anyApi, GenericActionCtx } from "convex/server";
+import { v } from "convex/values";
 
+import { BillingDataModel } from "./schema";
 import {
   ArgSchema,
   InferArgs,
   InputConfiguration,
   InternalConfiguration,
 } from "./types";
-import { BillingDataModel } from "./schema";
-import { v } from "convex/values";
 
 export const normalizeConfiguration = (
   config: InputConfiguration
@@ -32,25 +27,6 @@ export const defineActionImplementation = <S extends ArgSchema, R>(spec: {
   ) => R;
 }) => spec;
 
-export const defineMutationImplementation = <S extends ArgSchema, R>(spec: {
-  args: S;
-  name: string;
-  handler: (
-    context: GenericMutationCtx<BillingDataModel>,
-    args: InferArgs<S>,
-    configuration: InternalConfiguration
-  ) => R;
-}) => spec;
-
-export const defineQueryImplementation = <S extends ArgSchema, R>(spec: {
-  args: S;
-  name: string;
-  handler: (
-    context: GenericQueryCtx<BillingDataModel>,
-    args: InferArgs<S>,
-    configuration: InternalConfiguration
-  ) => R;
-}) => spec;
 export const nullablestring = () => v.union(v.string(), v.null());
 export const nullableboolean = () => v.union(v.boolean(), v.null());
 export const nullablenumber = () => v.union(v.number(), v.null());

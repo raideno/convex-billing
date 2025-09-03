@@ -59,7 +59,6 @@ export const {
   stripe: {
     secret_key: process.env.STRIPE_SECRET_KEY!,
     webhook_secret: process.env.STRIPE_WEBHOOK_SECRET!,
-    publishable_key: process.env.STRIPE_PUBLISHABLE_KEY!,
   },
   // https://<convex-project-id>.convex.site
   // https://<convex-project-id>.convex.cloud
