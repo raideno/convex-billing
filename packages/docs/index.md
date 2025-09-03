@@ -83,6 +83,21 @@ billing.addHttpRoutes(http);
 export default http;
 ```
 
+Set up a cron job to sync products, prices, and subscriptions every hour. This ensures data stays up to date, even if the server restarts or changes happen while it’s offline. You can skip this if you prefer to run the sync action manually at startup.
+
+```ts
+// convex/crons.ts
+
+import { cronJobs } from "convex/server";
+import { billing } from "./billing";
+
+const crons = cronJobs();
+
+billing.addCronJobs(crons);
+
+export default crons;
+```
+
 Ideally you should create a stripe customer as soon as the user / organization or whatever entity you bill for is created. You can do this using the `setup` action. Below is an example for users using convex-auth:
 ```ts
 // convex/convex.auth.ts

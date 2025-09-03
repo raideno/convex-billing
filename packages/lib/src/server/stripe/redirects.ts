@@ -3,7 +3,7 @@ import { GenericActionCtx, httpActionGeneric } from "convex/server";
 import { billingDispatchTyped } from "../operations/helpers";
 import { BillingDataModel } from "../schema";
 import { InternalConfiguration } from "../types";
-import { syncSubscriptionImplementation } from "./sync";
+import { syncSubscriptionImplementation } from "./sync-subscription";
 
 export const RETURN_ORIGINS = {
   portal: "portal",

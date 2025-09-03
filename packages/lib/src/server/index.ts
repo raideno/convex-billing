@@ -1,4 +1,5 @@
 import {
+  Crons,
   GenericMutationCtx,
   HttpRouter,
   internalActionGeneric,
@@ -22,6 +23,7 @@ import {
   portalImplementation,
   setupImplementation,
 } from "./stripe";
+import { sync } from "./stripe/sync";
 import { InputConfiguration } from "./types";
 
 export * from "./schema";
@@ -46,6 +48,13 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
           method: "GET",
           handler: buildRedirectImplementation(configuration),
         });
+      },
+      addCronJobs: (crons: Crons) => {
+        crons.interval(
+          "stripe sync",
+          { hours: 1 },
+          `${configuration.base}:sync` as any
+        );
       },
     },
     store: internalMutationGeneric({
@@ -162,6 +171,10 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
       },
       handler: (context, args) =>
         checkoutImplementation.handler(context, args, configuration),
+    }),
+    sync: internalActionGeneric({
+      args: {},
+      handler: (context) => sync.handler(context, {}, configuration),
     }),
     setup: internalActionGeneric({
       args: {

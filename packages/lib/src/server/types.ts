@@ -16,7 +16,7 @@ export interface InternalConfiguration {
 
   logger: Logger;
 
-  store: any;
+  base: string;
 }
 
 export type WithOptional<T, K extends keyof T = never> = Omit<T, K> &
@@ -24,7 +24,7 @@ export type WithOptional<T, K extends keyof T = never> = Omit<T, K> &
 
 export type InputConfiguration = WithOptional<
   InternalConfiguration,
-  "store" | "debug" | "logger"
+  "base" | "debug" | "logger"
 >;
 
 export type ArgSchema = Record<

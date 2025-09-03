@@ -12,7 +12,7 @@ export async function billingDispatchTyped<
   configuration: InternalConfiguration
 ): Promise<BillingResultFor<BillingDataModel, A>> {
   return (await context.runMutation(
-    configuration.store,
+    `${configuration.base}:store` as any,
     args
   )) as BillingResultFor<BillingDataModel, A>;
 }

@@ -8,8 +8,10 @@ import configuration from "./billing.config";
 
 export const {
   billing,
+  // --- --- ---
   store,
-  // --- stripe
+  sync,
+  // --- --- --- stripe
   portal: portal_,
   checkout: checkout_,
   setup,

@@ -17,7 +17,7 @@ export const normalizeConfiguration = (
     ...config,
     debug: false,
     logger: new Logger(config.debug || false),
-    store: config.store || anyApi.billing.store,
+    base: config.base || "billing",
   };
 };
 export const defineActionImplementation = <S extends ArgSchema, R>(spec: {
