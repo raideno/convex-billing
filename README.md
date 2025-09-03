@@ -54,7 +54,7 @@ export const {
   // --- stripe
   portal,
   checkout,
-  createStripeCustomer,
+  setup,
 } = internalConvexBilling({
   stripe: {
     secret_key: process.env.STRIPE_SECRET_KEY!,
@@ -85,7 +85,7 @@ billing.addHttpRoutes(http);
 export default http;
 ```
 
-Ideally you should create a stripe customer as soon as the user / organization or whatever entity you bill for is created. You can do this using the `createStripeCustomer` action. Below is an example for users using convex-auth:
+Ideally you should create a stripe customer as soon as the user / organization or whatever entity you bill for is created. You can do this using the `setup` action. Below is an example for users using convex-auth:
 ```ts
 // convex/convex.auth.ts
 
@@ -103,7 +103,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 
       await context.scheduler.runAfter(
         0,
-        internal.billing.createStripeCustomer,
+        internal.billing.setup,
         {
           entityId: userId,
         }
@@ -113,7 +113,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 });
 ```
 
-If you are billing organizations, you'll likely have a createOrganization action somewhere in your codebase. You can call `createStripeCustomer` there instead, passing the organization id as `entityId`.
+If you are billing organizations, you'll likely have a createOrganization action somewhere in your codebase. You can call `setup` there instead, passing the organization id as `entityId`.
 ```ts
 // convex/organizations.ts
 
@@ -137,7 +137,7 @@ export const createOrganization = query({
 
     await context.scheduler.runAfter(
       0,
-      internal.billing.createStripeCustomer,
+      internal.billing.setup,
       {
         entityId: orgId,
       }

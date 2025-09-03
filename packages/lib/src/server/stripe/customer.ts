@@ -4,8 +4,8 @@ import Stripe from "stripe";
 import { defineActionImplementation } from "../helpers";
 import { billingDispatchTyped } from "../operations/helpers";
 
-export const createStripeCustomerImplementation = defineActionImplementation({
-  name: "createStripeCustomer",
+export const setupImplementation = defineActionImplementation({
+  name: "setup",
   args: {
     entityId: v.string(),
     email: v.optional(v.string()),

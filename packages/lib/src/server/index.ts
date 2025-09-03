@@ -19,8 +19,8 @@ import {
   buildRedirectImplementation,
   buildWebhookImplementation,
   checkoutImplementation,
-  createStripeCustomerImplementation,
-  getPortalImplementation,
+  setupImplementation,
+  portalImplementation,
 } from "./stripe";
 import { InputConfiguration } from "./types";
 
@@ -151,7 +151,7 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
         returnUrl: v.string(),
       },
       handler: (context, args) =>
-        getPortalImplementation.handler(context, args, configuration),
+        portalImplementation.handler(context, args, configuration),
     }),
     checkout: internalActionGeneric({
       args: {
@@ -163,14 +163,14 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
       handler: (context, args) =>
         checkoutImplementation.handler(context, args, configuration),
     }),
-    createStripeCustomer: internalActionGeneric({
+    setup: internalActionGeneric({
       args: {
         entityId: v.string(),
         email: v.optional(v.string()),
         metadata: v.optional(v.record(v.string(), v.any())),
       },
       handler: (context, args) =>
-        createStripeCustomerImplementation.handler(
+        setupImplementation.handler(
           context,
           {
             email: args.entityId,

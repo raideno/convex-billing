@@ -1,8 +1,19 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { internalConvexBilling } from "@raideno/convex-billing/server";
 import { v } from "convex/values";
 
-import { internal } from "../_generated/api";
-import { action } from "../_generated/server";
+import { internal } from "./_generated/api";
+import { action } from "./_generated/server";
+import configuration from "./billing.config";
+
+export const {
+  billing,
+  store,
+  // --- stripe
+  portal: portal_,
+  checkout: checkout_,
+  setup,
+} = internalConvexBilling(configuration);
 
 export const getPortal = action({
   args: { restaurantId: v.string() },
@@ -23,7 +34,7 @@ export const getPortal = action({
         "You don't have permission to manage billing for this restaurant"
       );
 
-    return await context.runAction(internal.billing.private.getPortal_, {
+    return await context.runAction(internal.billing.portal_, {
       entityId: args.restaurantId,
       returnUrl: "http://localhost:3000/return-from-portal",
     });
@@ -49,7 +60,7 @@ export const checkout = action({
         "You don't have permission to manage billing for this restaurant"
       );
 
-    return await context.runAction(internal.billing.private.checkout_, {
+    return await context.runAction(internal.billing.checkout_, {
       entityId: args.restaurantId,
       priceId: args.priceId,
       successUrl: "http://localhost:3000/return-from-checkout-success",

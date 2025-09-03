@@ -1,6 +1,7 @@
 import { anyApi, GenericActionCtx } from "convex/server";
 import { v } from "convex/values";
 
+import { Logger } from "./logger";
 import { BillingDataModel } from "./schema";
 import {
   ArgSchema,
@@ -14,6 +15,8 @@ export const normalizeConfiguration = (
 ): InternalConfiguration => {
   return {
     ...config,
+    debug: false,
+    logger: new Logger(config.debug || false),
     store: config.store || anyApi.billing.store,
   };
 };

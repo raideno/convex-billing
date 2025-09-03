@@ -1,7 +1,7 @@
 import { httpRouter } from "convex/server";
 
 import { auth } from "./auth";
-import { billing } from "./billing/private";
+import { billing } from "./billing";
 
 const http = httpRouter();
 

@@ -9,13 +9,9 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
     afterUserCreatedOrUpdated: async (context, args) => {
       const userId = args.userId;
 
-      await context.scheduler.runAfter(
-        0,
-        internal.billing.private.createStripeCustomer,
-        {
-          entityId: userId,
-        }
-      );
+      await context.scheduler.runAfter(0, internal.billing.setup, {
+        entityId: userId,
+      });
     },
   },
 });

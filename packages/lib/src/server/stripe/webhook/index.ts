@@ -37,16 +37,16 @@ export const buildWebhookImplementation = (
       configuration.stripe.webhook_secret
     );
 
-    console.debug("[STRIPE HOOK](RECEIVED):", event.type);
+    configuration.logger.debug(`[STRIPE HOOK](RECEIVED): ${event.type}`);
 
     for (const handler of HANDLERS) {
       if (handler.events.includes(event.type)) {
         // TODO: maybe it should be parallelized ?
         try {
           await handler.handle(event, context, configuration);
-          console.debug("[STRIPE HOOK](HANDLED):", event.type);
+          configuration.logger.debug(`[STRIPE HOOK](HANDLED): ${event.type}`);
         } catch (error) {
-          console.error("[STRIPE HOOK](Error):", error);
+          configuration.logger.error(`[STRIPE HOOK](Error): ${error}`);
         }
       }
     }

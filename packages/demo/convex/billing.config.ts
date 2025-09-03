@@ -1,7 +1,5 @@
 import { InputConfiguration } from "@raideno/convex-billing/server";
 
-import { internal } from "../_generated/api";
-
 export default {
   stripe: {
     secret_key: process.env.STRIPE_SECRET_KEY!,
@@ -12,5 +10,5 @@ export default {
   convex: { projectId: process.env.CONVEX_PROJECT_ID! },
 
   store: "billing/private:store",
-  // store: internal.billing.private.store,
+  debug: true,
 } as InputConfiguration;

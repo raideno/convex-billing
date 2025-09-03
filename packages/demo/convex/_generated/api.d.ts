@@ -14,8 +14,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as auth from "../auth.js";
-import type * as billing_private from "../billing/private.js";
-import type * as billing_public from "../billing/public.js";
+import type * as billing from "../billing.js";
 import type * as http from "../http.js";
 
 /**
@@ -28,8 +27,7 @@ import type * as http from "../http.js";
  */
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
-  "billing/private": typeof billing_private;
-  "billing/public": typeof billing_public;
+  billing: typeof billing;
   http: typeof http;
 }>;
 export declare const api: FilterApi<

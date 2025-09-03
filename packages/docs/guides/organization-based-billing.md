@@ -18,7 +18,7 @@ import { internal } from "./_generated/api";
 export const createOrganization = async (ctx: any, orgId: string) => {
   // persist your organization...
 
-  await ctx.scheduler.runAfter(0, internal.billing.createStripeCustomer, {
+  await ctx.scheduler.runAfter(0, internal.billing.setup, {
     entityId: orgId,
   });
 };

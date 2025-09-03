@@ -5,7 +5,7 @@ import { defineActionImplementation } from "../helpers";
 import { billingDispatchTyped } from "../operations/helpers";
 import { buildSignedReturnUrl } from "./redirects";
 
-export const getPortalImplementation = defineActionImplementation({
+export const portalImplementation = defineActionImplementation({
   name: "getPortal",
   args: {
     entityId: v.string(),

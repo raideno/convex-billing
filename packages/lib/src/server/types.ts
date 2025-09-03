@@ -4,6 +4,7 @@ import {
   TableNamesInDataModel,
 } from "convex/server";
 import { GenericId, Infer, Validator } from "convex/values";
+import { Logger } from "./logger";
 
 export interface InternalConfiguration {
   stripe: {
@@ -13,13 +14,20 @@ export interface InternalConfiguration {
 
   convex: { projectId: string };
 
+  debug: boolean;
+
+  logger: Logger;
+
   store: any;
 }
 
 export type WithOptional<T, K extends keyof T = never> = Omit<T, K> &
   Partial<Pick<T, K>>;
 
-export type InputConfiguration = WithOptional<InternalConfiguration, "store">;
+export type InputConfiguration = WithOptional<
+  InternalConfiguration,
+  "store" | "debug" | "logger"
+>;
 
 export type ArgSchema = Record<
   string,
