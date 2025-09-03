@@ -8,7 +8,7 @@ export default defineConfig({
     nav: [
       { text: "Home", link: "/" },
       { text: "Guides", link: "/guides" },
-      { text: "Demo", link: "/demo/" },
+      { text: "Demo", link: "https://convex-billing-demo.vercel.app/" },
     ],
 
     sidebar: [

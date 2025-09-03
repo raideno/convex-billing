@@ -3,6 +3,8 @@
 > [!WARNING]
 > This library is still under development. Since it handles payments, please use it with caution.
 
+A demo project is available at [https://convex-billing-demo.vercel.app/](https://convex-billing-demo.vercel.app/).
+
 Stripe subscriptions, limits and features for Convex apps.
 Implemented according to the best practices listed in [Stripe Recommendations](https://github.com/t3dotgg/stripe-recommendations).
 
@@ -22,7 +24,6 @@ First setup the environment variables in your convex backend:
 ```bash
 npx convex env set STRIPE_SECRET_KEY "<secret>"
 npx convex env set STRIPE_WEBHOOK_SECRET "<secret>"
-npx convex env set STRIPE_PUBLISHABLE_KEY "<secret>"
 ```
 
 Add the required tables into your `convex/schema.ts` file.
@@ -60,9 +61,6 @@ export const {
     secret_key: process.env.STRIPE_SECRET_KEY!,
     webhook_secret: process.env.STRIPE_WEBHOOK_SECRET!,
   },
-  // https://<convex-project-id>.convex.site
-  // https://<convex-project-id>.convex.cloud
-  convex: { projectId: "chimpunk-6289" },
 });
 ```
 
@@ -106,6 +104,9 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
         internal.billing.setup,
         {
           entityId: userId,
+          // NOTE: optional
+          // email: args.user.email,
+          // metadata: { foo: "bar" }
         }
       );
     },
@@ -140,6 +141,9 @@ export const createOrganization = query({
       internal.billing.setup,
       {
         entityId: orgId,
+        // NOTE: optional
+        // email: args.user.email,
+        // metadata: { foo: "bar" }
       }
     );
 
