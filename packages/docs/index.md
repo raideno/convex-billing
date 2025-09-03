@@ -52,6 +52,7 @@ import { internalConvexBilling } from "@raideno/convex-billing/server";
 export const {
   billing,
   store,
+  sync,
   // --- stripe
   portal,
   checkout,
@@ -64,7 +65,7 @@ export const {
 });
 ```
 
-**NOTE:** All the exposed actions are internal. You can create wrappers to expose them as public actions if needed.
+**NOTE:** All the exposed actions are internal. You can create wrappers to expose them as public actions if needed. `billing`, `store` and `sync`are mandatory to be exported even if you don't use them directly, as they are used internally by the other actions.
 
 Register the HTTP routes (webhooks and callback url).
 
