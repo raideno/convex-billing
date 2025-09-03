@@ -3,6 +3,8 @@
 > [!WARNING]
 > This library is still under development. Since it handles payments, please use it with caution.
 
+A demo project is available at [packages/demo](./packages/demo/README.md).
+
 Stripe subscriptions, limits and features for Convex apps.
 Implemented according to the best practices listed in [Stripe Recommendations](https://github.com/t3dotgg/stripe-recommendations).
 
@@ -139,6 +141,9 @@ export const createOrganization = query({
       internal.billing.setup,
       {
         entityId: orgId,
+        // NOTE: optional
+        // email: args.user.email,
+        // metadata: { foo: "bar" }
       }
     );
 

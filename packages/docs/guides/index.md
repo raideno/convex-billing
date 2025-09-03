@@ -139,6 +139,9 @@ export const createOrganization = query({
       internal.billing.setup,
       {
         entityId: orgId,
+        // NOTE: optional
+        // email: args.user.email,
+        // metadata: { foo: "bar" }
       }
     );
 

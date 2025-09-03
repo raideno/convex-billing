@@ -75,8 +75,6 @@ export const SubscriptionForm = () => {
     }
   };
 
-  console.log("[subscription]:", subscription);
-
   if (products === undefined || subscription === undefined)
     return (
       <>
