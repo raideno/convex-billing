@@ -8,9 +8,11 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   callbacks: {
     afterUserCreatedOrUpdated: async (context, args) => {
       const userId = args.userId;
+      const email = args.profile.email;
 
       await context.scheduler.runAfter(0, internal.billing.setup, {
         entityId: userId,
+        email: email,
       });
     },
   },

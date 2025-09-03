@@ -11,7 +11,10 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "@/*": ["./src/server/*"]
+    }
   },
   "include": ["**/*.ts", "**/*.tsx", "*.mjs", "../../operations.local.ts"],
   "exclude": [

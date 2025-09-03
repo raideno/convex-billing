@@ -1,9 +1,9 @@
 import { GenericActionCtx } from "convex/server";
 import Stripe from "stripe";
 
-import { BillingDataModel } from "../../schema";
-import { billingDispatchTyped } from "../../operations/helpers";
-import { InternalConfiguration } from "../../types";
+import { billingDispatchTyped } from "@/operations/helpers";
+import { BillingDataModel } from "@/schema";
+import { InternalConfiguration } from "@/types";
 import { WebhookHandler } from "./types";
 
 export const ProductsWebhooksHandler: WebhookHandler = {

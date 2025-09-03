@@ -19,8 +19,8 @@ import {
   buildRedirectImplementation,
   buildWebhookImplementation,
   checkoutImplementation,
-  setupImplementation,
   portalImplementation,
+  setupImplementation,
 } from "./stripe";
 import { InputConfiguration } from "./types";
 
@@ -173,7 +173,7 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
         setupImplementation.handler(
           context,
           {
-            email: args.entityId,
+            email: args.email,
             entityId: args.entityId,
             metadata: args.metadata,
           },

@@ -22,7 +22,6 @@ First setup the environment variables in your convex backend:
 ```bash
 npx convex env set STRIPE_SECRET_KEY "<secret>"
 npx convex env set STRIPE_WEBHOOK_SECRET "<secret>"
-npx convex env set STRIPE_PUBLISHABLE_KEY "<secret>"
 ```
 
 Add the required tables into your `convex/schema.ts` file.

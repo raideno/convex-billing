@@ -24,7 +24,6 @@ export const syncSubscriptionImplementation = defineActionImplementation({
     });
 
     if (subscriptions.data.length === 0) {
-      const subscription = subscriptions.data[0];
       await billingDispatchTyped(
         {
           op: "upsert",
@@ -39,17 +38,7 @@ export const syncSubscriptionImplementation = defineActionImplementation({
         context,
         configuration
       );
-      // await context.runMutation(configuration.store as StoreImplementation, {
-      //   args: {
-      //     name: "persistSubscriptionData",
-      //     stripeCustomerId,
-      //     data: {
-      //       stripeCustomerId: stripeCustomerId,
-      //       data: null,
-      //       last_synced_at: Date.now(),
-      //     },
-      //   },
-      // });
+
       return null;
     }
 
@@ -69,17 +58,6 @@ export const syncSubscriptionImplementation = defineActionImplementation({
       context,
       configuration
     );
-    // await context.runMutation(configuration.store as StoreImplementation, {
-    //   args: {
-    //     name: "persistSubscriptionData",
-    //     stripeCustomerId,
-    //     data: {
-    //       stripeCustomerId: stripeCustomerId,
-    //       data: subscription,
-    //       last_synced_at: Date.now(),
-    //     },
-    //   },
-    // });
 
     return subscription;
   },

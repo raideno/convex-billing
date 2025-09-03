@@ -4,11 +4,10 @@ export default {
   stripe: {
     secret_key: process.env.STRIPE_SECRET_KEY!,
     webhook_secret: process.env.STRIPE_WEBHOOK_SECRET!,
-    publishable_key: process.env.STRIPE_PUBLISHABLE_KEY!,
   },
 
-  convex: { projectId: process.env.CONVEX_PROJECT_ID! },
+  convex: { projectId: "amicable-marmot-910" },
 
-  store: "billing/private:store",
+  store: "billing:store",
   debug: true,
 } as InputConfiguration;

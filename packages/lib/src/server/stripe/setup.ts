@@ -35,7 +35,7 @@ export const setupImplementation = defineActionImplementation({
 
     if (!stripeCustomerId) {
       const stripeCustomer = await stripe.customers.create({
-        email: args.email,
+        email: args.email ? args.email : undefined,
         metadata: {
           entityId: args.entityId,
           ...(args.metadata || {}),

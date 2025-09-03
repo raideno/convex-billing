@@ -13,9 +13,10 @@
         "@convex-dev/auth": "^0.0.88",
         "@radix-ui/themes": "^3.2.1",
         "convex": "^1.26.2",
-        "react": "^17.0.2",
-        "react-dom": "^17.0.2",
-        "stripe": "^18.5.0"
+        "react": "^19.1.1",
+        "react-dom": "^19.1.1",
+        "stripe": "^18.5.0",
+        "sonner": "^2.0.7"
     },
     "devDependencies": {
         "@types/react": "^18.2.14",
