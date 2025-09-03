@@ -1,7 +1,7 @@
 import { GenericActionCtx, httpActionGeneric } from "convex/server";
 
-import { BillingDataModel } from "../schema";
 import { billingDispatchTyped } from "../operations/helpers";
+import { BillingDataModel } from "../schema";
 import { InternalConfiguration } from "../types";
 import { syncSubscriptionImplementation } from "./sync";
 
@@ -14,7 +14,7 @@ export const RETURN_ORIGINS = {
 export type ReturnOrigin = (typeof RETURN_ORIGINS)[keyof typeof RETURN_ORIGINS];
 
 export function backendBaseUrl(configuration: InternalConfiguration): string {
-  return `https://${configuration.convex.projectId}.convex.site`;
+  return process.env.CONVEX_SITE_URL!;
 }
 
 export function toBase64Url(input: ArrayBuffer | string): string {

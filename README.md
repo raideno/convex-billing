@@ -59,9 +59,6 @@ export const {
     secret_key: process.env.STRIPE_SECRET_KEY!,
     webhook_secret: process.env.STRIPE_WEBHOOK_SECRET!,
   },
-  // https://<convex-project-id>.convex.site
-  // https://<convex-project-id>.convex.cloud
-  convex: { projectId: "chimpunk-6289" },
 });
 ```
 
@@ -105,6 +102,9 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
         internal.billing.setup,
         {
           entityId: userId,
+          // NOTE: optional
+          // email: args.user.email,
+          // metadata: { foo: "bar" }
         }
       );
     },

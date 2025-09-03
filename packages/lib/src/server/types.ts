@@ -12,8 +12,6 @@ export interface InternalConfiguration {
     webhook_secret: string;
   };
 
-  convex: { projectId: string };
-
   debug: boolean;
 
   logger: Logger;
