@@ -1,8 +1,5 @@
 # Convex Stripe Billing
 
-> [!WARNING]
-> This library is still under development. Since it handles payments, please use it with caution.
-
 A demo project is available at [https://convex-billing-demo.vercel.app/](https://convex-billing-demo.vercel.app/).
 
 Stripe subscriptions, limits and features for Convex apps.
@@ -20,8 +17,6 @@ You can find the detailed documentation @ [https://raideno.github.io/convex-bill
 
 ## TODOs
 
-- [ ] A function that takes a stripe subscription object and returns a simpler representation just like theo's one.
-- [ ] Implement default plan.
 - [ ] Implement one time payment endpoint.
 - [ ] Show an example app for subscription and one time payments with credits usage.
 
