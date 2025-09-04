@@ -178,10 +178,11 @@ export const createOrganization = query({
 
 The library automatically syncs:
 
-- `convex_billing_products`
-- `convex_billing_prices`
-- `convex_billing_customers`
-- `convex_billing_subscriptions`
+<!-- no toc -->
+- [`convex_billing_products`](#convex-billing-products)
+- [`convex_billing_prices`](#convex-billing-prices)
+- [`convex_billing_customers`](#convex-billing-customers)
+- [`convex_billing_subscriptions`](#convex-billing-subscriptions)
 
 You can query these tables at any time to:
 
