@@ -33,5 +33,11 @@
     "tsc": "^2.0.4",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.41.0"
+  },
+  "dependencies": {
+    "@radix-ui/react-icons": "^1.3.2",
+    "docs": "^0.0.0",
+    "vitepress-plugin-group-icons": "^1.6.3",
+    "vitepress-plugin-llms": "^1.7.4"
   }
 }

@@ -27,6 +27,14 @@ export default function App() {
         <Card>
           <Flex direction={"column"} gap={"2"}>
             <Link
+              href="https://github.com/raideno/convex-billing/tree/main/packages/demo"
+              target="_blank"
+            >
+              <Button variant="classic" className="w-full">
+                Code
+              </Button>
+            </Link>
+            <Link
               href="https://raideno.github.io/convex-billing/"
               target="_blank"
             >

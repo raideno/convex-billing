@@ -6,6 +6,8 @@ node_modules
 dist
 .env.local
 
+cache
+cache/
 # .vitepress
 .vitepress/cache
 .vitepress/dist

@@ -1,10 +1,12 @@
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 import {
   Box,
   Button,
+  Callout,
   Card,
+  Code,
   Flex,
   Heading,
-  RadioCards,
   Skeleton,
   Text,
 } from "@radix-ui/themes";
@@ -12,7 +14,8 @@ import { useAction, useQuery } from "convex/react";
 import React from "react";
 import { toast } from "sonner";
 
-import { api } from "../../../convex/_generated/api";
+import { api } from "@/convex/api";
+import Stripe from "stripe";
 
 const currencyToSymbol: Record<string, string> = {
   usd: "$",
@@ -29,12 +32,11 @@ export const SubscriptionForm = () => {
   const portal = useAction(api.billing.portal);
   const checkout = useAction(api.billing.checkout);
 
-  const [loading, setLoading] = React.useState(false);
-  const [priceId, setPriceId] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState<string | null>(null);
 
-  const handleCheckout = async () => {
+  const handleCheckout = async (priceId: string) => {
     try {
-      setLoading(true);
+      setLoading(priceId);
       if (!priceId) {
         toast.error("Please select a plan.");
         return;
@@ -51,13 +53,13 @@ export const SubscriptionForm = () => {
       console.error(error);
       toast.error("Failed to create checkout session.");
     } finally {
-      setLoading(false);
+      setLoading(null);
     }
   };
 
   const handlePortal = async () => {
     try {
-      setLoading(true);
+      setLoading("portal");
 
       toast.info("Redirecting to portal...");
 
@@ -71,7 +73,7 @@ export const SubscriptionForm = () => {
     } catch (error) {
       toast.error("Failed to redirect to portal.");
     } finally {
-      setLoading(false);
+      setLoading(null);
     }
   };
 
@@ -82,30 +84,68 @@ export const SubscriptionForm = () => {
       </>
     );
 
-  if (subscription)
+  if (subscription && subscription.data) {
+    const sub = subscription.data as Stripe.Subscription;
+
+    const product = products.find(
+      (p) => p.productId === sub.items.data[0].price.product
+    );
+
+    const start = new Date(sub.items.data[0].current_period_end * 1000);
+    const end = new Date(sub.items.data[0].current_period_start * 1000);
+
     return (
       <Card>
-        <Flex direction="column" gap="4">
+        <Box>
           <Heading size={"6"}>You are already subscribed</Heading>
-          <Text>
-            You are currently subscribed to the plan with price ID:{" "}
-            {subscription._id}
-          </Text>
-          <Button variant="classic" onClick={handlePortal} loading={loading}>
+          <Box mt={"4"} mb={"5"}>
+            <Text as="div">
+              You are currently subscribed to the{" "}
+              <Text weight={"bold"}>
+                {product ? product.name : "Unknown Plan"}
+              </Text>{" "}
+              Plan.
+            </Text>
+            <Text as="div">
+              Period: <Text weight={"bold"}>{start.toLocaleDateString()}</Text>{" "}
+              - <Text weight={"bold"}>{end.toLocaleDateString()}</Text>
+            </Text>
+            <Text as="div">
+              Status: <Text weight={"bold"}>{sub.status}</Text>
+            </Text>
+            <Text as="div">
+              Will be canceled at period end:{" "}
+              <Text weight={"bold"}>{String(sub.cancel_at_period_end)}</Text>
+            </Text>
+          </Box>
+          <Button
+            className="w-full"
+            variant="classic"
+            onClick={handlePortal}
+            loading={loading === "portal"}
+          >
             Manage Subscription
           </Button>
-        </Flex>
+        </Box>
       </Card>
     );
+  }
 
   return (
     <Box>
       <Flex direction="column" gap="4">
         <Heading size={"6"}>Select a plan</Heading>
-        <RadioCards.Root
-          value={priceId}
-          onValueChange={(value) => setPriceId(value)}
-        >
+        <Callout.Root>
+          <Callout.Icon>
+            <InfoCircledIcon />
+          </Callout.Icon>
+          <Callout.Text>
+            Stripe is in test mode. Use the card{" "}
+            <Code>5555 5555 5555 4444</Code> with any future date and any CVC
+            code.
+          </Callout.Text>
+        </Callout.Root>
+        <Flex direction={{ initial: "column", md: "row" }} gap="4">
           {products.map((product) => {
             // NOTE: products can have multiple prices, but in this demo we only use one price per product, we can have one price for monthly and one for yearly
             if (product.prices.length === 0) return null;
@@ -114,23 +154,41 @@ export const SubscriptionForm = () => {
 
             if (price.unit_amount === null) return null;
 
+            if (product.active === false) return null;
+
             return (
-              <RadioCards.Item key={price.priceId} value={price.priceId}>
-                <Flex direction={"column"} gap={"2"}>
-                  <Text size={"1"} weight={"bold"}>
+              <Card key={price.priceId}>
+                <Flex direction={"column"} gap={"6"}>
+                  <Text size={"6"} weight={"bold"}>
                     {price.unit_amount / 100}
                     {currencyToSymbol[price.currency]}
                   </Text>
-                  <Heading size={"3"}>{product.name}</Heading>
-                  <Text>{product.description}</Text>
+                  <Box>
+                    <Heading>{product.name}</Heading>
+                    <Text as="div">{product.description}</Text>
+                  </Box>
+                  <Flex direction={"column"}>
+                    {(product.marketing_features || []).map(
+                      (feature, index) =>
+                        feature.name && (
+                          <Text key={index}>- {feature.name}</Text>
+                        )
+                    )}
+                  </Flex>
+                  <Button
+                    variant="classic"
+                    disabled={loading !== null && loading !== price.priceId}
+                    loading={loading === price.priceId}
+                    className="w-full"
+                    onClick={handleCheckout.bind(null, price.priceId)}
+                  >
+                    Subscribe
+                  </Button>
                 </Flex>
-              </RadioCards.Item>
+              </Card>
             );
           })}
-        </RadioCards.Root>
-        <Button variant="classic" loading={loading} onClick={handleCheckout}>
-          Subscribe
-        </Button>
+        </Flex>
       </Flex>
     </Box>
   );

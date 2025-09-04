@@ -1,4 +1,8 @@
-import { defineConfig } from "vitepress";
+import { defineConfig, Plugin } from "vitepress";
+import {
+  groupIconMdPlugin,
+  groupIconVitePlugin,
+} from "vitepress-plugin-group-icons";
 
 export default defineConfig({
   base: "/convex-billing/",
@@ -7,30 +11,18 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: "Home", link: "/" },
-      { text: "Guides", link: "/guides" },
       { text: "Demo", link: "https://convex-billing-demo.vercel.app/" },
     ],
-
-    sidebar: [
-      {
-        text: "Installation",
-        items: [{ text: "Get Started", link: "/" }],
-      },
-      {
-        text: "Guides",
-        link: "/guides",
-        items: [
-          { text: "User Based Billing", link: "/guides/user-based-billing" },
-          {
-            text: "Organization Based Billing",
-            link: "/guides/organization-based-billing",
-          },
-        ],
-      },
-    ],
-
     socialLinks: [
       { icon: "github", link: "https://github.com/raideno/convex-billing" },
     ],
+  },
+  markdown: {
+    config(md) {
+      md.use(groupIconMdPlugin);
+    },
+  },
+  vite: {
+    plugins: [groupIconVitePlugin() as Plugin],
   },
 });
