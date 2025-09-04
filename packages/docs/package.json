@@ -27,6 +27,9 @@
   "dependencies": {},
   "peerDependencies": {},
   "devDependencies": {
-    "vitepress": "^1.6.4"
+    "vite": "^7.1.4",
+    "vitepress": "^1.6.4",
+    "vitepress-plugin-group-icons": "^1.6.3",
+    "vitepress-plugin-llms": "^1.7.4"
   }
 }

@@ -16,7 +16,7 @@ npm install @raideno/convex-billing stripe
 
 ## Documentation
 
-You can find the detailed documentation @ [https://raideno.github.io/convex-billing].
+You can find the detailed documentation @ [https://raideno.github.io/convex-billing](https://raideno.github.io/convex-billing).
 
 ## TODOs
 

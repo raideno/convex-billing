@@ -16,7 +16,7 @@
       "@/*": ["./src/server/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "*.mjs", "../../operations.local.ts"],
+  "include": ["**/*.ts", "**/*.tsx", "*.mjs"],
   "exclude": [
     "**/*.local*",
     "node_modules",

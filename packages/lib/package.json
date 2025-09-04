@@ -11,7 +11,9 @@
     "convex"
   ],
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "../../README.md"
   ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -39,9 +41,7 @@
     "dev": "tsup --watch"
   },
   "type": "module",
-  "dependencies": {
-    "@upstash/redis": "^1.35.3"
-  },
+  "dependencies": {},
   "peerDependencies": {
     "convex": "^1.26.2",
     "stripe": "^18.5.0"
