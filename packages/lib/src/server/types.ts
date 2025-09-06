@@ -3,7 +3,7 @@ import {
   GenericDataModel,
   TableNamesInDataModel,
 } from "convex/server";
-import { GenericId, Infer, v, Validator } from "convex/values";
+import { GenericId, Infer, Validator } from "convex/values";
 
 import { Logger } from "./logger";
 

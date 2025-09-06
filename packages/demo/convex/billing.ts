@@ -20,14 +20,16 @@ export const {
 export const products = query({
   args: {},
   handler: async (context) => {
-    const plans = await context.db.query("convex_billing_prices").collect();
+    const prices = await context.db.query("convex_billing_prices").collect();
     const products = await context.db
       .query("convex_billing_products")
       .collect();
 
     return products.map((product) => ({
       ...product,
-      prices: plans.filter((plan) => plan.productId === product.productId),
+      prices: prices.filter(
+        (price) => price.stripe.productId === product.productId
+      ),
     }));
   },
 });
@@ -48,9 +50,7 @@ export const subscription = query({
 
     const subscription = await context.db
       .query("convex_billing_subscriptions")
-      .withIndex("byStripeCustomerId", (q) =>
-        q.eq("stripeCustomerId", customer.stripeCustomerId)
-      )
+      .withIndex("byCustomerId", (q) => q.eq("customerId", customer.customerId))
       .unique();
 
     return subscription || null;

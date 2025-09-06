@@ -3,7 +3,7 @@ import { GenericActionCtx, httpActionGeneric } from "convex/server";
 import { billingDispatchTyped } from "../operations/helpers";
 import { BillingDataModel } from "../schema";
 import { InternalConfiguration } from "../types";
-import { syncSubscriptionImplementation } from "./sync-subscription";
+import { syncSubscriptionImplementation } from "./sync/subscription";
 
 export const RETURN_ORIGINS = {
   portal: "portal",
@@ -206,15 +206,18 @@ export const buildRedirectImplementation = (
       configuration
     );
 
-    const stripeCustomerId = stripeCustomer?.doc?.stripeCustomerId || null;
+    const customerId = stripeCustomer?.doc?.customerId || null;
 
-    // TODO: we should probably alert if there is no customerId
-    // TODO: should we create one ? it should be impossible to be here without one i guess
-    if (stripeCustomerId) {
+    if (customerId) {
       await syncSubscriptionImplementation.handler(
         context,
-        { stripeCustomerId },
+        { customerId },
         configuration
+      );
+    } else {
+      configuration.logger.warn(
+        "Potential redirect abuse detected. No customerId associated with provided entityId " +
+          decoded.entityId
       );
     }
 

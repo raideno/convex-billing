@@ -190,8 +190,43 @@ You can query these tables at any time to:
 - Retrieve customers and their `stripeCustomerId`
 - Check active subscriptions
 
+### `setup` Action
 
-### 🔑 `checkout` Action
+Creates or updates a Stripe customer for a given entity (user or organization).
+
+This should be called whenever a new entity is created in your app, or when you want to ensure the entity has a Stripe customer associated with it.
+
+```ts
+import { v } from "convex/values";
+import { action, internal } from "./_generated/api";
+
+export const setupCustomer = action({
+  args: { entityId: v.string(), email: v.optional(v.string()) },
+  handler: async (context, args) => {
+    // Add your own auth/authorization logic here
+    const response = await context.runAction(internal.billing.setup, {
+      entityId: args.entityId,
+      email: args.email, // optional, but recommended for Stripe
+      metadata: {
+        // NOTE: entityId is a reserved key and can't be used
+        foo: "bar",
+      }
+    });
+
+    return response.customerId;
+  },
+});
+```
+
+**📌 Notes:**
+
+- `entityId` is your app’s internal ID (user/org).
+- `customerId` is stripe's internal ID.
+- `email` is optional, but recommended so the Stripe customer has a contact email.
+- If the entity already has a Stripe customer, setup will return the existing one instead of creating a duplicate.
+- Typically, you’ll call this automatically in your user/org creation flow (see [⚙️ Configuration - 7](#️⚙️-configuration)).
+
+### `checkout` Action
 
 Creates a Stripe Checkout session for a given entity.
 
@@ -218,7 +253,7 @@ export const createCheckout = action({
 ```
 
 
-### 🔑 `portal` Action
+### `portal` Action
 
 Allows an entity to manage their subscription via the Stripe Portal.
 
@@ -298,18 +333,12 @@ When you spread `billingTables` into your Convex schema, the following tables ar
 ### `convex_billing_products`
 Stores Stripe products.
 
-| Field                | Type                  | Description                                |
-| -------------------- | --------------------- | ------------------------------------------ |
-| `_id`                | `string`              | Convex document ID                         |
-| `productId`          | `string`              | Stripe product ID                          |
-| `object`             | `string`              | Always `"product"`                         |
-| `active`             | `boolean`             | Whether the product is active              |
-| `description`        | `string?`             | Optional description                       |
-| `metadata`           | `Record<string, any>` | Custom metadata from Stripe                |
-| `name`               | `string`              | Product name                               |
-| `marketing_features` | `string[]`            | Product features from Stripe               |
-| `...`                | `...`                 | All other properties from `Stripe.Product` |
-| `last_synced_at`     | `number`              | Last sync timestamp (Convex)               |
+| Field            | Type             | Description                  |
+| ---------------- | ---------------- | ---------------------------- |
+| `_id`            | `string`         | Convex document ID           |
+| `productId`      | `string`         | Stripe product ID            |
+| `stripe`         | `Stripe.Product` | Synced stripe product data   |
+| `last_synced_at` | `number`         | Last sync timestamp (Convex) |
 
 Indexes:
 - `byActive`
@@ -318,50 +347,49 @@ Indexes:
 ### `convex_billing_prices`
 Stores Stripe prices.
 
-| Field            | Type                        | Description                                |
-| ---------------- | --------------------------- | ------------------------------------------ |
-| `_id`            | `string`                    | Convex document ID                         |
-| `priceId`        | `string`                    | Stripe price ID                            |
-| `currency`       | `string`                    | Currency code (e.g. `usd`, `eur`)          |
-| `unit_amount`    | `number?`                   | Price in smallest currency unit (cents)    |
-| `recurring`      | `object?`                   | Recurring billing details (interval, etc.) |
-| `productId`      | `string`                    | Reference to `convex_billing_products`     |
-| `type`           | `"one_time" \| "recurring"` | Price type                                 |
-| `...`            | `...`                       | All other properties from `Stripe.Price`   |
-| `last_synced_at` | `number`                    | Last sync timestamp                        |
+| Field            | Type           | Description              |
+| ---------------- | -------------- | ------------------------ |
+| `_id`            | `string`       | Convex document ID       |
+| `priceId`        | `string`       | Stripe price ID          |
+| `stripe`         | `Stripe.Price` | Synced stripe price data |
+| `last_synced_at` | `number`       | Last sync timestamp      |
 
 Indexes:
 - `byProductId`
 - `byActive`
+- `byRecurringInterval`
 - `byCurrency`
 
 ### `convex_billing_customers`
 Stores mapping between your app’s entities (users/orgs) and Stripe customers.
 
-| Field              | Type     | Description                     |
-| ------------------ | -------- | ------------------------------- |
-| `_id`              | `string` | Convex document ID              |
-| `entityId`         | `string` | Your app’s entity ID (user/org) |
-| `stripeCustomerId` | `string` | Stripe customer ID              |
-| `last_synced_at`   | `number` | Last sync timestamp             |
+| Field            | Type              | Description                     |
+| ---------------- | ----------------- | ------------------------------- |
+| `_id`            | `string`          | Convex document ID              |
+| `entityId`       | `string`          | Your app’s entity ID (user/org) |
+| `customerId`     | `string`          | Stripe customer ID              |
+| `stripe`         | `Stripe.Customer` | Synced stripe data              |
+| `last_synced_at` | `number`          | Last sync timestamp             |
 
 Indexes:
 - `byEntityId`
-- `byStripeCustomerId`
+- `byCustomerId`
 
 
 ### `convex_billing_subscriptions`
 Stores Stripe subscriptions.
 
-| Field              | Type     | Description                                                      |
-| ------------------ | -------- | ---------------------------------------------------------------- |
-| `_id`              | `string` | Convex document ID                                               |
-| `stripeCustomerId` | `string` | Stripe customer ID                                               |
-| `data`             | `any`    | Full Stripe subscription object `Stripe.Subscription`(or `null`) |
-| `last_synced_at`   | `number` | Last sync timestamp                                              |
+| Field            | Type                          | Description                                                      |
+| ---------------- | ----------------------------- | ---------------------------------------------------------------- |
+| `_id`            | `string`                      | Convex document ID                                               |
+| `customerId`     | `string`                      | Stripe customer ID                                               |
+| `subscriptionId` | `string \| null`              | Subscription Id or null if none exist.                           | Œ |
+| `stripe`         | `Stripe.Subscription \| null` | Full Stripe subscription object `Stripe.Subscription`(or `null`) |
+| `last_synced_at` | `number`                      | Last sync timestamp                                              |
 
 Index:
-- `byStripeCustomerId`
+- `bySubscriptionId`
+- `byCustomerId`
 
 > ⚡ These tables are **synced automatically** via webhooks and cron jobs.  
 > You can query them directly in your Convex functions to check products, prices, and subscription status.

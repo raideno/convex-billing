@@ -4,7 +4,7 @@ import { currencies } from "./currencies";
 import { metadata, nullablenumber, nullablestring } from "../helpers";
 
 export const PriceSchema = {
-  priceId: v.string(),
+  id: v.string(),
   object: v.string(),
   active: v.boolean(),
   currency: currencies,
@@ -42,7 +42,6 @@ export const PriceSchema = {
     v.null()
   ),
   unit_amount_decimal: nullablestring(),
-  last_synced_at: v.number(),
 };
 
 export const PriceObject = v.object(PriceSchema);

@@ -1,4 +1,4 @@
-import { anyApi, GenericActionCtx } from "convex/server";
+import { GenericActionCtx } from "convex/server";
 
 import type { BillingDataModel } from "../schema";
 import { InternalConfiguration } from "../types";

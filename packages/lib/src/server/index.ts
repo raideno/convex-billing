@@ -23,7 +23,7 @@ import {
   portalImplementation,
   setupImplementation,
 } from "./stripe";
-import { sync } from "./stripe/sync";
+import { sync } from "./stripe/sync/all";
 import { InputConfiguration } from "./types";
 
 export * from "./schema";

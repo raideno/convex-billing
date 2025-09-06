@@ -1,12 +1,12 @@
 import { v } from "convex/values";
 import Stripe from "stripe";
 
-import { defineActionImplementation } from "../helpers";
-import { billingDispatchTyped } from "../operations/helpers";
+import { defineActionImplementation } from "@/helpers";
+import { billingDispatchTyped } from "@/operations/helpers";
 
 export const syncSubscriptionImplementation = defineActionImplementation({
   args: {
-    stripeCustomerId: v.string(),
+    customerId: v.string(),
   },
   name: "syncSubscription",
   handler: async (context, args, configuration) => {
@@ -14,10 +14,10 @@ export const syncSubscriptionImplementation = defineActionImplementation({
       apiVersion: "2025-08-27.basil",
     });
 
-    const stripeCustomerId = args.stripeCustomerId;
+    const customerId = args.customerId;
 
     const subscriptions = await stripe.subscriptions.list({
-      customer: stripeCustomerId,
+      customer: customerId,
       limit: 1,
       status: "all",
       expand: ["data.default_payment_method"],
@@ -28,10 +28,11 @@ export const syncSubscriptionImplementation = defineActionImplementation({
         {
           op: "upsert",
           table: "convex_billing_subscriptions",
-          idField: "stripeCustomerId",
+          idField: "customerId",
           data: {
-            stripeCustomerId: stripeCustomerId,
-            data: null,
+            subscriptionId: null,
+            customerId: customerId,
+            stripe: null,
             last_synced_at: Date.now(),
           },
         },
@@ -48,10 +49,11 @@ export const syncSubscriptionImplementation = defineActionImplementation({
       {
         op: "upsert",
         table: "convex_billing_subscriptions",
-        idField: "stripeCustomerId",
+        idField: "customerId",
         data: {
-          stripeCustomerId: stripeCustomerId,
-          data: subscription,
+          subscriptionId: subscription.id,
+          customerId: customerId,
+          stripe: subscription,
           last_synced_at: Date.now(),
         },
       },

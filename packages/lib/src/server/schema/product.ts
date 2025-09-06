@@ -3,7 +3,7 @@ import { v } from "convex/values";
 import { metadata, nullableboolean, nullablestring } from "../helpers";
 
 export const ProductSchema = {
-  productId: v.string(),
+  id: v.string(),
   object: v.string(),
   active: v.boolean(),
   description: nullablestring(),
@@ -32,7 +32,6 @@ export const ProductSchema = {
     })
   ),
   default_price: nullablestring(),
-  last_synced_at: v.number(),
 };
 
 export const ProductObject = v.object(ProductSchema);

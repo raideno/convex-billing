@@ -7,28 +7,47 @@ import {
   GenericQueryCtx,
   TableNamesInDataModel,
 } from "convex/server";
+import { v } from "convex/values";
 
 import { GenericDoc } from "../types";
 import { CustomerSchema } from "./customer";
 import { PriceSchema } from "./price";
 import { ProductSchema } from "./product";
-import { SubscriptionSchema } from "./subscription";
+import { SubscriptionObject } from "./subscription";
 
 export const billingTables = {
-  convex_billing_products: defineTable(ProductSchema)
-    .index("byActive", ["active"])
-    .index("byName", ["name"]),
-  convex_billing_prices: defineTable(PriceSchema)
-    .index("byProductId", ["productId"])
-    .index("byActive", ["active"])
-    .index("byCurrency", ["currency"]),
-  convex_billing_customers: defineTable(CustomerSchema)
-    .index("byEntityId", ["entityId"])
-    .index("byStripeCustomerId", ["stripeCustomerId"]),
-  convex_billing_subscriptions: defineTable(SubscriptionSchema).index(
-    "byStripeCustomerId",
-    ["stripeCustomerId"]
-  ),
+  convex_billing_products: defineTable({
+    productId: v.string(),
+    stripe: v.object(ProductSchema),
+    last_synced_at: v.number(),
+  })
+    .index("byActive", ["stripe.active"])
+    .index("byName", ["stripe.name"]),
+  convex_billing_prices: defineTable({
+    priceId: v.string(),
+    stripe: v.object(PriceSchema),
+    last_synced_at: v.number(),
+  })
+    .index("byPriceId", ["priceId"])
+    .index("byActive", ["stripe.active"])
+    .index("byRecurringInterval", ["stripe.recurring.interval"])
+    .index("byCurrency", ["stripe.currency"]),
+  convex_billing_customers: defineTable({
+    customerId: v.string(),
+    entityId: v.string(),
+    stripe: v.object(CustomerSchema),
+    last_synced_at: v.number(),
+  })
+    .index("byCustomerId", ["customerId"])
+    .index("byEntityId", ["entityId"]),
+  convex_billing_subscriptions: defineTable({
+    subscriptionId: v.union(v.string(), v.null()),
+    customerId: v.string(),
+    stripe: SubscriptionObject,
+    last_synced_at: v.number(),
+  })
+    .index("bySubscriptionId", ["subscriptionId"])
+    .index("byCustomerId", ["customerId"]),
 };
 
 const defaultSchema = defineSchema(billingTables);

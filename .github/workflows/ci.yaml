@@ -17,4 +17,5 @@ jobs:
       - run: npm ci --force
       - run: npm run build --workspace @raideno/convex-billing
       - run: npm run build --workspace docs
+      - run: npm run build --workspace demo
       - run: npm test --if-present

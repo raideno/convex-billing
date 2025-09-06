@@ -1,9 +1,10 @@
 import { GenericActionCtx } from "convex/server";
 import Stripe from "stripe";
 
-import { BillingDataModel } from "../../schema";
-import { InternalConfiguration } from "../../types";
-import { syncSubscriptionImplementation } from "../sync-subscription";
+import { BillingDataModel } from "@/schema";
+import { InternalConfiguration } from "@/types";
+
+import { syncSubscriptionImplementation } from "../sync/subscription";
 import { WebhookHandler } from "./types";
 
 export const SubscriptionsWebhooksHandler: WebhookHandler = {
@@ -41,7 +42,7 @@ export const SubscriptionsWebhooksHandler: WebhookHandler = {
 
     await syncSubscriptionImplementation.handler(
       context,
-      { stripeCustomerId: customerId },
+      { customerId },
       configuration
     );
   },

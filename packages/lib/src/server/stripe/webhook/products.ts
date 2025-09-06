@@ -4,6 +4,7 @@ import Stripe from "stripe";
 import { billingDispatchTyped } from "@/operations/helpers";
 import { BillingDataModel } from "@/schema";
 import { InternalConfiguration } from "@/types";
+
 import { WebhookHandler } from "./types";
 
 export const ProductsWebhooksHandler: WebhookHandler = {
@@ -30,25 +31,28 @@ export const ProductsWebhooksHandler: WebhookHandler = {
             idField: "productId",
             data: {
               productId: product.id,
-              object: product.object,
-              active: product.active,
-              description: product.description,
-              metadata: product.metadata || {},
-              name: product.name,
-              created: product.created,
-              images: product.images,
-              livemode: product.livemode,
-              package_dimensions: product.package_dimensions,
-              shippable: product.shippable,
-              statement_descriptor: product.statement_descriptor || null,
-              unit_label: product.unit_label || null,
-              updated: product.updated,
-              url: product.url,
-              marketing_features: product.marketing_features,
-              default_price:
-                typeof product.default_price === "string"
-                  ? product.default_price
-                  : product.default_price?.id || null,
+              stripe: {
+                id: product.id,
+                object: product.object,
+                active: product.active,
+                description: product.description,
+                metadata: product.metadata || {},
+                name: product.name,
+                created: product.created,
+                images: product.images,
+                livemode: product.livemode,
+                package_dimensions: product.package_dimensions,
+                shippable: product.shippable,
+                statement_descriptor: product.statement_descriptor || null,
+                unit_label: product.unit_label || null,
+                updated: product.updated,
+                url: product.url,
+                marketing_features: product.marketing_features,
+                default_price:
+                  typeof product.default_price === "string"
+                    ? product.default_price
+                    : product.default_price?.id || null,
+              },
               last_synced_at: Date.now(),
             },
           },

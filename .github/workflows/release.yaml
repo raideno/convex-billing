@@ -3,35 +3,14 @@ name: Release
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "v*"
 
 permissions:
   contents: write
   id-token: write
 
 jobs:
-  # release:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-
-  #     - name: ensure tag matches package.json version
-  #       run: |
-  #         PKG_VERSION=$(node -p "require('./packages/lib/package.json').version")
-  #         TAG=${GITHUB_REF_NAME}
-  #         if [ "v$PKG_VERSION" != "$TAG" ]; then
-  #           echo "Tag $TAG does not match package.json version v$PKG_VERSION"
-  #           exit 1
-  #         fi
-
-  #     - name: create github release
-  #       uses: softprops/action-gh-release@v2
-  #       with:
-  #         tag_name: ${{ github.ref_name }}
-  #         generate_release_notes: true
-
   publish:
-    # needs: release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -41,7 +20,7 @@ jobs:
           PKG_VERSION=$(node -p "require('./packages/lib/package.json').version")
           TAG=${GITHUB_REF_NAME}
           if [ "v$PKG_VERSION" != "$TAG" ]; then
-            echo "Tag $TAG does not match package.json version v$PKG_VERSION"
+            echo "[publisher]: tag $TAG does not match package.json version v$PKG_VERSION"
             exit 1
           fi
 
@@ -50,8 +29,20 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org
           cache: npm
+
       - run: npm ci --force
       - run: npm run build --workspace @raideno/convex-billing
-      - run: npm publish --workspace @raideno/convex-billing --provenance --access public
+
+      - name: publish to npm
+        run: |
+          PKG_VERSION=$(node -p "require('./packages/lib/package.json').version")
+          if [[ "$PKG_VERSION" == *"-"* ]]; then
+            TAG=$(echo $PKG_VERSION | sed 's/^[0-9.]*-\([a-zA-Z0-9]*\).*/\1/')
+            echo "[publisher]: publishing prerelease with tag $TAG"
+            npm publish --workspace @raideno/convex-billing --provenance --access public --tag $TAG
+          else
+            echo "[publisher]: publishing stable release as latest"
+            npm publish --workspace @raideno/convex-billing --provenance --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

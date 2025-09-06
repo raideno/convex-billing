@@ -41,15 +41,15 @@ export const checkoutImplementation = defineActionImplementation({
       configuration
     );
 
-    let stripeCustomerId = stripeCustomer?.doc?.stripeCustomerId || null;
+    let customerId = stripeCustomer?.doc?.customerId || null;
 
-    if (!stripeCustomerId) {
+    if (!customerId) {
       if (!createStripeCustomerIfMissing) {
         throw new Error(
           `No Stripe customer ID found for this entityId: ${args.entityId}`
         );
       } else {
-        stripeCustomerId = (
+        customerId = (
           await setupImplementation.handler(
             context,
             {
@@ -59,7 +59,7 @@ export const checkoutImplementation = defineActionImplementation({
             },
             configuration
           )
-        ).stripeCustomerId;
+        ).customerId;
       }
     }
 
@@ -77,7 +77,7 @@ export const checkoutImplementation = defineActionImplementation({
     );
 
     const checkout = await stripe.checkout.sessions.create({
-      customer: stripeCustomerId,
+      customer: customerId,
       ui_mode: "hosted",
       mode: "subscription",
       line_items: [

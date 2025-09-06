@@ -18,7 +18,6 @@ You can find the detailed documentation @ [https://raideno.github.io/convex-bill
 ## TODOs
 
 - [ ] Implement one time payment endpoint.
-- [ ] Show an example app for subscription and one time payments with credits usage.
 
 ## Development
 

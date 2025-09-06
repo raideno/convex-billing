@@ -84,8 +84,8 @@ export const SubscriptionForm = () => {
       </>
     );
 
-  if (subscription && subscription.data) {
-    const sub = subscription.data as Stripe.Subscription;
+  if (subscription && subscription.stripe) {
+    const sub = subscription.stripe as Stripe.Subscription;
 
     const product = products.find(
       (p) => p.productId === sub.items.data[0].price.product
@@ -102,7 +102,7 @@ export const SubscriptionForm = () => {
             <Text as="div">
               You are currently subscribed to the{" "}
               <Text weight={"bold"}>
-                {product ? product.name : "Unknown Plan"}
+                {product ? product.stripe.name : "Unknown Plan"}
               </Text>{" "}
               Plan.
             </Text>
@@ -152,23 +152,23 @@ export const SubscriptionForm = () => {
 
             const price = product.prices[0];
 
-            if (price.unit_amount === null) return null;
+            if (price.stripe.unit_amount === null) return null;
 
-            if (product.active === false) return null;
+            if (product.stripe.active === false) return null;
 
             return (
               <Card key={price.priceId}>
                 <Flex direction={"column"} gap={"6"}>
                   <Text size={"6"} weight={"bold"}>
-                    {price.unit_amount / 100}
-                    {currencyToSymbol[price.currency]}
+                    {price.stripe.unit_amount / 100}
+                    {currencyToSymbol[price.stripe.currency]}
                   </Text>
                   <Box>
-                    <Heading>{product.name}</Heading>
-                    <Text as="div">{product.description}</Text>
+                    <Heading>{product.stripe.name}</Heading>
+                    <Text as="div">{product.stripe.description}</Text>
                   </Box>
                   <Flex direction={"column"}>
-                    {(product.marketing_features || []).map(
+                    {(product.stripe.marketing_features || []).map(
                       (feature, index) =>
                         feature.name && (
                           <Text key={index}>- {feature.name}</Text>

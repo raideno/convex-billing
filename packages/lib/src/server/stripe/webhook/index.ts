@@ -1,8 +1,9 @@
 import { GenericActionCtx, httpActionGeneric } from "convex/server";
 import Stripe from "stripe";
 
-import { BillingDataModel } from "../../schema";
-import { InternalConfiguration } from "../../types";
+import { BillingDataModel } from "@/schema";
+import { InternalConfiguration } from "@/types";
+
 import { PricesWebhooksHandler } from "./prices";
 import { ProductsWebhooksHandler } from "./products";
 import { SubscriptionsWebhooksHandler } from "./subscription";
@@ -41,7 +42,6 @@ export const buildWebhookImplementation = (
 
     for (const handler of HANDLERS) {
       if (handler.events.includes(event.type)) {
-        // TODO: maybe it should be parallelized ?
         try {
           await handler.handle(event, context, configuration);
           configuration.logger.debug(`[STRIPE HOOK](HANDLED): ${event.type}`);

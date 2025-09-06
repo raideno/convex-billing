@@ -1,9 +1,6 @@
 import { v } from "convex/values";
 
-export const SubscriptionSchema = {
-  stripeCustomerId: v.string(),
-  data: v.any(),
-  last_synced_at: v.number(),
-};
+export const SubscriptionSchema = v.any();
 
-export const SubscriptionObject = v.object(SubscriptionSchema);
+// export const SubscriptionObject = v.object(SubscriptionSchema);
+export const SubscriptionObject = v.any();

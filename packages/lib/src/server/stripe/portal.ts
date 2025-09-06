@@ -35,15 +35,15 @@ export const portalImplementation = defineActionImplementation({
       configuration
     );
 
-    let stripeCustomerId = stripeCustomer?.doc?.stripeCustomerId || null;
+    let customerId = stripeCustomer?.doc?.customerId || null;
 
-    if (!stripeCustomerId) {
+    if (!customerId) {
       if (!createStripeCustomerIfMissing) {
         throw new Error(
           `No Stripe customer ID found for this entityId: ${args.entityId}`
         );
       } else {
-        stripeCustomerId = (
+        customerId = (
           await setupImplementation.handler(
             context,
             {
@@ -53,7 +53,7 @@ export const portalImplementation = defineActionImplementation({
             },
             configuration
           )
-        ).stripeCustomerId;
+        ).customerId;
       }
     }
 
@@ -65,7 +65,7 @@ export const portalImplementation = defineActionImplementation({
     );
 
     const portal = await stripe.billingPortal.sessions.create({
-      customer: stripeCustomerId,
+      customer: customerId,
       return_url: returnUrl,
     });
 
