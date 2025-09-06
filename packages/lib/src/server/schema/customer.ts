@@ -54,12 +54,14 @@ export const CustomerSchema = {
 
   object: v.string(),
   balance: v.number(),
-  cash_balance: v.union(
-    // v.object({
-    //   // TODO: complete
-    // }),
-    v.any(),
-    v.null()
+  cash_balance: v.optional(
+    v.union(
+      // v.object({
+      //   // TODO: complete
+      // }),
+      v.any(),
+      v.null()
+    )
   ),
   created: v.number(),
   currency: v.optional(v.union(currencies, v.string(), v.null())),
@@ -88,19 +90,23 @@ export const CustomerSchema = {
   livemode: v.boolean(),
   next_invoice_sequence: v.optional(nullablenumber()),
   preferred_locales: v.optional(v.union(v.array(v.string()), v.null())),
-  sources: v.union(
-    // v.object({
-    //   // TODO: complete
-    // }),
-    v.any(),
-    v.null()
+  sources: v.optional(
+    v.union(
+      // v.object({
+      //   // TODO: complete
+      // }),
+      v.any(),
+      v.null()
+    )
   ),
-  subscriptions: v.union(
-    // v.object({
-    //   // TODO: complete
-    // }),
-    v.any(),
-    v.null()
+  subscriptions: v.optional(
+    v.union(
+      // v.object({
+      //   // TODO: complete
+      // }),
+      v.any(),
+      v.null()
+    )
   ),
   tax_exempt: v.optional(
     v.union(
@@ -110,12 +116,14 @@ export const CustomerSchema = {
       v.null()
     )
   ),
-  tax_ids: v.union(
-    // v.object({
-    //   // TODO: complete
-    // }),
-    v.any(),
-    v.null()
+  tax_ids: v.optional(
+    v.union(
+      // v.object({
+      //   // TODO: complete
+      // }),
+      v.any(),
+      v.null()
+    )
   ),
   test_clock: v.optional(nullablestring()),
 };
