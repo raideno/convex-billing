@@ -279,7 +279,7 @@ The provided entityId must have a stripeCustomerId associated to it otherwise th
 
 The following events are handled and synced automatically:
 
-**Subscriptions:**
+**Subscriptions (<u>Mandatory</u>):**
 - `checkout.session.completed`
 - `customer.subscription.created`
 - `customer.subscription.updated`
@@ -289,6 +289,8 @@ The following events are handled and synced automatically:
 - `customer.subscription.pending_update_applied`
 - `customer.subscription.pending_update_expired`
 - `customer.subscription.trial_will_end`
+- `customer.created`
+- `customer.deleted`
 - `invoice.paid`
 - `invoice.payment_failed`
 - `invoice.payment_action_required`
@@ -308,6 +310,15 @@ The following events are handled and synced automatically:
 - `price.created`
 - `price.updated`
 - `price.deleted`
+
+**Coupons**
+- `coupon.created`
+- `coupon.updated`
+- `coupon.deleted`
+
+**Promotion Codes**
+- `promotion_code.created`
+- `promotion_code.updated`
 
 
 ## ✅ Best Practices
@@ -383,13 +394,39 @@ Stores Stripe subscriptions.
 | ---------------- | ----------------------------- | ---------------------------------------------------------------- |
 | `_id`            | `string`                      | Convex document ID                                               |
 | `customerId`     | `string`                      | Stripe customer ID                                               |
-| `subscriptionId` | `string \| null`              | Subscription Id or null if none exist.                           | Œ |
+| `subscriptionId` | `string \| null`              | Subscription Id or null if none exist.                           |
 | `stripe`         | `Stripe.Subscription \| null` | Full Stripe subscription object `Stripe.Subscription`(or `null`) |
 | `last_synced_at` | `number`                      | Last sync timestamp                                              |
 
 Index:
 - `bySubscriptionId`
 - `byCustomerId`
+
+### `convex_billing_coupons`
+Stores Stripe subscriptions.
+
+| Field            | Type            | Description                               |
+| ---------------- | --------------- | ----------------------------------------- |
+| `_id`            | `string`        | Convex document ID                        |
+| `couponId`       | `string`        | Stripe coupon ID                          |
+| `stripe`         | `Stripe.Coupon` | Full Stripe coupon object `Stripe.Coupon` |
+| `last_synced_at` | `number`        | Last sync timestamp                       |
+
+Index:
+- `byCouponId`
+
+### `convex_billing_promotion_codes`
+Stores Stripe subscriptions.
+
+| Field             | Type                   | Description                                              |
+| ----------------- | ---------------------- | -------------------------------------------------------- |
+| `_id`             | `string`               | Convex document ID                                       |
+| `promotionCodeId` | `string`               | Stripe promotion code ID                                 |
+| `stripe`          | `Stripe.PromotionCode` | Full Stripe promotion code object `Stripe.PromotionCode` |
+| `last_synced_at`  | `number`               | Last sync timestamp                                      |
+
+Index:
+- `byPromotionCodeId`
 
 > ⚡ These tables are **synced automatically** via webhooks and cron jobs.  
 > You can query them directly in your Convex functions to check products, prices, and subscription status.
