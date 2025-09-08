@@ -428,5 +428,15 @@ Stores Stripe subscriptions.
 Index:
 - `byPromotionCodeId`
 
+### `convex_billing_payouts`
+Stores Stripe subscriptions.
+
+| Field            | Type            | Description                               |
+| ---------------- | --------------- | ----------------------------------------- |
+| `_id`            | `string`        | Convex document ID                        |
+| `payoutId`       | `string`        | Stripe payout ID                          |
+| `stripe`         | `Stripe.Payout` | Full Stripe payout object `Stripe.Payout` |
+| `last_synced_at` | `number`        | Last sync timestamp                       |
+
 > ⚡ These tables are **synced automatically** via webhooks and cron jobs.  
 > You can query them directly in your Convex functions to check products, prices, and subscription status.

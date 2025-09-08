@@ -5,6 +5,7 @@ import { BillingDataModel } from "@/schema";
 import { InternalConfiguration } from "@/types";
 
 import { CustomersWebhookHandler } from "./customers";
+import { PayoutsWebhooksHandler } from "./payouts";
 import { PricesWebhooksHandler } from "./prices";
 import { ProductsWebhooksHandler } from "./products";
 import { PromotionCodesWebhooksHandler } from "./promotion-codes";
@@ -17,6 +18,7 @@ export const HANDLERS = [
   CustomersWebhookHandler,
   PromotionCodesWebhooksHandler,
   SubscriptionsWebhooksHandler,
+  PayoutsWebhooksHandler,
 ] as const;
 
 export const buildWebhookImplementation = (
