@@ -1,22 +1,15 @@
-import { GenericActionCtx } from "convex/server";
 import { Infer } from "convex/values";
 import Stripe from "stripe";
 
 import { billingDispatchTyped } from "@/operations/helpers";
-import { BillingDataModel } from "@/schema";
 import { PriceObject } from "@/schema/price";
-import { InternalConfiguration } from "@/types";
 
-import { WebhookHandler } from "./types";
+import { defineWebhookHandler } from "./types";
 
-export const PricesWebhooksHandler: WebhookHandler = {
+export const PricesWebhooksHandler = defineWebhookHandler({
   events: ["price.created", "price.updated", "price.deleted"],
-  handle: async (
-    event: Stripe.Event,
-    context: GenericActionCtx<BillingDataModel>,
-    configuration: InternalConfiguration
-  ) => {
-    const priceId = (event.data.object as { id: string }).id;
+  handle: async (event, context, configuration) => {
+    const priceId = event.data.object.id;
 
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
@@ -78,4 +71,4 @@ export const PricesWebhooksHandler: WebhookHandler = {
         break;
     }
   },
-};
+});
