@@ -1,20 +1,13 @@
-import { GenericActionCtx } from "convex/server";
 import Stripe from "stripe";
 
 import { billingDispatchTyped } from "@/operations/helpers";
-import { BillingDataModel } from "@/schema";
-import { InternalConfiguration } from "@/types";
 
-import { WebhookHandler } from "./types";
+import { defineWebhookHandler } from "./types";
 
-export const PricesWebhooksHandler: WebhookHandler = {
+export const CustomersWebhookHandler = defineWebhookHandler({
   events: ["customer.created", "customer.deleted"],
-  handle: async (
-    event: Stripe.Event,
-    context: GenericActionCtx<BillingDataModel>,
-    configuration: InternalConfiguration
-  ) => {
-    const customerId = (event.data.object as { id: string }).id;
+  handle: async (event, context, configuration) => {
+    const customerId = event.data.object.id;
 
     const customer = event.data.object as Stripe.Customer;
     const entityId = customer.metadata.entityId;
@@ -91,4 +84,4 @@ export const PricesWebhooksHandler: WebhookHandler = {
         break;
     }
   },
-};
+});

@@ -4,13 +4,18 @@ import Stripe from "stripe";
 import { BillingDataModel } from "@/schema";
 import { InternalConfiguration } from "@/types";
 
+import { CustomersWebhookHandler } from "./customers";
 import { PricesWebhooksHandler } from "./prices";
 import { ProductsWebhooksHandler } from "./products";
+import { PromotionCodesWebhooksHandler } from "./promotion-codes";
 import { SubscriptionsWebhooksHandler } from "./subscription";
 
 export const HANDLERS = [
   ProductsWebhooksHandler,
   PricesWebhooksHandler,
+  SubscriptionsWebhooksHandler,
+  CustomersWebhookHandler,
+  PromotionCodesWebhooksHandler,
   SubscriptionsWebhooksHandler,
 ] as const;
 
@@ -41,9 +46,9 @@ export const buildWebhookImplementation = (
     configuration.logger.debug(`[STRIPE HOOK](RECEIVED): ${event.type}`);
 
     for (const handler of HANDLERS) {
-      if (handler.events.includes(event.type)) {
+      if (handler.events.includes(event.type as never)) {
         try {
-          await handler.handle(event, context, configuration);
+          await handler.handle(event as never, context, configuration);
           configuration.logger.debug(`[STRIPE HOOK](HANDLED): ${event.type}`);
         } catch (error) {
           configuration.logger.error(`[STRIPE HOOK](Error): ${error}`);

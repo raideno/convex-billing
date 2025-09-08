@@ -1,13 +1,7 @@
-import { GenericActionCtx } from "convex/server";
-import Stripe from "stripe";
-
-import { BillingDataModel } from "@/schema";
-import { InternalConfiguration } from "@/types";
-
 import { syncSubscriptionImplementation } from "../sync/subscription";
-import { WebhookHandler } from "./types";
+import { defineWebhookHandler } from "./types";
 
-export const SubscriptionsWebhooksHandler: WebhookHandler = {
+export const SubscriptionsWebhooksHandler = defineWebhookHandler({
   events: [
     "checkout.session.completed",
     "customer.subscription.created",
@@ -28,14 +22,11 @@ export const SubscriptionsWebhooksHandler: WebhookHandler = {
     "payment_intent.payment_failed",
     "payment_intent.canceled",
   ],
-  handle: async (
-    event: Stripe.Event,
-    context: GenericActionCtx<BillingDataModel>,
-    configuration: InternalConfiguration
-  ) => {
-    const { customer: customerId } = event?.data?.object as {
-      customer: string;
-    };
+  handle: async (event, context, configuration) => {
+    const customerId =
+      typeof event.data.object.customer === "string"
+        ? event.data.object.customer
+        : event.data.object.customer?.id;
 
     if (typeof customerId !== "string")
       throw new Error(`Customer ID ${customerId} isn't string.`);
@@ -46,4 +37,4 @@ export const SubscriptionsWebhooksHandler: WebhookHandler = {
       configuration
     );
   },
-};
+});

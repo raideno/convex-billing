@@ -9,11 +9,14 @@ import {
 } from "convex/server";
 import { v } from "convex/values";
 
-import { GenericDoc } from "../types";
-import { CustomerSchema } from "./customer";
-import { PriceSchema } from "./price";
-import { ProductSchema } from "./product";
-import { SubscriptionObject } from "./subscription";
+import { GenericDoc } from "@/types";
+
+import { CouponSchema } from "@/schema/coupon";
+import { CustomerSchema } from "@/schema/customer";
+import { PriceSchema } from "@/schema/price";
+import { ProductSchema } from "@/schema/product";
+import { PromotionCodeSchema } from "@/schema/promotion-code";
+import { SubscriptionObject } from "@/schema/subscription";
 
 export const billingTables = {
   convex_billing_products: defineTable({
@@ -48,6 +51,16 @@ export const billingTables = {
   })
     .index("bySubscriptionId", ["subscriptionId"])
     .index("byCustomerId", ["customerId"]),
+  convex_billing_coupons: defineTable({
+    couponId: v.string(),
+    stripe: v.object(CouponSchema),
+    last_synced_at: v.number(),
+  }).index("byCouponId", ["couponId"]),
+  convex_billing_promotion_codes: defineTable({
+    promotionCodeId: v.string(),
+    stripe: v.object(PromotionCodeSchema),
+    last_synced_at: v.number(),
+  }).index("byPromotionCodeId", ["promotionCodeId"]),
 };
 
 const defaultSchema = defineSchema(billingTables);
