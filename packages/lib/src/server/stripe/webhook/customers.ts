@@ -28,36 +28,11 @@ export const CustomersWebhookHandler = defineWebhookHandler({
                 customerId: customer.id,
                 entityId: entityId,
                 stripe: {
-                  id: customer.id,
-                  address: customer.address,
-                  description: customer.description,
-                  email: customer.email,
-                  metadata: customer.metadata,
-                  name: customer.name,
-                  phone: customer.phone,
-                  shipping: customer.shipping,
-                  tax: customer.tax,
-                  object: customer.object,
-                  balance: customer.balance,
-                  cash_balance: customer.cash_balance,
-                  created: customer.created,
-                  currency: customer.currency,
+                  ...customer,
                   default_source:
                     typeof customer.default_source === "string"
                       ? customer.default_source
                       : customer.default_source?.id,
-                  delinquent: customer.delinquent,
-                  discount: customer.discount,
-                  invoice_credit_balance: customer.invoice_credit_balance,
-                  invoice_prefix: customer.invoice_prefix,
-                  invoice_settings: customer.invoice_settings,
-                  livemode: customer.livemode,
-                  next_invoice_sequence: customer.next_invoice_sequence,
-                  preferred_locales: customer.preferred_locales,
-                  sources: customer.sources,
-                  subscriptions: customer.subscriptions,
-                  tax_exempt: customer.tax_exempt,
-                  tax_ids: customer.tax_ids,
                   test_clock:
                     typeof customer.test_clock === "string"
                       ? customer.test_clock

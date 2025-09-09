@@ -4,25 +4,46 @@ import Stripe from "stripe";
 import { BillingDataModel } from "@/schema";
 import { InternalConfiguration } from "@/types";
 
+import { CouponsWebhooksHandler } from "./coupons";
 import { CustomersWebhookHandler } from "./customers";
+import { PayoutsWebhooksHandler } from "./payouts";
 import { PricesWebhooksHandler } from "./prices";
 import { ProductsWebhooksHandler } from "./products";
 import { PromotionCodesWebhooksHandler } from "./promotion-codes";
+import { RefundsWebhooksHandler } from "./refunds";
 import { SubscriptionsWebhooksHandler } from "./subscription";
-
-export const HANDLERS = [
-  ProductsWebhooksHandler,
-  PricesWebhooksHandler,
-  SubscriptionsWebhooksHandler,
-  CustomersWebhookHandler,
-  PromotionCodesWebhooksHandler,
-  SubscriptionsWebhooksHandler,
-] as const;
 
 export const buildWebhookImplementation = (
   configuration: InternalConfiguration
 ) =>
   httpActionGeneric(async (context_, request) => {
+    const HANDLERS = [
+      ...(configuration.sync.convex_billing_refunds === true
+        ? [RefundsWebhooksHandler]
+        : []),
+      ...(configuration.sync.convex_billing_products === true
+        ? [ProductsWebhooksHandler]
+        : []),
+      ...(configuration.sync.convex_billing_prices === true
+        ? [PricesWebhooksHandler]
+        : []),
+      ...(configuration.sync.convex_billing_subscriptions === true
+        ? [SubscriptionsWebhooksHandler]
+        : []),
+      ...(configuration.sync.convex_billing_customers === true
+        ? [CustomersWebhookHandler]
+        : []),
+      ...(configuration.sync.convex_billing_promotion_codes === true
+        ? [PromotionCodesWebhooksHandler]
+        : []),
+      ...(configuration.sync.convex_billing_coupons === true
+        ? [CouponsWebhooksHandler]
+        : []),
+      ...(configuration.sync.convex_billing_payouts === true
+        ? [PayoutsWebhooksHandler]
+        : []),
+    ] as const;
+
     const context = context_ as unknown as GenericActionCtx<BillingDataModel>;
 
     const body = await request.text();

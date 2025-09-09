@@ -1,4 +1,4 @@
-import { syncSubscriptionImplementation } from "../sync/subscription";
+import { SubscriptionSyncImplementation } from "../sync/subscription";
 import { defineWebhookHandler } from "./types";
 
 export const SubscriptionsWebhooksHandler = defineWebhookHandler({
@@ -31,7 +31,7 @@ export const SubscriptionsWebhooksHandler = defineWebhookHandler({
     if (typeof customerId !== "string")
       throw new Error(`Customer ID ${customerId} isn't string.`);
 
-    await syncSubscriptionImplementation.handler(
+    await SubscriptionSyncImplementation.handler(
       context,
       { customerId },
       configuration

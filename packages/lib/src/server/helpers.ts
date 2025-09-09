@@ -15,6 +15,15 @@ export const normalizeConfiguration = (
 ): InternalConfiguration => {
   return {
     ...config,
+    sync: {
+      convex_billing_coupons: true,
+      convex_billing_customers: true,
+      convex_billing_prices: true,
+      convex_billing_products: true,
+      convex_billing_promotion_codes: true,
+      convex_billing_subscriptions: true,
+      convex_billing_payouts: true,
+    },
     debug: false,
     logger: new Logger(config.debug || false),
     base: config.base || "billing",

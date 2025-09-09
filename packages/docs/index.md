@@ -179,16 +179,20 @@ export const createOrganization = query({
 The library automatically syncs:
 
 <!-- no toc -->
-- [`convex_billing_products`](#convex-billing-products)
-- [`convex_billing_prices`](#convex-billing-prices)
-- [`convex_billing_customers`](#convex-billing-customers)
-- [`convex_billing_subscriptions`](#convex-billing-subscriptions)
+- [`convex_billing_products`](#convex_billing_products)
+- [`convex_billing_prices`](#convex_billing_prices)
+- [`convex_billing_customers`](#convex_billing_customers)
+- [`convex_billing_subscriptions`](#convex_billing_subscriptions)
+- [`convex_billing_payouts`](#convex_billing_payouts)
+- [`convex_billing_refunds`](#convex_billing_refunds)
+- [`convex_billing_promotion_codes`](#convex_billing_promotion_codes)
+- [`convex_billing_coupons`](#convex_billing_coupons)
 
 You can query these tables at any time to:
 
-- List available products/plans and prices
-- Retrieve customers and their `stripeCustomerId`
-- Check active subscriptions
+- List available products/plans and prices.
+- Retrieve customers and their `customerId`.
+- Check active subscriptions.
 
 ### `setup` Action
 
@@ -243,7 +247,7 @@ export const createCheckout = action({
       priceId: args.priceId,
       successUrl: "http://localhost:3000/payments/success",
       cancelUrl: "http://localhost:3000/payments/cancel",
-      // NOTE: true by default. if set to false will throw an error if provided entityId don't have a stripeCustomerId associated to it.
+      // NOTE: true by default. if set to false will throw an error if provided entityId don't have a customerId associated to it.
       // createStripeCustomerIfMissing: true
     });
 
@@ -273,7 +277,14 @@ export const portal = action({
   },
 });
 ```
-The provided entityId must have a stripeCustomerId associated to it otherwise the action will throw an error.
+The provided entityId must have a customerId associated to it otherwise the action will throw an error.
+
+## ✅ Best Practices
+
+- Always create a Stripe customer (`setup`) when a new entity is created.  
+- Use `metadata` or `marketing_features` on products to store feature flags or limits.  
+- Run `sync` periodically (via cron) to ensure data consistency.  
+- Never expose internal actions directly to clients, wrap them in public actions with proper authorization.
 
 ## 📡 Stripe Events
 
@@ -320,13 +331,18 @@ The following events are handled and synced automatically:
 - `promotion_code.created`
 - `promotion_code.updated`
 
+**Payouts**
+- `payout.canceled`
+- `payout.created`
+- `payout.failed`
+- `payout.paid`
+- `payout.updated`
+- `payout.reconciliation_completed`
 
-## ✅ Best Practices
-
-- Always create a Stripe customer (`setup`) when a new entity is created.  
-- Use `metadata` or `marketing_features` on products to store feature flags or limits.  
-- Run `sync` periodically (via cron) to ensure data consistency.  
-- Never expose internal actions directly to clients, wrap them in public actions with proper authorization.
+**Refunds**
+- `refund.created`
+- `refund.updated`
+- `refund.failed`
 
 
 ## 📚 Resources
@@ -403,7 +419,7 @@ Index:
 - `byCustomerId`
 
 ### `convex_billing_coupons`
-Stores Stripe subscriptions.
+Stores Stripe coupons.
 
 | Field            | Type            | Description                               |
 | ---------------- | --------------- | ----------------------------------------- |
@@ -416,7 +432,7 @@ Index:
 - `byCouponId`
 
 ### `convex_billing_promotion_codes`
-Stores Stripe subscriptions.
+Stores Stripe promotion codes.
 
 | Field             | Type                   | Description                                              |
 | ----------------- | ---------------------- | -------------------------------------------------------- |
@@ -427,6 +443,33 @@ Stores Stripe subscriptions.
 
 Index:
 - `byPromotionCodeId`
+
+### `convex_billing_payouts`
+Stores Stripe payouts.
+
+| Field            | Type            | Description                               |
+| ---------------- | --------------- | ----------------------------------------- |
+| `_id`            | `string`        | Convex document ID                        |
+| `payoutId`       | `string`        | Stripe payout ID                          |
+| `stripe`         | `Stripe.Payout` | Full Stripe payout object `Stripe.Payout` |
+| `last_synced_at` | `number`        | Last sync timestamp                       |
+
+Index:
+- `byPayoutId`
+
+### `convex_billing_refunds`
+Stores Stripe refunds.
+
+| Field            | Type            | Description                               |
+| ---------------- | --------------- | ----------------------------------------- |
+| `_id`            | `string`        | Convex document ID                        |
+| `refundId`       | `string`        | Stripe refund ID                          |
+| `stripe`         | `Stripe.Refund` | Full Stripe refund object `Stripe.Refund` |
+| `last_synced_at` | `number`        | Last sync timestamp                       |
+
+
+Index:
+- `byRefundId`
 
 > ⚡ These tables are **synced automatically** via webhooks and cron jobs.  
 > You can query them directly in your Convex functions to check products, prices, and subscription status.

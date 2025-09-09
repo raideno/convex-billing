@@ -3,7 +3,7 @@ import { GenericActionCtx, httpActionGeneric } from "convex/server";
 import { billingDispatchTyped } from "../operations/helpers";
 import { BillingDataModel } from "../schema";
 import { InternalConfiguration } from "../types";
-import { syncSubscriptionImplementation } from "./sync/subscription";
+import { SubscriptionSyncImplementation } from "./sync/subscription";
 
 export const RETURN_ORIGINS = {
   portal: "portal",
@@ -209,7 +209,7 @@ export const buildRedirectImplementation = (
     const customerId = stripeCustomer?.doc?.customerId || null;
 
     if (customerId) {
-      await syncSubscriptionImplementation.handler(
+      await SubscriptionSyncImplementation.handler(
         context,
         { customerId },
         configuration

@@ -37,3 +37,5 @@ export const PromotionCodeSchema = {
   }),
   times_redeemed: v.number(),
 };
+
+export const PromotionCodeObject = v.object(PromotionCodeSchema);

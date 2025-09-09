@@ -23,7 +23,7 @@ import {
   portalImplementation,
   setupImplementation,
 } from "./stripe";
-import { sync } from "./stripe/sync/all";
+import { SyncAllImplementation } from "./stripe/sync/all";
 import { InputConfiguration } from "./types";
 
 export * from "./schema";
@@ -176,7 +176,8 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
     }),
     sync: internalActionGeneric({
       args: {},
-      handler: (context) => sync.handler(context, {}, configuration),
+      handler: (context) =>
+        SyncAllImplementation.handler(context, {}, configuration),
     }),
     setup: internalActionGeneric({
       args: {
