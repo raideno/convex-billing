@@ -13,15 +13,31 @@ export const SyncAllImplementation = defineActionImplementation({
   name: "sync",
   handler: async (context, args, configuration) => {
     await Promise.all([
-      CouponsSyncImplementation.handler(context, args, configuration),
-      CustomersSyncImplementation.handler(context, args, configuration),
-      PayoutsSyncImplementation.handler(context, args, configuration),
-      PricesSyncImplementation.handler(context, args, configuration),
-      ProductsSyncImplementation.handler(context, args, configuration),
-      PromotionCodesSyncImplementation.handler(context, args, configuration),
-      // SubscriptionSyncImplementation.handler(context, args, configuration),
-      SubscriptionsSyncImplementation.handler(context, args, configuration),
-      RefundsSyncImplementation.handler(context, args, configuration),
+      configuration.sync.convex_billing_subscriptions
+        ? CouponsSyncImplementation.handler(context, args, configuration)
+        : null,
+      configuration.sync.convex_billing_subscriptions
+        ? CustomersSyncImplementation.handler(context, args, configuration)
+        : null,
+      configuration.sync.convex_billing_subscriptions
+        ? PayoutsSyncImplementation.handler(context, args, configuration)
+        : null,
+      configuration.sync.convex_billing_subscriptions
+        ? PricesSyncImplementation.handler(context, args, configuration)
+        : null,
+      configuration.sync.convex_billing_subscriptions
+        ? ProductsSyncImplementation.handler(context, args, configuration)
+        : null,
+      configuration.sync.convex_billing_subscriptions
+        ? PromotionCodesSyncImplementation.handler(context, args, configuration)
+        : null,
+      // configuration.sync.convex_billing_subscriptions ? SubscriptionSyncImplementation.handler(context, args, configuration) : null,
+      configuration.sync.convex_billing_subscriptions
+        ? SubscriptionsSyncImplementation.handler(context, args, configuration)
+        : null,
+      configuration.sync.convex_billing_subscriptions
+        ? RefundsSyncImplementation.handler(context, args, configuration)
+        : null,
     ]);
   },
 });
