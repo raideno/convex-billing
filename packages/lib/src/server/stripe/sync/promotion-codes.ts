@@ -29,7 +29,7 @@ export const PromotionCodesSyncImplementation = defineActionImplementation({
     );
 
     const promotionCodes = await stripe.promotionCodes
-      .list({ limit: 100, expand: ["data.product"] })
+      .list({ limit: 100 })
       .autoPagingToArray({ limit: 10_000 });
 
     const stripePromotionCodeIds = new Set<string>();

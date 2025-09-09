@@ -24,7 +24,7 @@ export const CustomersSyncImplementation = defineActionImplementation({
     );
 
     const customers = await stripe.customers
-      .list({ limit: 100, expand: ["data.product"] })
+      .list({ limit: 100 })
       .autoPagingToArray({ limit: 10_000 });
 
     const stripeCustomerIds = new Set<string>();

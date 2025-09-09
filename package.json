@@ -33,6 +33,5 @@
     "tsc": "^2.0.4",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.41.0"
-  },
-  "dependencies": {}
+  }
 }

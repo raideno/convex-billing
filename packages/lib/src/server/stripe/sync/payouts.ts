@@ -26,7 +26,7 @@ export const PayoutsSyncImplementation = defineActionImplementation({
     );
 
     const payouts = await stripe.payouts
-      .list({ limit: 100, expand: ["data.product"] })
+      .list({ limit: 100 })
       .autoPagingToArray({ limit: 10_000 });
 
     const stripePayoutIds = new Set<string>();

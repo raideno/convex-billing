@@ -26,7 +26,7 @@ export const CouponsSyncImplementation = defineActionImplementation({
     );
 
     const coupons = await stripe.coupons
-      .list({ limit: 100, expand: ["data.product"] })
+      .list({ limit: 100 })
       .autoPagingToArray({ limit: 10_000 });
 
     const stripeCouponIds = new Set<string>();
