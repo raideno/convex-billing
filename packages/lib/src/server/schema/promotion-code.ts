@@ -21,7 +21,7 @@ export const PromotionCodeSchema = {
     currency_options: v.optional(
       v.union(
         v.record(
-          v.union(currencies, v.string()),
+          v.string(),
           v.object({
             minimum_amount: v.optional(nullablenumber()),
           })

@@ -28,7 +28,7 @@ export const CouponSchema = {
   currency_options: v.optional(
     v.union(
       v.record(
-        v.union(currencies, v.string()),
+        v.string(),
         v.object({
           amount_off: v.number(),
         })
