@@ -18,6 +18,7 @@ import { ProductSchema } from "@/schema/product";
 import { PromotionCodeSchema } from "@/schema/promotion-code";
 import { SubscriptionObject } from "@/schema/subscription";
 import { PayoutSchema } from "./payout";
+import { RefundSchema } from "./refund";
 
 export const billingTables = {
   convex_billing_products: defineTable({
@@ -67,6 +68,11 @@ export const billingTables = {
     stripe: v.object(PayoutSchema),
     last_synced_at: v.number(),
   }).index("byPayoutId", ["payoutId"]),
+  convex_billing_refunds: defineTable({
+    refundId: v.string(),
+    stripe: v.object(RefundSchema),
+    last_synced_at: v.number(),
+  }).index("byRefundId", ["refundId"]),
 };
 
 const defaultSchema = defineSchema(billingTables);

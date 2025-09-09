@@ -6,12 +6,15 @@ import {
 import { GenericId, Infer, Validator } from "convex/values";
 
 import { Logger } from "./logger";
+import { billingTables } from "./schema";
 
 export interface InternalConfiguration {
   stripe: {
     secret_key: string;
     webhook_secret: string;
   };
+
+  sync: Partial<Record<keyof typeof billingTables, boolean>>;
 
   debug: boolean;
 
@@ -25,7 +28,7 @@ export type WithOptional<T, K extends keyof T = never> = Omit<T, K> &
 
 export type InputConfiguration = WithOptional<
   InternalConfiguration,
-  "base" | "debug" | "logger"
+  "base" | "debug" | "logger" | "sync"
 >;
 
 export type ArgSchema = Record<

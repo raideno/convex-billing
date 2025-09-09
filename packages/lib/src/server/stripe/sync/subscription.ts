@@ -4,7 +4,7 @@ import Stripe from "stripe";
 import { defineActionImplementation } from "@/helpers";
 import { billingDispatchTyped } from "@/operations/helpers";
 
-export const syncSubscriptionImplementation = defineActionImplementation({
+export const SubscriptionSyncImplementation = defineActionImplementation({
   args: {
     customerId: v.string(),
   },

@@ -2,8 +2,8 @@ import { Infer } from "convex/values";
 import Stripe from "stripe";
 
 import { billingDispatchTyped } from "@/operations/helpers";
-import { CouponSchema } from "@/schema/coupon";
 
+import { PromotionCodeSchema } from "@/schema/promotion-code";
 import { defineWebhookHandler } from "./types";
 
 export const PromotionCodesWebhooksHandler = defineWebhookHandler({
@@ -36,8 +36,8 @@ export const PromotionCodesWebhooksHandler = defineWebhookHandler({
                 coupon: {
                   ...promotionCode.coupon,
                   currency: promotionCode.coupon.currency as Infer<
-                    (typeof CouponSchema)["currency"]
-                  >,
+                    (typeof PromotionCodeSchema)["coupon"]
+                  >["currency"],
                 },
               },
               last_synced_at: Date.now(),
