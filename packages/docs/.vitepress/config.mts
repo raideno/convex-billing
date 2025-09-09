@@ -11,6 +11,7 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: "Home", link: "/" },
+      { text: "References", link: "/references" },
       { text: "Demo", link: "https://convex-billing-demo.vercel.app/" },
     ],
     socialLinks: [
