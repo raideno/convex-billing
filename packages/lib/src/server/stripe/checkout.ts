@@ -90,6 +90,6 @@ export const checkoutImplementation = defineActionImplementation({
       cancel_url: cancelUrl,
     });
 
-    return { url: checkout.url };
+    return checkout;
   },
 });

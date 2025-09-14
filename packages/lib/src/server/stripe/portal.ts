@@ -69,6 +69,6 @@ export const portalImplementation = defineActionImplementation({
       return_url: returnUrl,
     });
 
-    return { url: portal.url };
+    return portal;
   },
 });
