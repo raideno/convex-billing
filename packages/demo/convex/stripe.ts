@@ -8,49 +8,6 @@ import configuration from "./stripe.config";
 export const { stripe, store, sync, setup } =
   internalConvexStripe(configuration);
 
-// TODO: create a helper function that take in an authorization function (will be passed the current context)
-// And return / define a bunch of actions to get started easily
-// All the ones described below
-// Developers also need to specify redirect urls.
-
-/* eslint-disable no-restricted-imports */
-import {
-  mutation as rawMutation,
-  internalMutation as rawInternalMutation,
-} from "./_generated/server";
-/* eslint-enable no-restricted-imports */
-import { DataModel } from "./_generated/dataModel";
-import { Triggers } from "convex-helpers/server/triggers";
-import {
-  customCtx,
-  customMutation,
-} from "convex-helpers/server/customFunctions";
-
-// TODO: how does this thing work ?
-// start using Triggers, with table types from schema.ts
-const triggers = new Triggers<DataModel>();
-
-// TODO: we could maybe define the trigger directly when calling the internalConvexStripe function that exports the sync, store, etc
-// register a function to run when a `ctx.db.insert`, `ctx.db.patch`, `ctx.db.replace`, or `ctx.db.delete` changes the "users" table
-triggers.register("convex_stripe_payment_intents", async (context, change) => {
-  const referenceId = change.newDoc?.stripe.metadata!.referenceId as string;
-
-  const oldStatus = change.oldDoc?.stripe.status;
-  const newStatus = change.newDoc?.stripe.status;
-
-  if (newStatus === "succeeded") {
-    // TODO: assign credits, send email, etc
-  }
-});
-
-// create wrappers that replace the built-in `mutation` and `internalMutation`
-// the wrappers override `ctx` so that `ctx.db.insert`, `ctx.db.patch`, etc. run registered trigger functions
-export const mutation = customMutation(rawMutation, customCtx(triggers.wrapDB));
-export const internalMutation = customMutation(
-  rawInternalMutation,
-  customCtx(triggers.wrapDB)
-);
-
 export const pay = action({
   args: {
     priceId: v.string(),
@@ -60,10 +17,7 @@ export const pay = action({
 
     if (!userId) throw new Error("Unauthorized");
 
-    // TODO: generate a unique referenceId for the payment
-    // TODO: store the referenceId as well as the associated payment_intent in a payments table
-    // TODO: this way we have a list of all the payment attempts
-
+    // TODO: shouldn't be done this way, add entityId to it or something
     const orderId = "#" + Math.floor(Math.random() * 1000);
 
     const checkout = await stripe.pay(context as any, {

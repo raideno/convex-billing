@@ -16,42 +16,25 @@ export const SyncAllImplementation = defineActionImplementation({
   args: v.object({}),
   name: "sync",
   handler: async (context, args, configuration) => {
-    await Promise.all([
-      configuration.sync.convex_stripe_subscriptions
-        ? CouponsSyncImplementation.handler(context, args, configuration)
-        : null,
-      configuration.sync.convex_stripe_subscriptions
-        ? CustomersSyncImplementation.handler(context, args, configuration)
-        : null,
-      configuration.sync.convex_stripe_subscriptions
-        ? PayoutsSyncImplementation.handler(context, args, configuration)
-        : null,
-      configuration.sync.convex_stripe_subscriptions
-        ? PricesSyncImplementation.handler(context, args, configuration)
-        : null,
-      configuration.sync.convex_stripe_subscriptions
-        ? ProductsSyncImplementation.handler(context, args, configuration)
-        : null,
-      configuration.sync.convex_stripe_subscriptions
-        ? PromotionCodesSyncImplementation.handler(context, args, configuration)
-        : null,
-      // configuration.sync.convex_stripe_subscriptions ? SubscriptionSyncImplementation.handler(context, args, configuration) : null,
-      configuration.sync.convex_stripe_subscriptions
-        ? SubscriptionsSyncImplementation.handler(context, args, configuration)
-        : null,
-      configuration.sync.convex_stripe_subscriptions
-        ? RefundsSyncImplementation.handler(context, args, configuration)
-        : null,
-      configuration.sync.convex_stripe_checkout_sessions
-        ? CheckoutSessionsSyncImplementation.handler(
-            context,
-            args,
-            configuration
-          )
-        : null,
-      configuration.sync.convex_stripe_payment_intents
-        ? PaymentIntentsSyncImplementation.handler(context, args, configuration)
-        : null,
-    ]);
+    const syncs = [
+      configuration.sync.convex_stripe_customers && CustomersSyncImplementation,
+      configuration.sync.convex_stripe_coupons && CouponsSyncImplementation,
+      configuration.sync.convex_stripe_payouts && PayoutsSyncImplementation,
+      configuration.sync.convex_stripe_prices && PricesSyncImplementation,
+      configuration.sync.convex_stripe_products && ProductsSyncImplementation,
+      configuration.sync.convex_stripe_promotion_codes &&
+        PromotionCodesSyncImplementation,
+      configuration.sync.convex_stripe_subscriptions &&
+        SubscriptionsSyncImplementation,
+      configuration.sync.convex_stripe_refunds && RefundsSyncImplementation,
+      configuration.sync.convex_stripe_checkout_sessions &&
+        CheckoutSessionsSyncImplementation,
+      configuration.sync.convex_stripe_payment_intents &&
+        PaymentIntentsSyncImplementation,
+    ];
+
+    for (const sync of syncs) {
+      if (sync) await sync.handler(context, {}, configuration);
+    }
   },
 });
