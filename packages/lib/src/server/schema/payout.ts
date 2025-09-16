@@ -1,7 +1,38 @@
-import { v } from "convex/values";
+import { Infer, v } from "convex/values";
+import Stripe from "stripe";
 
 import { metadata, nullablenumber, nullablestring } from "@/helpers";
 import { currencies } from "@/schema/currencies";
+
+export const PayoutStripeToConvex = (payout: Stripe.Payout) => {
+  const object: Infer<typeof PayoutObject> = {
+    ...payout,
+    original_payout:
+      typeof payout.original_payout === "string"
+        ? payout.original_payout
+        : payout.original_payout?.id || null,
+    reversed_by:
+      typeof payout.reversed_by === "string"
+        ? payout.reversed_by
+        : payout.reversed_by?.id || null,
+    destination:
+      typeof payout.destination === "string"
+        ? payout.destination
+        : payout.destination?.id || null,
+    balance_transaction:
+      typeof payout.balance_transaction === "string"
+        ? payout.balance_transaction
+        : payout.balance_transaction?.id || null,
+    failure_balance_transaction:
+      typeof payout.failure_balance_transaction === "string"
+        ? payout.failure_balance_transaction
+        : payout.failure_balance_transaction?.id || null,
+    currency:
+      (payout.currency as Infer<(typeof PayoutSchema)["currency"]>) ||
+      undefined,
+  };
+  return object;
+};
 
 export const PayoutSchema = {
   id: v.string(),
@@ -9,7 +40,7 @@ export const PayoutSchema = {
   arrival_date: v.number(),
   currency: v.optional(v.union(currencies, v.null())),
   description: v.optional(nullablestring()),
-  metadata: metadata(),
+  metadata: v.optional(v.union(metadata(), v.null())),
   statement_descriptor: v.optional(nullablestring()),
   status: v.string(),
   object: v.string(),

@@ -1,6 +1,6 @@
-# Convex Stripe Billing
+# Convex Stripe stripe
 
-A demo project is available at [https://convex-billing-demo.vercel.app/](https://convex-billing-demo.vercel.app/).
+A demo project is available at [https://convex-stripe-demo.vercel.app/](https://convex-stripe-demo.vercel.app/).
 
 Stripe subscriptions, limits and features for Convex apps.
 Implemented according to the best practices listed in [Stripe Recommendations](https://github.com/t3dotgg/stripe-recommendations).
@@ -8,12 +8,12 @@ Implemented according to the best practices listed in [Stripe Recommendations](h
 ## Install
 
 ```bash
-npm install @raideno/convex-billing stripe
+npm install @raideno/convex-stripe stripe
 ```
 
 ## Documentation
 
-You can find the detailed documentation @ [https://raideno.github.io/convex-billing](https://raideno.github.io/convex-billing).
+You can find the detailed documentation @ [https://raideno.github.io/convex-stripe](https://raideno.github.io/convex-stripe).
 
 ## TODOs
 
@@ -24,8 +24,8 @@ You can find the detailed documentation @ [https://raideno.github.io/convex-bill
 Clone the repository:
 
 ```bash
-git clone git@github.com:raideno/convex-billing.git
-cd convex-billing
+git clone git@github.com:raideno/convex-stripe.git
+cd convex-stripe
 ```
 
 Install the dependencies:
@@ -38,7 +38,7 @@ Start the development server:
 
 ```bash
 # automatically rebuild lib on changes
-npm run dev --workspace @raideno/convex-billing
+npm run dev --workspace @raideno/convex-stripe
 # run the demo app
 npm run dev --workspace demo
 ```

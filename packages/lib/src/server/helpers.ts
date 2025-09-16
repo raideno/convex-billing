@@ -1,8 +1,8 @@
-import { GenericActionCtx } from "convex/server";
-import { v } from "convex/values";
+import { GenericActionCtx, GenericMutationCtx } from "convex/server";
+import { Infer, v, VObject } from "convex/values";
 
 import { Logger } from "./logger";
-import { BillingDataModel } from "./schema";
+import { StripeDataModel } from "./schema";
 import {
   ArgSchema,
   InferArgs,
@@ -16,24 +16,41 @@ export const normalizeConfiguration = (
   return {
     ...config,
     sync: {
-      convex_billing_coupons: true,
-      convex_billing_customers: true,
-      convex_billing_prices: true,
-      convex_billing_products: true,
-      convex_billing_promotion_codes: true,
-      convex_billing_subscriptions: true,
-      convex_billing_payouts: true,
+      convex_stripe_coupons: true,
+      convex_stripe_customers: true,
+      convex_stripe_prices: true,
+      convex_stripe_products: true,
+      convex_stripe_promotion_codes: true,
+      convex_stripe_subscriptions: true,
+      convex_stripe_payouts: true,
+      convex_stripe_checkout_sessions: true,
+      convex_stripe_payment_intents: true,
+      convex_stripe_refunds: true,
     },
     debug: false,
     logger: new Logger(config.debug || false),
-    base: config.base || "billing",
+    base: config.base || "stripe",
   };
 };
-export const defineActionImplementation = <S extends ArgSchema, R>(spec: {
+
+export const defineActionImplementation = <
+  S extends VObject<any, any>,
+  R,
+>(spec: {
   args: S;
   name: string;
   handler: (
-    context: GenericActionCtx<BillingDataModel>,
+    context: GenericActionCtx<StripeDataModel>,
+    args: Infer<S>,
+    configuration: InternalConfiguration
+  ) => R;
+}) => spec;
+
+export const defineMutationImplementation = <S extends ArgSchema, R>(spec: {
+  args: S;
+  name: string;
+  handler: (
+    context: GenericMutationCtx<StripeDataModel>,
     args: InferArgs<S>,
     configuration: InternalConfiguration
   ) => R;
@@ -42,4 +59,7 @@ export const defineActionImplementation = <S extends ArgSchema, R>(spec: {
 export const nullablestring = () => v.union(v.string(), v.null());
 export const nullableboolean = () => v.union(v.boolean(), v.null());
 export const nullablenumber = () => v.union(v.number(), v.null());
-export const metadata = () => v.union(v.null(), v.record(v.string(), v.any()));
+export const metadata = () =>
+  v.record(v.string(), v.union(v.string(), v.number(), v.null()));
+export const optionalnullableobject = <T extends ArgSchema>(object: T) =>
+  v.optional(v.union(v.object(object), v.null()));

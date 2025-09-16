@@ -3,7 +3,7 @@
 ## `InputConfiguration`
 
 The **input configuration** is what you provide when calling
-`internalConvexBilling`.
+`internalConvexStripe`.
 Some fields are optional and defaults will be applied automatically.
 
 ```ts
@@ -15,13 +15,13 @@ export type InputConfiguration = {
 
   /** Which tables to sync */
   sync?: {
-    convex_billing_coupons?: boolean;
-    convex_billing_customers?: boolean;
-    convex_billing_prices?: boolean;
-    convex_billing_products?: boolean;
-    convex_billing_promotion_codes?: boolean;
-    convex_billing_subscriptions?: boolean;
-    convex_billing_payouts?: boolean;
+    convex_stripe_coupons?: boolean;
+    convex_stripe_customers?: boolean;
+    convex_stripe_prices?: boolean;
+    convex_stripe_products?: boolean;
+    convex_stripe_promotion_codes?: boolean;
+    convex_stripe_subscriptions?: boolean;
+    convex_stripe_payouts?: boolean;
   };
 
   /** Enable verbose logging */
@@ -30,7 +30,7 @@ export type InputConfiguration = {
   /** Custom logger (defaults to internal Logger) */
   logger?: Logger;
 
-  /** Namespace prefix for internal functions (default: "billing") */
+  /** Namespace prefix for internal functions (default: "stripe") */
   base?: string;
 };
 ```
@@ -44,18 +44,21 @@ Configuration for authenticating with Stripe.
 | `webhook_secret` | `string` | Stripe **webhook signing secret** (starts with `whsec_...`). Used to verify events. | ✅ Yes    |
 
 ### `sync` (optional)
-Controls which Convex billing tables get synced from Stripe.
+Controls which Convex tables get synced from Stripe.
 If omitted, **all tables are synced**.
 
-| Table                            | Default | Purpose                     |
-| -------------------------------- | ------- | --------------------------- |
-| `convex_billing_products`        | `true`  | Sync Stripe products        |
-| `convex_billing_prices`          | `true`  | Sync Stripe prices          |
-| `convex_billing_customers`       | `true`  | Sync Stripe customers       |
-| `convex_billing_subscriptions`   | `true`  | Sync Stripe subscriptions   |
-| `convex_billing_coupons`         | `true`  | Sync Stripe coupons         |
-| `convex_billing_promotion_codes` | `true`  | Sync Stripe promotion codes |
-| `convex_billing_payouts`         | `true`  | Sync Stripe payout events   |
+| Table                             | Default | Purpose                       |
+| --------------------------------- | ------- | ----------------------------- |
+| `convex_stripe_products`          | `true`  | Sync products                 |
+| `convex_stripe_prices`            | `true`  | Sync prices                   |
+| `convex_stripe_customers`         | `true`  | Sync customers                |
+| `convex_stripe_subscriptions`     | `true`  | Sync subscriptions            |
+| `convex_stripe_coupons`           | `true`  | Sync coupons                  |
+| `convex_stripe_promotion_codes`   | `true`  | Sync promotion codes          |
+| `convex_stripe_refunds`           | `true`  | Sync refunds events           |
+| `convex_stripe_payouts`           | `true`  | Sync payout events            |
+| `convex_stripe_payment_intents`   | `true`  | Sync payment intents events   |
+| `convex_stripe_checkout_sessions` | `true`  | Sync checkout sessions events |
 
 ### `debug` (optional)
 - Type: `boolean`.
@@ -70,7 +73,7 @@ Allows injecting a custom logging implementation.
 
 ### `base` (optional)
 - Type: `string`.
-- Default: `"billing"` (since default file is `billing.ts`).
+- Default: `"stripe"` (since default file is `stripe.ts`).
 File path exporting internal actions.
 Example: if `base = "subscriptions"`, actions will be registered under
 `internal.subscriptions.*`.
@@ -78,22 +81,16 @@ Example: if `base = "subscriptions"`, actions will be registered under
 ### ✅ Example
 
 ```ts
-import { internalConvexBilling } from "@raideno/convex-billing/server";
+import { internalConvexStripe } from "@raideno/convex-stripe/server";
 
-export const {
-  billing,
-  checkout,
-  portal,
-  setup,
-  sync
-} = internalConvexBilling({
+export const { stripe, store, sync, setup } = internalConvexStripe({
   stripe: {
     secret_key: process.env.STRIPE_SECRET_KEY!,
     webhook_secret: process.env.STRIPE_WEBHOOK_SECRET!,
   },
   debug: true,     // optional
   sync: {
-    convex_billing_payouts: false, // disable syncing payouts
+    convex_stripe_payouts: false, // disable syncing payouts
   },
 });
 ```

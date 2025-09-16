@@ -26,11 +26,11 @@ const currencyToSymbol: Record<string, string> = {
 };
 
 export const SubscriptionForm = () => {
-  const products = useQuery(api.billing.products);
-  const subscription = useQuery(api.billing.subscription);
+  const products = useQuery(api.stripe.products);
+  const subscription = useQuery(api.stripe.subscription);
 
-  const portal = useAction(api.billing.portal);
-  const checkout = useAction(api.billing.checkout);
+  const portal = useAction(api.stripe.portal);
+  const checkout = useAction(api.stripe.subscribe);
 
   const [loading, setLoading] = React.useState<string | null>(null);
 

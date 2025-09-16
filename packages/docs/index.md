@@ -1,11 +1,11 @@
-# Convex Stripe Billing
+# Convex Stripe
 
-| Status      | Features                                                                       |
-| ----------- | ------------------------------------------------------------------------------ |
-| ✅ Supported | Subscriptions, Checkout, Billing portal, Sync webhooks and cron, Multi-tenant. |
-| 🚧 Planned   | One‑time payments, Usage based billing, Credits.                               |
+| Status      | Features                                                                                          |
+| ----------- | ------------------------------------------------------------------------------------------------- |
+| ✅ Supported | Subscriptions, One‑time payments, Checkout, Billing portal, Sync webhooks and cron, Multi-tenant. |
+| 🚧 Planned   | Usage tracking and credits.                                                                       |
 
-A demo project is available at [https://convex-billing-demo.vercel.app/](https://convex-billing-demo.vercel.app/).
+A demo project is available at [https://convex-stripe-demo.vercel.app/](https://convex-stripe-demo.vercel.app/).
 
 Stripe [syncing](#📑-table-schemas), subscriptions and [checkouts](#-checkout-action) for Convex apps. Implemented according to the best practices listed in [Theo's Stripe Recommendations](https://github.com/t3dotgg/stripe-recommendations).
 
@@ -15,19 +15,19 @@ Stripe [syncing](#📑-table-schemas), subscriptions and [checkouts](#-checkout-
 ::: code-group
 
 ```sh [npm]
-npm add @raideno/convex-billing stripe
+npm add @raideno/convex-stripe stripe
 ```
 
 ```sh [pnpm]
-pnpm add @raideno/convex-billing stripe
+pnpm add @raideno/convex-stripe stripe
 ```
 
 ```sh [yarn]
-yarn add @raideno/convex-billing stripe
+yarn add @raideno/convex-stripe stripe
 ```
 
 ```sh [bun]
-bun add @raideno/convex-billing stripe
+bun add @raideno/convex-stripe stripe
 ```
 
 :::
@@ -51,35 +51,26 @@ npx convex env set STRIPE_SECRET_KEY "<secret>"
 npx convex env set STRIPE_WEBHOOK_SECRET "<secret>"
 ```
 
-3. **Add billing tables** to your schema:
+3. **Add stripe tables** to your schema:
 
 Check [📑 Tables Schema](#📑-table-schemas) to know more about synced tables.
 
 ```ts [convex/schema.ts]
 import { defineSchema } from "convex/server";
-import { billingTables } from "@raideno/convex-billing/server";
+import { stripeTables } from "@raideno/convex-stripe/server";
 
 export default defineSchema({
-  ...billingTables,
+  ...stripeTables,
   // your other tables...
 });
 ```
 
-4. **Initialize billing** in `convex/billing.ts`:
+4. **Initialize the library** in `convex/stripe.ts`:
 
-```ts [convex/billing.ts]
-import { internalConvexBilling } from "@raideno/convex-billing/server";
+```ts [convex/stripe.ts]
+import { internalConvexStripe } from "@raideno/convex-stripe/server";
 
-export const {
-  // mandatory
-  billing,
-  store,
-  sync,
-  // --- --- ---
-  portal,
-  checkout,
-  setup,
-} = internalConvexBilling({
+export const { stripe, store, sync, setup } = internalConvexStripe({
   stripe: {
     secret_key: process.env.STRIPE_SECRET_KEY!,
     webhook_secret: process.env.STRIPE_WEBHOOK_SECRET!,
@@ -87,20 +78,20 @@ export const {
 });
 ```
 
-> **Note:** All exposed actions are **internal**. Meaning they can only be called from other convex functions, you can wrap them in public actions when needed.  
-> **Important:** `billing`, `store`, and `sync` must always be exported, as they are used internally.
+> **Note:** All exposed actions (store, sync, setup) are **internal**. Meaning they can only be called from other convex functions, you can wrap them in public actions when needed.  
+> **Important:** `store` must always be exported, as it is used internally.
 
-1. **Register HTTP routes** in `convex/http.ts`:
+5. **Register HTTP routes** in `convex/http.ts`:
 
 ```ts [convex/http.ts]
 import { httpRouter } from "convex/server";
-import { billing } from "./billing";
+import { stripe } from "./stripe";
 
 const http = httpRouter();
 
 // registers POST /stripe/webhook
 // registers GET /stripe/return/*
-billing.addHttpRoutes(http);
+stripe.addHttpRoutes(http);
 
 export default http;
 ```
@@ -109,11 +100,11 @@ export default http;
 
 ```ts [convex/crons.ts]
 import { cronJobs } from "convex/server";
-import { billing } from "./billing";
+import { stripe } from "./stripe";
 
 const crons = cronJobs();
 
-billing.addCronJobs(crons);
+stripe.addCronJobs(crons);
 
 export default crons;
 ```
@@ -122,7 +113,7 @@ export default crons;
 > You can skip this if you prefer to run the sync action manually at startup.
 
 7. **Create Stripe customers** when entities (users/orgs) are created.  
-   Example with [convex-auth](https://labs.convex.dev/auth):
+  Example with [convex-auth](https://labs.convex.dev/auth):
 
 ```ts [convex/auth.ts]
 import { convexAuth } from "@convex-dev/auth/server";
@@ -133,7 +124,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [Password],
   callbacks: {
     afterUserCreatedOrUpdated: async (context, args) => {
-      await context.scheduler.runAfter(0, internal.billing.setup, {
+      await context.scheduler.runAfter(0, internal.stripe.setup, {
         entityId: args.userId,
         email: args.profile.email,
       });
@@ -142,8 +133,12 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 });
 ```
 
+8. **Run sync action** go to your project's dashboard in the convex website.  
+  In the *Functions* section search for a function called `sync` and run it. This is to sync already existing stripe data into convex.
+  It must be done in both your development and production deployment.  
+  This might not be necessary if you are starting with a fresh empty stripe project.
 
-## 🏢 Organization-Based Billing
+## 🏢 Organization-Based stripe
 
 If you bill organizations instead of users, call `setup` when creating an organization:
 
@@ -151,6 +146,7 @@ If you bill organizations instead of users, call `setup` when creating an organi
 import { v } from "convex/values";
 import { query } from "convex/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+
 import { internal } from "./_generated/api";
 
 export const createOrganization = query({
@@ -164,7 +160,7 @@ export const createOrganization = query({
       ownerId: userId,
     });
 
-    await context.scheduler.runAfter(0, internal.billing.setup, {
+    await context.scheduler.runAfter(0, internal.stripe.setup, {
       entityId: orgId,
     });
 
@@ -179,14 +175,14 @@ export const createOrganization = query({
 The library automatically syncs:
 
 <!-- no toc -->
-- [`convex_billing_products`](#convex_billing_products)
-- [`convex_billing_prices`](#convex_billing_prices)
-- [`convex_billing_customers`](#convex_billing_customers)
-- [`convex_billing_subscriptions`](#convex_billing_subscriptions)
-- [`convex_billing_payouts`](#convex_billing_payouts)
-- [`convex_billing_refunds`](#convex_billing_refunds)
-- [`convex_billing_promotion_codes`](#convex_billing_promotion_codes)
-- [`convex_billing_coupons`](#convex_billing_coupons)
+- [`convex_stripe_products`](#convex_stripe_products)
+- [`convex_stripe_prices`](#convex_stripe_prices)
+- [`convex_stripe_customers`](#convex_stripe_customers)
+- [`convex_stripe_subscriptions`](#convex_stripe_subscriptions)
+- [`convex_stripe_payouts`](#convex_stripe_payouts)
+- [`convex_stripe_refunds`](#convex_stripe_refunds)
+- [`convex_stripe_promotion_codes`](#convex_stripe_promotion_codes)
+- [`convex_stripe_coupons`](#convex_stripe_coupons)
 
 You can query these tables at any time to:
 
@@ -208,7 +204,7 @@ export const setupCustomer = action({
   args: { entityId: v.string(), email: v.optional(v.string()) },
   handler: async (context, args) => {
     // Add your own auth/authorization logic here
-    const response = await context.runAction(internal.billing.setup, {
+    const response = await context.runAction(internal.stripe.setup, {
       entityId: args.entityId,
       email: args.email, // optional, but recommended for Stripe
       metadata: {
@@ -230,19 +226,26 @@ export const setupCustomer = action({
 - If the entity already has a Stripe customer, setup will return the existing one instead of creating a duplicate.
 - Typically, you’ll call this automatically in your user/org creation flow (see [⚙️ Configuration - 7](#️⚙️-configuration)).
 
-### `checkout` Action
+### `sync` Action
 
-Creates a Stripe Checkout session for a given entity.
+Sync all existing data on stripe to convex database.
+
+### `subscribe` Function
+
+Creates a Stripe Subscription Checkout session for a given entity.
 
 ```ts
 import { v } from "convex/values";
+
+import { stripe } from "./stripe";
 import { action, internal } from "./_generated/api";
 
 export const createCheckout = action({
   args: { entityId: v.string(), priceId: v.string() },
   handler: async (context, args) => {
     // Add your own auth/authorization logic here
-    const response = await context.runAction(internal.billing.checkout, {
+
+    const response = await stripe.subscribe(context, {
       entityId: args.entityId,
       priceId: args.priceId,
       successUrl: "http://localhost:3000/payments/success",
@@ -257,18 +260,20 @@ export const createCheckout = action({
 ```
 
 
-### `portal` Action
+### `portal` Function
 
 Allows an entity to manage their subscription via the Stripe Portal.
 
 ```ts
 import { v } from "convex/values";
+
+import { stripe } from "./stripe";
 import { action, internal } from "./_generated/api";
 
 export const portal = action({
   args: { entityId: v.string() },
   handler: async (context, args) => {
-    const response = await context.runAction(internal.billing.portal, {
+    const response = await stripe.portal(context, {
       entityId: args.entityId,
       returnUrl: "http://localhost:3000/return-from-portal",
     });
@@ -279,11 +284,35 @@ export const portal = action({
 ```
 The provided entityId must have a customerId associated to it otherwise the action will throw an error.
 
+### `pay` Function
+
+Creates a Stripe One Time Payment Checkout session for a given entity.
+
+```ts
+import { v } from "convex/values";
+
+import { stripe } from "./stripe";
+import { action, internal } from "./_generated/api";
+
+export const subscribe = action({
+  args: { entityId: v.string(), priceId: v.string() },
+  handler: async (context, args) => {
+    // Add your own auth/authorization logic here
+
+    const response = await stripe.pay(context, {
+      // TODO: complete
+    });
+
+    return response.url;
+  },
+});
+```
+
 ## ✅ Best Practices
 
 - Always create a Stripe customer (`setup`) when a new entity is created.  
 - Use `metadata` or `marketing_features` on products to store feature flags or limits.  
-- Run `sync` periodically (via cron) to ensure data consistency.  
+- Run `sync` when you first configure the extension to sync already existing stripe resources.  
 - Never expose internal actions directly to clients, wrap them in public actions with proper authorization.
 
 ## 📡 Stripe Events
@@ -344,20 +373,40 @@ The following events are handled and synced automatically:
 - `refund.updated`
 - `refund.failed`
 
+**Customers**
+- `customer.created`
+- `customer.updated`
+- `customer.deleted`
+
+**Checkout Sessions**
+- `checkout.session.async_payment_failed`
+- `checkout.session.async_payment_succeeded`
+- `checkout.session.completed`
+- `checkout.session.expired`
+
+**Payment Intents**
+- `payment_intent.created`
+- `payment_intent.amount_capturable_updated`
+- `payment_intent.canceled`
+- `payment_intent.partially_funded`
+- `payment_intent.payment_failed`
+- `payment_intent.processing`
+- `payment_intent.requires_action`
+- `payment_intent.succeeded`
 
 ## 📚 Resources
 
 - [Convex Documentation](https://docs.convex.dev)  
 - [Stripe Documentation](https://stripe.com/docs)  
-- [Demo App](https://convex-billing-demo.vercel.app/)  
-- [GitHub Repository](https://github.com/raideno/convex-billing)
+- [Demo App](https://convex-stripe-demo.vercel.app/)  
+- [GitHub Repository](https://github.com/raideno/convex-stripe)
 - [Theo's Stripe Recommendations](https://github.com/t3dotgg/stripe-recommendations)
 
 ## 📑 Table Schemas
 
-When you spread `billingTables` into your Convex schema, the following tables are created automatically:
+When you spread `stripeTables` into your Convex schema, the following tables are created automatically:
 
-### `convex_billing_products`
+### `convex_stripe_products`
 Stores Stripe products.
 
 | Field            | Type             | Description                  |
@@ -371,7 +420,7 @@ Indexes:
 - `byActive`
 - `byName`
 
-### `convex_billing_prices`
+### `convex_stripe_prices`
 Stores Stripe prices.
 
 | Field            | Type           | Description              |
@@ -387,7 +436,7 @@ Indexes:
 - `byRecurringInterval`
 - `byCurrency`
 
-### `convex_billing_customers`
+### `convex_stripe_customers`
 Stores mapping between your app’s entities (users/orgs) and Stripe customers.
 
 | Field            | Type              | Description                     |
@@ -403,7 +452,7 @@ Indexes:
 - `byCustomerId`
 
 
-### `convex_billing_subscriptions`
+### `convex_stripe_subscriptions`
 Stores Stripe subscriptions.
 
 | Field            | Type                          | Description                                                      |
@@ -418,7 +467,7 @@ Index:
 - `bySubscriptionId`
 - `byCustomerId`
 
-### `convex_billing_coupons`
+### `convex_stripe_coupons`
 Stores Stripe coupons.
 
 | Field            | Type            | Description                               |
@@ -431,7 +480,7 @@ Stores Stripe coupons.
 Index:
 - `byCouponId`
 
-### `convex_billing_promotion_codes`
+### `convex_stripe_promotion_codes`
 Stores Stripe promotion codes.
 
 | Field             | Type                   | Description                                              |
@@ -444,7 +493,7 @@ Stores Stripe promotion codes.
 Index:
 - `byPromotionCodeId`
 
-### `convex_billing_payouts`
+### `convex_stripe_payouts`
 Stores Stripe payouts.
 
 | Field            | Type            | Description                               |
@@ -457,7 +506,7 @@ Stores Stripe payouts.
 Index:
 - `byPayoutId`
 
-### `convex_billing_refunds`
+### `convex_stripe_refunds`
 Stores Stripe refunds.
 
 | Field            | Type            | Description                               |

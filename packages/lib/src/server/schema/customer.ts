@@ -1,7 +1,23 @@
-import { v } from "convex/values";
+import { Infer, v } from "convex/values";
+import Stripe from "stripe";
 
 import { metadata, nullablenumber, nullablestring } from "@/helpers";
 import { currencies } from "@/schema/currencies";
+
+export const CustomerStripeToConvex = (customer: Stripe.Customer) => {
+  const object: Infer<typeof CustomerObject> = {
+    ...customer,
+    default_source:
+      typeof customer.default_source === "string"
+        ? customer.default_source
+        : customer.default_source?.id,
+    test_clock:
+      typeof customer.test_clock === "string"
+        ? customer.test_clock
+        : customer.test_clock?.id,
+  };
+  return object;
+};
 
 export const AddressSchema = {
   city: v.optional(nullablestring()),
@@ -17,7 +33,7 @@ export const CustomerSchema = {
   address: v.optional(v.union(v.object(AddressSchema), v.null())),
   description: v.optional(nullablestring()),
   email: v.optional(nullablestring()),
-  metadata: metadata(),
+  metadata: v.optional(v.union(metadata(), v.null())),
   name: v.optional(nullablestring()),
   phone: v.optional(nullablestring()),
   shipping: v.optional(

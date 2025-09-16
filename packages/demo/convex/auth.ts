@@ -10,7 +10,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
       const userId = args.userId;
       const email = args.profile.email;
 
-      await context.scheduler.runAfter(0, internal.billing.setup, {
+      await context.scheduler.runAfter(0, internal.stripe.setup, {
         entityId: userId,
         email: email,
       });

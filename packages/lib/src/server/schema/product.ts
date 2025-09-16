@@ -1,13 +1,41 @@
-import { v } from "convex/values";
+import { Infer, v } from "convex/values";
+import Stripe from "stripe";
 
 import { metadata, nullableboolean, nullablestring } from "../helpers";
+
+export const ProductStripeToConvex = (product: Stripe.Product) => {
+  const object: Infer<typeof ProductObject> = {
+    id: product.id,
+    object: product.object,
+    active: product.active,
+    description: product.description ?? null,
+    metadata: product.metadata ?? null,
+    name: product.name,
+    created: product.created,
+    images: product.images,
+    livemode: product.livemode,
+    package_dimensions: product.package_dimensions ?? null,
+    shippable: product.shippable ?? null,
+    statement_descriptor: product.statement_descriptor ?? null,
+    unit_label: product.unit_label ?? null,
+    updated: product.updated,
+    url: product.url ?? null,
+    marketing_features: product.marketing_features,
+    default_price:
+      typeof product.default_price === "string"
+        ? product.default_price
+        : (product.default_price?.id ?? null),
+  };
+
+  return object;
+};
 
 export const ProductSchema = {
   id: v.string(),
   object: v.string(),
   active: v.boolean(),
   description: nullablestring(),
-  metadata: metadata(),
+  metadata: v.optional(v.union(metadata(), v.null())),
   name: v.string(),
   created: v.number(),
   images: v.array(v.string()),
@@ -22,8 +50,8 @@ export const ProductSchema = {
     v.null()
   ),
   shippable: nullableboolean(),
-  statement_descriptor: nullablestring(),
-  unit_label: nullablestring(),
+  statement_descriptor: v.optional(nullablestring()),
+  unit_label: v.optional(nullablestring()),
   updated: v.number(),
   url: nullablestring(),
   marketing_features: v.array(

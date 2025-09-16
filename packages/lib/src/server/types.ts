@@ -6,7 +6,7 @@ import {
 import { GenericId, Infer, Validator } from "convex/values";
 
 import { Logger } from "./logger";
-import { billingTables } from "./schema";
+import { stripeTables } from "./schema";
 
 export interface InternalConfiguration {
   stripe: {
@@ -14,7 +14,7 @@ export interface InternalConfiguration {
     webhook_secret: string;
   };
 
-  sync: Partial<Record<keyof typeof billingTables, boolean>>;
+  sync: Partial<Record<keyof typeof stripeTables, boolean>>;
 
   debug: boolean;
 

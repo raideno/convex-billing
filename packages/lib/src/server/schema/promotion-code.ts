@@ -1,15 +1,35 @@
-import { v } from "convex/values";
+import { Infer, v } from "convex/values";
+import Stripe from "stripe";
 
 import { metadata, nullablenumber } from "@/helpers";
 import { currencies } from "@/schema/currencies";
 
 import { CouponSchema } from "./coupon";
 
+export const PromotionCodeStripeToConvex = (
+  promotionCode: Stripe.PromotionCode
+) => {
+  const object: Infer<typeof PromotionCodeObject> = {
+    ...promotionCode,
+    customer:
+      typeof promotionCode.customer === "string"
+        ? promotionCode.customer
+        : promotionCode.customer?.id || null,
+    coupon: {
+      ...promotionCode.coupon,
+      currency: promotionCode.coupon.currency as Infer<
+        (typeof PromotionCodeSchema)["coupon"]
+      >["currency"],
+    },
+  };
+  return object;
+};
+
 export const PromotionCodeSchema = {
   id: v.string(),
   code: v.string(),
   coupon: v.object(CouponSchema),
-  metadata: metadata(),
+  metadata: v.optional(v.union(metadata(), v.null())),
   object: v.string(),
   active: v.boolean(),
   created: v.number(),

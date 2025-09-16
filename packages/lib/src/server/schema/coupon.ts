@@ -1,7 +1,18 @@
-import { v } from "convex/values";
+import { Infer, v } from "convex/values";
+import Stripe from "stripe";
 
 import { metadata, nullablenumber, nullablestring } from "@/helpers";
 import { currencies } from "@/schema/currencies";
+
+export const CouponStripeToConvex = (coupon: Stripe.Coupon) => {
+  const object: Infer<typeof CouponObject> = {
+    ...coupon,
+    currency:
+      (coupon.currency as Infer<(typeof CouponSchema)["currency"]>) ||
+      undefined,
+  };
+  return object;
+};
 
 export const CouponSchema = {
   id: v.string(),
@@ -12,7 +23,7 @@ export const CouponSchema = {
     v.literal("once"),
     v.literal("repeating")
   ),
-  metadata: metadata(),
+  metadata: v.optional(v.union(metadata(), v.null())),
   name: v.optional(nullablestring()),
   percent_off: v.optional(nullablenumber()),
   object: v.string(),
