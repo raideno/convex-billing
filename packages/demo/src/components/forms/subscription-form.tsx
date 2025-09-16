@@ -30,7 +30,7 @@ export const SubscriptionForm = () => {
   const subscription = useQuery(api.billing.subscription);
 
   const portal = useAction(api.billing.portal);
-  const checkout = useAction(api.billing.checkout);
+  const checkout = useAction(api.billing.subscribe);
 
   const [loading, setLoading] = React.useState<string | null>(null);
 

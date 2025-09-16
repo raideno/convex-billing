@@ -1,14 +1,39 @@
-import { v } from "convex/values";
+import { Infer, v } from "convex/values";
+import Stripe from "stripe";
 
-import { currencies } from "./currencies";
 import { metadata, nullablenumber, nullablestring } from "../helpers";
+import { currencies } from "./currencies";
+
+export const PriceStripeToConvex = (price: Stripe.Price) => {
+  const object: Infer<typeof PriceObject> = {
+    id: price.id,
+    object: price.object,
+    active: price.active,
+    currency: price.currency as Infer<typeof PriceObject>["currency"],
+    metadata: price.metadata,
+    nickname: price.nickname,
+    recurring: price.recurring,
+    productId:
+      typeof price.product === "string" ? price.product : price.product.id,
+    type: price.type,
+    unit_amount: price.unit_amount,
+    billing_scheme: price.billing_scheme,
+    created: price.created,
+    livemode: price.livemode,
+    lookup_key: price.lookup_key,
+    tiers_mode: price.tiers_mode,
+    transform_quantity: price.transform_quantity,
+    unit_amount_decimal: price.unit_amount_decimal,
+  };
+  return object;
+};
 
 export const PriceSchema = {
   id: v.string(),
   object: v.string(),
   active: v.boolean(),
   currency: currencies,
-  metadata: metadata(),
+  metadata: v.optional(v.union(metadata(), v.null())),
   nickname: nullablestring(),
   recurring: v.union(
     v.object({

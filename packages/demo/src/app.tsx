@@ -6,6 +6,7 @@ import { SubscriptionForm } from "./components/forms/subscription-form";
 import { UserForm } from "./components/forms/user-form";
 import { ReturnFromCheckoutModal } from "./components/modals/return-from-checkout-modal";
 import { ReturnFromPortalModal } from "./components/modals/return-from-portal-modal";
+import { ProductsForm } from "./components/forms/products-form";
 
 export default function App() {
   return (
@@ -65,6 +66,7 @@ export default function App() {
         <Flex direction={"column"} gap="6">
           <UserForm />
           <SubscriptionForm />
+          <ProductsForm />
         </Flex>
         <ReturnFromCheckoutModal />
         <ReturnFromPortalModal />

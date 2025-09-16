@@ -70,16 +70,7 @@ export default defineSchema({
 ```ts [convex/billing.ts]
 import { internalConvexBilling } from "@raideno/convex-billing/server";
 
-export const {
-  // mandatory
-  billing,
-  store,
-  sync,
-  // --- --- ---
-  portal,
-  checkout,
-  setup,
-} = internalConvexBilling({
+export const { billing, store, sync, setup } = internalConvexBilling({
   stripe: {
     secret_key: process.env.STRIPE_SECRET_KEY!,
     webhook_secret: process.env.STRIPE_WEBHOOK_SECRET!,
@@ -87,8 +78,8 @@ export const {
 });
 ```
 
-> **Note:** All exposed actions are **internal**. Meaning they can only be called from other convex functions, you can wrap them in public actions when needed.  
-> **Important:** `billing`, `store`, and `sync` must always be exported, as they are used internally.
+> **Note:** All exposed actions (store, sync, setup) are **internal**. Meaning they can only be called from other convex functions, you can wrap them in public actions when needed.  
+> **Important:** `store` must always be exported, as it is used internally.
 
 1. **Register HTTP routes** in `convex/http.ts`:
 
@@ -151,6 +142,7 @@ If you bill organizations instead of users, call `setup` when creating an organi
 import { v } from "convex/values";
 import { query } from "convex/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+
 import { internal } from "./_generated/api";
 
 export const createOrganization = query({
@@ -230,18 +222,25 @@ export const setupCustomer = action({
 - If the entity already has a Stripe customer, setup will return the existing one instead of creating a duplicate.
 - Typically, you’ll call this automatically in your user/org creation flow (see [⚙️ Configuration - 7](#️⚙️-configuration)).
 
-### `checkout` Action
+### `sync` Action
 
-Creates a Stripe Checkout session for a given entity.
+Sync all existing data on stripe to convex database.
+
+### `subscribe` Function
+
+Creates a Stripe Subscription Checkout session for a given entity.
 
 ```ts
 import { v } from "convex/values";
+
+import { billing } from "./billing";
 import { action, internal } from "./_generated/api";
 
 export const createCheckout = action({
   args: { entityId: v.string(), priceId: v.string() },
   handler: async (context, args) => {
     // Add your own auth/authorization logic here
+
     const response = await context.runAction(internal.billing.checkout, {
       entityId: args.entityId,
       priceId: args.priceId,
@@ -257,18 +256,20 @@ export const createCheckout = action({
 ```
 
 
-### `portal` Action
+### `portal` Function
 
 Allows an entity to manage their subscription via the Stripe Portal.
 
 ```ts
 import { v } from "convex/values";
+
+import { billing } from "./billing";
 import { action, internal } from "./_generated/api";
 
 export const portal = action({
   args: { entityId: v.string() },
   handler: async (context, args) => {
-    const response = await context.runAction(internal.billing.portal, {
+    const response = await billing.portal(context, {
       entityId: args.entityId,
       returnUrl: "http://localhost:3000/return-from-portal",
     });
@@ -279,11 +280,35 @@ export const portal = action({
 ```
 The provided entityId must have a customerId associated to it otherwise the action will throw an error.
 
+### `pay` Function
+
+Creates a Stripe One Time Payment Checkout session for a given entity.
+
+```ts
+import { v } from "convex/values";
+
+import { billing } from "./billing";
+import { action, internal } from "./_generated/api";
+
+export const subscribe = action({
+  args: { entityId: v.string(), priceId: v.string() },
+  handler: async (context, args) => {
+    // Add your own auth/authorization logic here
+
+    const response = await billing.pay(context, {
+      // TODO: complete
+    });
+
+    return response.url;
+  },
+});
+```
+
 ## ✅ Best Practices
 
 - Always create a Stripe customer (`setup`) when a new entity is created.  
 - Use `metadata` or `marketing_features` on products to store feature flags or limits.  
-- Run `sync` periodically (via cron) to ensure data consistency.  
+- Run `sync` when you first configure the extension to sync already existing stripe resources.  
 - Never expose internal actions directly to clients, wrap them in public actions with proper authorization.
 
 ## 📡 Stripe Events
@@ -344,6 +369,26 @@ The following events are handled and synced automatically:
 - `refund.updated`
 - `refund.failed`
 
+**Customers**
+- `customer.created`
+- `customer.updated`
+- `customer.deleted`
+
+**Checkout Sessions**
+- `checkout.session.async_payment_failed`
+- `checkout.session.async_payment_succeeded`
+- `checkout.session.completed`
+- `checkout.session.expired`
+
+**Payment Intents**
+- `payment_intent.created`
+- `payment_intent.amount_capturable_updated`
+- `payment_intent.canceled`
+- `payment_intent.partially_funded`
+- `payment_intent.payment_failed`
+- `payment_intent.processing`
+- `payment_intent.requires_action`
+- `payment_intent.succeeded`
 
 ## 📚 Resources
 
