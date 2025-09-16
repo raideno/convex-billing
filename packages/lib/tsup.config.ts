@@ -13,5 +13,6 @@ export default defineConfig({
   splitting: false,
   shims: false,
   minify: false,
+  external: ["convex", "stripe"],
   tsconfig: "tsconfig.json",
 });
