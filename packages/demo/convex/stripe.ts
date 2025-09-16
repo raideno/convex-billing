@@ -26,6 +26,7 @@ import {
   customMutation,
 } from "convex-helpers/server/customFunctions";
 
+// TODO: how does this thing work ?
 // start using Triggers, with table types from schema.ts
 const triggers = new Triggers<DataModel>();
 
