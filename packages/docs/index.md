@@ -81,7 +81,7 @@ export const { stripe, store, sync, setup } = internalConvexStripe({
 > **Note:** All exposed actions (store, sync, setup) are **internal**. Meaning they can only be called from other convex functions, you can wrap them in public actions when needed.  
 > **Important:** `store` must always be exported, as it is used internally.
 
-1. **Register HTTP routes** in `convex/http.ts`:
+5. **Register HTTP routes** in `convex/http.ts`:
 
 ```ts [convex/http.ts]
 import { httpRouter } from "convex/server";
@@ -113,7 +113,7 @@ export default crons;
 > You can skip this if you prefer to run the sync action manually at startup.
 
 7. **Create Stripe customers** when entities (users/orgs) are created.  
-   Example with [convex-auth](https://labs.convex.dev/auth):
+  Example with [convex-auth](https://labs.convex.dev/auth):
 
 ```ts [convex/auth.ts]
 import { convexAuth } from "@convex-dev/auth/server";
@@ -133,6 +133,10 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 });
 ```
 
+8. **Run sync action** go to your project's dashboard in the convex website.  
+  In the *Functions* section search for a function called `sync` and run it. This is to sync already existing stripe data into convex.
+  It must be done in both your development and production deployment.  
+  This might not be necessary if you are starting with a fresh empty stripe project.
 
 ## 🏢 Organization-Based stripe
 
