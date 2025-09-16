@@ -1,4 +1,4 @@
-# Convex Stripe stripe
+# Convex Stripe
 
 A demo project is available at [https://convex-stripe-demo.vercel.app/](https://convex-stripe-demo.vercel.app/).
 

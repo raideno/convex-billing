@@ -15,7 +15,7 @@ Stripe [syncing](#📑-table-schemas), subscriptions and [checkouts](#-checkout-
 ::: code-group
 
 ```sh [npm]
-npm add @raideno/convex-stripe stripe
+npm install @raideno/convex-stripe stripe
 ```
 
 ```sh [pnpm]
