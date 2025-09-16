@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 import { SubscriptionSyncImplementation } from "../sync/subscription";
 import { defineRedirectHandler } from "./types";
@@ -11,10 +11,10 @@ export const PortalReturnImplementation = defineRedirectHandler({
     entityId: v.string(),
   },
   handle: async (origin, context, data, configuration) => {
-    const customer = await billingDispatchTyped(
+    const customer = await storeDispatchTyped(
       {
         operation: "selectOne",
-        table: "convex_billing_customers",
+        table: "convex_stripe_customers",
         field: "entityId",
         value: data.entityId,
       },

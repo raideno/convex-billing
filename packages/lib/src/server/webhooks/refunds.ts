@@ -1,5 +1,5 @@
 import { RefundStripeToConvex } from "@/schema/refund";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 import { defineWebhookHandler } from "./types";
 
@@ -12,10 +12,10 @@ export const RefundsWebhooksHandler = defineWebhookHandler({
       case "refund.created":
       case "refund.updated":
       case "refund.failed":
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_billing_refunds",
+            table: "convex_stripe_refunds",
             idField: "refundId",
             data: {
               refundId: refund.id,

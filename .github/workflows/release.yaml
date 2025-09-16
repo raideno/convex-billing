@@ -31,7 +31,7 @@ jobs:
           cache: npm
 
       - run: npm ci --force
-      - run: npm run build --workspace @raideno/convex-billing
+      - run: npm run build --workspace @raideno/convex-stripe
 
       - name: publish to npm
         run: |
@@ -39,10 +39,10 @@ jobs:
           if [[ "$PKG_VERSION" == *"-"* ]]; then
             TAG=$(echo $PKG_VERSION | sed 's/^[0-9.]*-\([a-zA-Z0-9]*\).*/\1/')
             echo "[publisher]: publishing prerelease with tag $TAG"
-            npm publish --workspace @raideno/convex-billing --provenance --access public --tag $TAG
+            npm publish --workspace @raideno/convex-stripe --provenance --access public --tag $TAG
           else
             echo "[publisher]: publishing stable release as latest"
-            npm publish --workspace @raideno/convex-billing --provenance --access public
+            npm publish --workspace @raideno/convex-stripe --provenance --access public
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

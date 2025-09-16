@@ -3,7 +3,7 @@ import Stripe from "stripe";
 
 import { defineActionImplementation } from "@/helpers";
 import { CustomerStripeToConvex } from "@/schema/customer";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 export const CustomersSyncImplementation = defineActionImplementation({
   args: v.object({}),
@@ -13,10 +13,10 @@ export const CustomersSyncImplementation = defineActionImplementation({
       apiVersion: "2025-08-27.basil",
     });
 
-    const localCustomersRes = await billingDispatchTyped(
+    const localCustomersRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "convex_billing_customers",
+        table: "convex_stripe_customers",
       },
       context,
       configuration
@@ -41,10 +41,10 @@ export const CustomersSyncImplementation = defineActionImplementation({
         continue;
       }
 
-      await billingDispatchTyped(
+      await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_billing_customers",
+          table: "convex_stripe_customers",
           idField: "customerId",
           data: {
             customerId: customer.id,
@@ -60,10 +60,10 @@ export const CustomersSyncImplementation = defineActionImplementation({
 
     for (const [customerId] of localCustomersById.entries()) {
       if (!stripeCustomerIds.has(customerId)) {
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_billing_customers",
+            table: "convex_stripe_customers",
             idField: "customerId",
             idValue: customerId,
           },

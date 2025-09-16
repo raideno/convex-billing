@@ -3,7 +3,7 @@ import Stripe from "stripe";
 
 import { defineActionImplementation } from "@/helpers";
 import { PromotionCodeStripeToConvex } from "@/schema/promotion-code";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 export const PromotionCodesSyncImplementation = defineActionImplementation({
   args: v.object({}),
@@ -13,10 +13,10 @@ export const PromotionCodesSyncImplementation = defineActionImplementation({
       apiVersion: "2025-08-27.basil",
     });
 
-    const localPromotionCodesRes = await billingDispatchTyped(
+    const localPromotionCodesRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "convex_billing_promotion_codes",
+        table: "convex_stripe_promotion_codes",
       },
       context,
       configuration
@@ -37,10 +37,10 @@ export const PromotionCodesSyncImplementation = defineActionImplementation({
     for (const promotionCode of promotionCodes) {
       stripePromotionCodeIds.add(promotionCode.id);
 
-      await billingDispatchTyped(
+      await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_billing_promotion_codes",
+          table: "convex_stripe_promotion_codes",
           idField: "promotionCodeId",
           data: {
             promotionCodeId: promotionCode.id,
@@ -55,10 +55,10 @@ export const PromotionCodesSyncImplementation = defineActionImplementation({
 
     for (const [promotionCodeId] of localPromotionCodesById.entries()) {
       if (!stripePromotionCodeIds.has(promotionCodeId)) {
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_billing_promotion_codes",
+            table: "convex_stripe_promotion_codes",
             idField: "promotionCodeId",
             idValue: promotionCodeId,
           },

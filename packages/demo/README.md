@@ -1,6 +1,6 @@
-# Convex Billing Stripe Demo
+# Convex Stripe Demo
 
-This is a demo app that demonstrates how to use the [Convex Stripe Billing](https://github.com/raideno/convex-stripe-component) package.
+This is a demo app that demonstrates how to use the [Convex Stripe](https://github.com/raideno/convex-stripe-component) package.
 
 Before running the demo, make sure the following environment variables are configured in your convex project:
 

@@ -1,5 +1,5 @@
 import { PromotionCodeStripeToConvex } from "@/schema/promotion-code";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 import { defineWebhookHandler } from "./types";
 
@@ -11,10 +11,10 @@ export const PromotionCodesWebhooksHandler = defineWebhookHandler({
     switch (event.type) {
       case "promotion_code.created":
       case "promotion_code.updated":
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_billing_promotion_codes",
+            table: "convex_stripe_promotion_codes",
             idField: "promotionCodeId",
             data: {
               promotionCodeId: promotionCode.id,

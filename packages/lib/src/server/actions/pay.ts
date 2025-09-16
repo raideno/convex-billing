@@ -5,7 +5,7 @@ import { SetupImplementation } from "@/actions/setup";
 import { buildSignedReturnUrl } from "@/redirects";
 import { CheckoutSessionStripeToConvex } from "@/schema/checkout-session";
 import { PaymentIntentStripeToConvex } from "@/schema/payment-intent";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 import { defineActionImplementation, metadata } from "../helpers";
 
@@ -117,10 +117,10 @@ export const PayImplementation = defineActionImplementation({
       apiVersion: "2025-08-27.basil",
     });
 
-    const stripeCustomer = await billingDispatchTyped(
+    const stripeCustomer = await storeDispatchTyped(
       {
         operation: "selectOne",
-        table: "convex_billing_customers",
+        table: "convex_stripe_customers",
         field: "entityId",
         value: args.entityId,
       },
@@ -198,10 +198,10 @@ export const PayImplementation = defineActionImplementation({
       expand: ["payment_intent"],
     });
 
-    await billingDispatchTyped(
+    await storeDispatchTyped(
       {
         operation: "upsert",
-        table: "convex_billing_checkout_sessions",
+        table: "convex_stripe_checkout_sessions",
         idField: "checkoutSessionId",
         data: {
           checkoutSessionId: checkout.id,
@@ -220,10 +220,10 @@ export const PayImplementation = defineActionImplementation({
       paymentIntent !== null &&
       typeof paymentIntent !== "string"
     ) {
-      await billingDispatchTyped(
+      await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_billing_payment_intents",
+          table: "convex_stripe_payment_intents",
           idField: "paymentIntentId",
           data: {
             paymentIntentId: paymentIntent.id,

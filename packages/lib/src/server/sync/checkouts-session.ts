@@ -3,7 +3,7 @@ import Stripe from "stripe";
 
 import { defineActionImplementation } from "@/helpers";
 import { CheckoutSessionStripeToConvex } from "@/schema/checkout-session";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 export const CheckoutSessionsSyncImplementation = defineActionImplementation({
   args: v.object({}),
@@ -13,10 +13,10 @@ export const CheckoutSessionsSyncImplementation = defineActionImplementation({
       apiVersion: "2025-08-27.basil",
     });
 
-    const localCheckoutSessionsRes = await billingDispatchTyped(
+    const localCheckoutSessionsRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "convex_billing_checkout_sessions",
+        table: "convex_stripe_checkout_sessions",
       },
       context,
       configuration
@@ -37,10 +37,10 @@ export const CheckoutSessionsSyncImplementation = defineActionImplementation({
     for (const checkoutSession of checkoutSessions) {
       stripeCheckoutSessionIds.add(checkoutSession.id);
 
-      await billingDispatchTyped(
+      await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_billing_checkout_sessions",
+          table: "convex_stripe_checkout_sessions",
           idField: "checkoutSessionId",
           data: {
             checkoutSessionId: checkoutSession.id,
@@ -55,10 +55,10 @@ export const CheckoutSessionsSyncImplementation = defineActionImplementation({
 
     for (const [checkoutSessionId] of localCheckoutSessionsById.entries()) {
       if (!stripeCheckoutSessionIds.has(checkoutSessionId)) {
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_billing_checkout_sessions",
+            table: "convex_stripe_checkout_sessions",
             idField: "checkoutSessionId",
             idValue: checkoutSessionId,
           },

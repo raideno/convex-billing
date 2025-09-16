@@ -5,7 +5,7 @@ import { SetupImplementation } from "@/actions/setup";
 import { buildSignedReturnUrl } from "@/redirects";
 import { CheckoutSessionStripeToConvex } from "@/schema/checkout-session";
 import { SubscriptionStripeToConvex } from "@/schema/subscription";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 import { defineActionImplementation, metadata } from "../helpers";
 
@@ -38,10 +38,10 @@ export const SubscribeImplementation = defineActionImplementation({
       apiVersion: "2025-08-27.basil",
     });
 
-    const stripeCustomer = await billingDispatchTyped(
+    const stripeCustomer = await storeDispatchTyped(
       {
         operation: "selectOne",
-        table: "convex_billing_customers",
+        table: "convex_stripe_customers",
         field: "entityId",
         value: args.entityId,
       },
@@ -115,10 +115,10 @@ export const SubscribeImplementation = defineActionImplementation({
       expand: ["subscription"],
     });
 
-    await billingDispatchTyped(
+    await storeDispatchTyped(
       {
         operation: "upsert",
-        table: "convex_billing_checkout_sessions",
+        table: "convex_stripe_checkout_sessions",
         idField: "checkoutSessionId",
         data: {
           checkoutSessionId: checkout.id,
@@ -137,10 +137,10 @@ export const SubscribeImplementation = defineActionImplementation({
       subscription !== null &&
       typeof subscription !== "string"
     ) {
-      await billingDispatchTyped(
+      await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_billing_subscriptions",
+          table: "convex_stripe_subscriptions",
           idField: "subscriptionId",
           data: {
             subscriptionId: subscription.id,

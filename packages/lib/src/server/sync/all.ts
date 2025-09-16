@@ -17,39 +17,39 @@ export const SyncAllImplementation = defineActionImplementation({
   name: "sync",
   handler: async (context, args, configuration) => {
     await Promise.all([
-      configuration.sync.convex_billing_subscriptions
+      configuration.sync.convex_stripe_subscriptions
         ? CouponsSyncImplementation.handler(context, args, configuration)
         : null,
-      configuration.sync.convex_billing_subscriptions
+      configuration.sync.convex_stripe_subscriptions
         ? CustomersSyncImplementation.handler(context, args, configuration)
         : null,
-      configuration.sync.convex_billing_subscriptions
+      configuration.sync.convex_stripe_subscriptions
         ? PayoutsSyncImplementation.handler(context, args, configuration)
         : null,
-      configuration.sync.convex_billing_subscriptions
+      configuration.sync.convex_stripe_subscriptions
         ? PricesSyncImplementation.handler(context, args, configuration)
         : null,
-      configuration.sync.convex_billing_subscriptions
+      configuration.sync.convex_stripe_subscriptions
         ? ProductsSyncImplementation.handler(context, args, configuration)
         : null,
-      configuration.sync.convex_billing_subscriptions
+      configuration.sync.convex_stripe_subscriptions
         ? PromotionCodesSyncImplementation.handler(context, args, configuration)
         : null,
-      // configuration.sync.convex_billing_subscriptions ? SubscriptionSyncImplementation.handler(context, args, configuration) : null,
-      configuration.sync.convex_billing_subscriptions
+      // configuration.sync.convex_stripe_subscriptions ? SubscriptionSyncImplementation.handler(context, args, configuration) : null,
+      configuration.sync.convex_stripe_subscriptions
         ? SubscriptionsSyncImplementation.handler(context, args, configuration)
         : null,
-      configuration.sync.convex_billing_subscriptions
+      configuration.sync.convex_stripe_subscriptions
         ? RefundsSyncImplementation.handler(context, args, configuration)
         : null,
-      configuration.sync.convex_billing_checkout_sessions
+      configuration.sync.convex_stripe_checkout_sessions
         ? CheckoutSessionsSyncImplementation.handler(
             context,
             args,
             configuration
           )
         : null,
-      configuration.sync.convex_billing_payment_intents
+      configuration.sync.convex_stripe_payment_intents
         ? PaymentIntentsSyncImplementation.handler(context, args, configuration)
         : null,
     ]);

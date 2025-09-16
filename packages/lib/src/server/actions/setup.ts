@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import Stripe from "stripe";
 
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 import { defineActionImplementation } from "../helpers";
 
@@ -19,10 +19,10 @@ export const SetupImplementation = defineActionImplementation({
 
     // TODO: is it enough to check on the locally synced version, what if someone modifies the dashboard in the mean time
     // And deletes the customer, we'll then have an issue as we'll return a customerId that don't exist anymore
-    const stripeCustomer = await billingDispatchTyped(
+    const stripeCustomer = await storeDispatchTyped(
       {
         operation: "selectOne",
-        table: "convex_billing_customers",
+        table: "convex_stripe_customers",
         field: "entityId",
         value: args.entityId,
       },
@@ -43,10 +43,10 @@ export const SetupImplementation = defineActionImplementation({
         },
       });
 
-      await billingDispatchTyped(
+      await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_billing_customers",
+          table: "convex_stripe_customers",
           idField: "entityId",
           data: {
             entityId: args.entityId,

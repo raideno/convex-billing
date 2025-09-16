@@ -1,13 +1,13 @@
 import { GenericMutationCtx } from "convex/server";
 
-import { BillingDataModel } from "../../schema";
+import { StripeDataModel } from "../../schema";
 
 export async function selectOne<
-  TableName extends keyof BillingDataModel,
-  Schema extends BillingDataModel[TableName]["document"],
+  TableName extends keyof StripeDataModel,
+  Schema extends StripeDataModel[TableName]["document"],
   Field extends keyof Schema & string,
 >(
-  context: GenericMutationCtx<BillingDataModel>,
+  context: GenericMutationCtx<StripeDataModel>,
   table: TableName,
   field: Field,
   value: Schema[Field]

@@ -1,13 +1,13 @@
 import { GenericMutationCtx, WithoutSystemFields } from "convex/server";
 import { GenericId } from "convex/values";
 
-import { BillingDataModel } from "../../schema";
+import { StripeDataModel } from "../../schema";
 
-export async function upsert<TableName extends keyof BillingDataModel>(
-  context: GenericMutationCtx<BillingDataModel>,
+export async function upsert<TableName extends keyof StripeDataModel>(
+  context: GenericMutationCtx<StripeDataModel>,
   table: TableName,
-  idField: keyof BillingDataModel[TableName]["document"] & string,
-  data: WithoutSystemFields<BillingDataModel[TableName]["document"]>
+  idField: keyof StripeDataModel[TableName]["document"] & string,
+  data: WithoutSystemFields<StripeDataModel[TableName]["document"]>
 ): Promise<GenericId<TableName>> {
   const existing = await context.db
     .query(table)

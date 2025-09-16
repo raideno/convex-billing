@@ -1,4 +1,4 @@
-import { InputConfiguration } from "@raideno/convex-billing/server";
+import { InputConfiguration } from "@raideno/convex-stripe/server";
 
 export default {
   stripe: {
@@ -8,6 +8,6 @@ export default {
 
   convex: { projectId: "amicable-marmot-910" },
 
-  store: "billing:store",
+  store: "stripe:store",
   debug: true,
 } as InputConfiguration;

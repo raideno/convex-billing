@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import Stripe from "stripe";
 
 import { defineActionImplementation } from "@/helpers";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 export const SubscriptionSyncImplementation = defineActionImplementation({
   args: v.object({
@@ -25,10 +25,10 @@ export const SubscriptionSyncImplementation = defineActionImplementation({
     });
 
     if (subscriptions.data.length === 0) {
-      await billingDispatchTyped(
+      await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_billing_subscriptions",
+          table: "convex_stripe_subscriptions",
           idField: "customerId",
           data: {
             subscriptionId: null,
@@ -46,10 +46,10 @@ export const SubscriptionSyncImplementation = defineActionImplementation({
 
     const subscription = subscriptions.data[0];
 
-    await billingDispatchTyped(
+    await storeDispatchTyped(
       {
         operation: "upsert",
-        table: "convex_billing_subscriptions",
+        table: "convex_stripe_subscriptions",
         idField: "customerId",
         data: {
           subscriptionId: subscription.id,

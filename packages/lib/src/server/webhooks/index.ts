@@ -1,7 +1,7 @@
 import { GenericActionCtx, httpActionGeneric } from "convex/server";
 import Stripe from "stripe";
 
-import { BillingDataModel } from "@/schema";
+import { StripeDataModel } from "@/schema";
 import { InternalConfiguration } from "@/types";
 
 import { CheckoutSessionsWebhooksHandler } from "./checkouts-session";
@@ -20,39 +20,39 @@ export const buildWebhookImplementation = (
 ) =>
   httpActionGeneric(async (context_, request) => {
     const HANDLERS = [
-      ...(configuration.sync.convex_billing_refunds === true
+      ...(configuration.sync.convex_stripe_refunds === true
         ? [RefundsWebhooksHandler]
         : []),
-      ...(configuration.sync.convex_billing_products === true
+      ...(configuration.sync.convex_stripe_products === true
         ? [ProductsWebhooksHandler]
         : []),
-      ...(configuration.sync.convex_billing_prices === true
+      ...(configuration.sync.convex_stripe_prices === true
         ? [PricesWebhooksHandler]
         : []),
-      ...(configuration.sync.convex_billing_subscriptions === true
+      ...(configuration.sync.convex_stripe_subscriptions === true
         ? [SubscriptionsWebhooksHandler]
         : []),
-      ...(configuration.sync.convex_billing_customers === true
+      ...(configuration.sync.convex_stripe_customers === true
         ? [CustomersWebhookHandler]
         : []),
-      ...(configuration.sync.convex_billing_promotion_codes === true
+      ...(configuration.sync.convex_stripe_promotion_codes === true
         ? [PromotionCodesWebhooksHandler]
         : []),
-      ...(configuration.sync.convex_billing_coupons === true
+      ...(configuration.sync.convex_stripe_coupons === true
         ? [CouponsWebhooksHandler]
         : []),
-      ...(configuration.sync.convex_billing_payouts === true
+      ...(configuration.sync.convex_stripe_payouts === true
         ? [PayoutsWebhooksHandler]
         : []),
-      ...(configuration.sync.convex_billing_checkout_sessions === true
+      ...(configuration.sync.convex_stripe_checkout_sessions === true
         ? [CheckoutSessionsWebhooksHandler]
         : []),
-      ...(configuration.sync.convex_billing_payment_intents === true
+      ...(configuration.sync.convex_stripe_payment_intents === true
         ? [PaymentIntentsWebhooksHandler]
         : []),
     ] as const;
 
-    const context = context_ as unknown as GenericActionCtx<BillingDataModel>;
+    const context = context_ as unknown as GenericActionCtx<StripeDataModel>;
 
     const body = await request.text();
     const signature = request.headers.get("Stripe-Signature");

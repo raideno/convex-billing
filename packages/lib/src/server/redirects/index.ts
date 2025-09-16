@@ -1,6 +1,6 @@
 import { GenericActionCtx, httpActionGeneric } from "convex/server";
 
-import { BillingDataModel } from "../schema";
+import { StripeDataModel } from "../schema";
 import { InferArgs, InternalConfiguration } from "../types";
 import { PayReturnImplementation } from "./pay";
 import { PortalReturnImplementation } from "./portal";
@@ -194,7 +194,7 @@ export const buildRedirectImplementation = (
   configuration: InternalConfiguration
 ) =>
   httpActionGeneric(async (context_, request) => {
-    const context = context_ as unknown as GenericActionCtx<BillingDataModel>;
+    const context = context_ as unknown as GenericActionCtx<StripeDataModel>;
     const url = new URL(request.url);
 
     const segments = url.pathname.split("/").filter(Boolean);

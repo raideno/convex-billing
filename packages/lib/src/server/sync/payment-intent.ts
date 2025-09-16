@@ -3,7 +3,7 @@ import Stripe from "stripe";
 
 import { defineActionImplementation } from "@/helpers";
 import { PaymentIntentStripeToConvex } from "@/schema/payment-intent";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 export const PaymentIntentsSyncImplementation = defineActionImplementation({
   args: v.object({}),
@@ -13,10 +13,10 @@ export const PaymentIntentsSyncImplementation = defineActionImplementation({
       apiVersion: "2025-08-27.basil",
     });
 
-    const localPaymentIntentsRes = await billingDispatchTyped(
+    const localPaymentIntentsRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "convex_billing_payment_intents",
+        table: "convex_stripe_payment_intents",
       },
       context,
       configuration
@@ -37,10 +37,10 @@ export const PaymentIntentsSyncImplementation = defineActionImplementation({
     for (const paymentIntent of paymentIntents) {
       stripePaymentIntentIds.add(paymentIntent.id);
 
-      await billingDispatchTyped(
+      await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_billing_payment_intents",
+          table: "convex_stripe_payment_intents",
           idField: "paymentIntentId",
           data: {
             paymentIntentId: paymentIntent.id,
@@ -55,10 +55,10 @@ export const PaymentIntentsSyncImplementation = defineActionImplementation({
 
     for (const [paymentIntentId] of localPaymentIntentsById.entries()) {
       if (!stripePaymentIntentIds.has(paymentIntentId)) {
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_billing_payment_intents",
+            table: "convex_stripe_payment_intents",
             idField: "paymentIntentId",
             idValue: paymentIntentId,
           },

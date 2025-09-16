@@ -3,7 +3,7 @@ import Stripe from "stripe";
 
 import { defineActionImplementation } from "@/helpers";
 import { PriceStripeToConvex } from "@/schema/price";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 export const PricesSyncImplementation = defineActionImplementation({
   args: v.object({}),
@@ -13,10 +13,10 @@ export const PricesSyncImplementation = defineActionImplementation({
       apiVersion: "2025-08-27.basil",
     });
 
-    const localPricesRes = await billingDispatchTyped(
+    const localPricesRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "convex_billing_prices",
+        table: "convex_stripe_prices",
       },
       context,
       configuration
@@ -34,10 +34,10 @@ export const PricesSyncImplementation = defineActionImplementation({
     for (const price of prices) {
       stripePriceIds.add(price.id);
 
-      await billingDispatchTyped(
+      await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_billing_prices",
+          table: "convex_stripe_prices",
           idField: "priceId",
           data: {
             priceId: price.id,
@@ -52,10 +52,10 @@ export const PricesSyncImplementation = defineActionImplementation({
 
     for (const [priceId] of localPricesById.entries()) {
       if (!stripePriceIds.has(priceId)) {
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_billing_prices",
+            table: "convex_stripe_prices",
             idField: "priceId",
             idValue: priceId,
           },

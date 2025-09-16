@@ -3,7 +3,7 @@ import Stripe from "stripe";
 
 import { defineActionImplementation } from "@/helpers";
 import { ProductStripeToConvex } from "@/schema/product";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 export const ProductsSyncImplementation = defineActionImplementation({
   args: v.object({}),
@@ -13,10 +13,10 @@ export const ProductsSyncImplementation = defineActionImplementation({
       apiVersion: "2025-08-27.basil",
     });
 
-    const localProductsResponse = await billingDispatchTyped(
+    const localProductsResponse = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "convex_billing_products",
+        table: "convex_stripe_products",
       },
       context,
       configuration
@@ -39,10 +39,10 @@ export const ProductsSyncImplementation = defineActionImplementation({
         continue;
       }
 
-      await billingDispatchTyped(
+      await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_billing_products",
+          table: "convex_stripe_products",
           idField: "productId",
           data: {
             productId: product.id,
@@ -57,10 +57,10 @@ export const ProductsSyncImplementation = defineActionImplementation({
 
     for (const [productId, doc] of localProductsById.entries()) {
       if (!stripeProductIds.has(productId)) {
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_billing_products",
+            table: "convex_stripe_products",
             idField: "productId",
             idValue: productId,
           },

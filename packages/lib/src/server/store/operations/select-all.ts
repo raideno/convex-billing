@@ -1,10 +1,10 @@
 import { GenericMutationCtx } from "convex/server";
 
-import { BillingDataModel } from "@/schema";
+import { StripeDataModel } from "@/schema";
 
-export async function selectAll<TableName extends keyof BillingDataModel>(
-  context: GenericMutationCtx<BillingDataModel>,
+export async function selectAll<TableName extends keyof StripeDataModel>(
+  context: GenericMutationCtx<StripeDataModel>,
   table: TableName
-): Promise<BillingDataModel[TableName]["document"][]> {
+): Promise<StripeDataModel[TableName]["document"][]> {
   return await context.db.query(table).collect();
 }

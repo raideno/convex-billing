@@ -1,5 +1,5 @@
 import { PaymentIntentStripeToConvex } from "@/schema/payment-intent";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 import { defineWebhookHandler } from "./types";
 
@@ -26,10 +26,10 @@ export const PaymentIntentsWebhooksHandler = defineWebhookHandler({
       case "payment_intent.processing":
       case "payment_intent.requires_action":
       case "payment_intent.succeeded":
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_billing_payment_intents",
+            table: "convex_stripe_payment_intents",
             idField: "paymentIntentId",
             data: {
               paymentIntentId: paymentIntent.id,

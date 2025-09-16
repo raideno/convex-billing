@@ -4,7 +4,7 @@ import Stripe from "stripe";
 import { defineActionImplementation } from "@/helpers";
 import { CustomerStripeToConvex } from "@/schema/customer";
 import { SubscriptionStripeToConvex } from "@/schema/subscription";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 // TODO: revisit
 export const SubscriptionsSyncImplementation = defineActionImplementation({
@@ -29,7 +29,7 @@ export const SubscriptionsSyncImplementation = defineActionImplementation({
         !Object.keys(subscription.customer.metadata).includes("entityId")
       ) {
         configuration.logger.error(
-          `Skipping subscription ${subscription.id} because it has no entityId metadata. This is due to the subscription being created outside of the checkout flow created by convex-billing.`
+          `Skipping subscription ${subscription.id} because it has no entityId metadata. This is due to the subscription being created outside of the checkout flow created by convex-stripe.`
         );
         continue;
       }
@@ -38,10 +38,10 @@ export const SubscriptionsSyncImplementation = defineActionImplementation({
         typeof subscription.customer !== "string" &&
         subscription.customer.deleted
       ) {
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_billing_customers",
+            table: "convex_stripe_customers",
             idField: "customerId",
             idValue: subscription.customer.id,
           },
@@ -56,10 +56,10 @@ export const SubscriptionsSyncImplementation = defineActionImplementation({
         const entityId = subscription.customer.metadata["entityId"];
         const customerId = subscription.customer.id;
 
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_billing_customers",
+            table: "convex_stripe_customers",
             idField: "entityId",
             data: {
               entityId: entityId,
@@ -72,10 +72,10 @@ export const SubscriptionsSyncImplementation = defineActionImplementation({
           configuration
         );
 
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_billing_subscriptions",
+            table: "convex_stripe_subscriptions",
             idField: "customerId",
             data: {
               customerId: customerId,
@@ -89,14 +89,14 @@ export const SubscriptionsSyncImplementation = defineActionImplementation({
         );
       } else {
         configuration.logger.error(
-          `Skipping subscription ${subscription.id} because it has no entityId metadata. This is due to the subscription being created outside of the checkout flow created by convex-billing.`
+          `Skipping subscription ${subscription.id} because it has no entityId metadata. This is due to the subscription being created outside of the checkout flow created by convex-stripe.`
         );
         continue;
       }
     }
 
-    const localSubsResponse = await billingDispatchTyped(
-      { operation: "selectAll", table: "convex_billing_subscriptions" },
+    const localSubsResponse = await storeDispatchTyped(
+      { operation: "selectAll", table: "convex_stripe_subscriptions" },
       context,
       configuration
     );
@@ -107,10 +107,10 @@ export const SubscriptionsSyncImplementation = defineActionImplementation({
     );
     for (const sub of localSubsResponse.docs || []) {
       if (!hasSub.has(sub.customerId)) {
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_billing_subscriptions",
+            table: "convex_stripe_subscriptions",
             idField: "customerId",
             data: {
               customerId: sub.customerId,

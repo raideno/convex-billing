@@ -1,5 +1,5 @@
 import { CustomerStripeToConvex } from "@/schema/customer";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 import { defineWebhookHandler } from "./types";
 
@@ -17,10 +17,10 @@ export const CustomersWebhookHandler = defineWebhookHandler({
             "No entityId associated with newly created customer."
           );
         else
-          await billingDispatchTyped(
+          await storeDispatchTyped(
             {
               operation: "upsert",
-              table: "convex_billing_customers",
+              table: "convex_stripe_customers",
               idField: "entityId",
               data: {
                 customerId: customer.id,
@@ -34,10 +34,10 @@ export const CustomersWebhookHandler = defineWebhookHandler({
           );
         break;
       case "customer.deleted":
-        billingDispatchTyped(
+        storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_billing_customers",
+            table: "convex_stripe_customers",
             idField: "customerId",
             idValue: customer.id,
           },

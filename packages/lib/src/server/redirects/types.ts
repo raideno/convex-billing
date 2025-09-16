@@ -1,6 +1,6 @@
 import { GenericActionCtx } from "convex/server";
 
-import { BillingDataModel } from "@/schema";
+import { StripeDataModel } from "@/schema";
 import { ArgSchema, InferArgs, InternalConfiguration } from "@/types";
 
 export type RedirectHandler<
@@ -11,7 +11,7 @@ export type RedirectHandler<
   data?: S;
   handle: (
     origin: TOrigins[number],
-    context: GenericActionCtx<BillingDataModel>,
+    context: GenericActionCtx<StripeDataModel>,
     data: InferArgs<S>,
     configuration: InternalConfiguration
   ) => Promise<void>;

@@ -2,10 +2,10 @@ import { GenericActionCtx } from "convex/server";
 import { GenericId, v } from "convex/values";
 
 import { defineMutationImplementation } from "@/helpers";
-import { BillingDataModel } from "@/schema";
+import { StripeDataModel } from "@/schema";
 
 import { InternalConfiguration } from "../types";
-import { BillingDispatchArgs, BillingResultFor } from "./types";
+import { StoreDispatchArgs, StoreResultFor } from "./types";
 
 import {
   deleteById,
@@ -39,7 +39,7 @@ export const StoreImplementation = defineMutationImplementation({
       throw new Error(`Unknown op "${args.operation}"`);
     }
 
-    const table = args.table as keyof BillingDataModel;
+    const table = args.table as keyof StripeDataModel;
 
     switch (args.operation) {
       case "upsert": {
@@ -106,15 +106,15 @@ export const StoreImplementation = defineMutationImplementation({
   },
 });
 
-export async function billingDispatchTyped<
-  A extends BillingDispatchArgs<BillingDataModel>,
+export async function storeDispatchTyped<
+  A extends StoreDispatchArgs<StripeDataModel>,
 >(
   args: A,
-  context: GenericActionCtx<BillingDataModel>,
+  context: GenericActionCtx<StripeDataModel>,
   configuration: InternalConfiguration
-): Promise<BillingResultFor<BillingDataModel, A>> {
+): Promise<StoreResultFor<StripeDataModel, A>> {
   return (await context.runMutation(
     `${configuration.base}:store` as any,
     args
-  )) as BillingResultFor<BillingDataModel, A>;
+  )) as StoreResultFor<StripeDataModel, A>;
 }

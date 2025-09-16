@@ -15,11 +15,8 @@ export default function App() {
         <Heading size={"7"}>Convex Stripe Integration Demo</Heading>
         <Text>
           Visit documentation at{" "}
-          <Link
-            href="https://github.com/raideno/convex-billing"
-            target="_blank"
-          >
-            https://github.com/raideno/convex-billing
+          <Link href="https://github.com/raideno/convex-stripe" target="_blank">
+            https://github.com/raideno/convex-stripe
           </Link>
           .
         </Text>
@@ -28,7 +25,7 @@ export default function App() {
         <Card>
           <Flex direction={"column"} gap={"2"}>
             <Link
-              href="https://github.com/raideno/convex-billing/tree/main/packages/demo"
+              href="https://github.com/raideno/convex-stripe/tree/main/packages/demo"
               target="_blank"
             >
               <Button variant="classic" className="w-full">
@@ -36,7 +33,7 @@ export default function App() {
               </Button>
             </Link>
             <Link
-              href="https://raideno.github.io/convex-billing/"
+              href="https://raideno.github.io/convex-stripe/"
               target="_blank"
             >
               <Button variant="classic" className="w-full">
@@ -44,7 +41,7 @@ export default function App() {
               </Button>
             </Link>
             <Link
-              href="https://github.com/raideno/convex-billing"
+              href="https://github.com/raideno/convex-stripe"
               target="_blank"
             >
               <Button variant="classic" className="w-full">

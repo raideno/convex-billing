@@ -1,13 +1,11 @@
 import { CheckoutSessionStripeToConvex } from "@/schema/checkout-session";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 import { defineWebhookHandler } from "./types";
 
 export const CheckoutSessionsWebhooksHandler = defineWebhookHandler({
   events: [
     "checkout.session.async_payment_failed",
-    // NOTE: fired when the checkout is completed, not when the payment is successful
-    // At this stage, the payment may be still processing or require additional actions
     "checkout.session.async_payment_succeeded",
     "checkout.session.completed",
     "checkout.session.expired",
@@ -20,10 +18,10 @@ export const CheckoutSessionsWebhooksHandler = defineWebhookHandler({
       case "checkout.session.async_payment_succeeded":
       case "checkout.session.expired":
       case "checkout.session.completed":
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_billing_checkout_sessions",
+            table: "convex_stripe_checkout_sessions",
             idField: "checkoutSessionId",
             data: {
               checkoutSessionId: checkout.id,

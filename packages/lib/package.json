@@ -1,5 +1,5 @@
 {
-  "name": "@raideno/convex-billing",
+  "name": "@raideno/convex-stripe",
   "version": "0.0.28",
   "description": "Easy stripe billing for convex apps.",
   "keywords": [
@@ -27,11 +27,11 @@
       "types": "./dist/server.d.ts"
     }
   },
-  "homepage": "https://raideno.github.io/convex-billing",
-  "bugs": "https://github.com/raideno/convex-billing/issues",
+  "homepage": "https://raideno.github.io/convex-stripe",
+  "bugs": "https://github.com/raideno/convex-stripe/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/raideno/convex-billing"
+    "url": "https://github.com/raideno/convex-stripe"
   },
   "license": "Apache-2.0",
   "author": "raideno",

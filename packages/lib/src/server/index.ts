@@ -1,12 +1,11 @@
 import {
-  AnyDataModel,
   Crons,
   GenericActionCtx,
-  GenericMutationCtx,
   HttpRouter,
   internalActionGeneric,
   internalMutationGeneric,
 } from "convex/server";
+import { Infer } from "convex/values";
 
 import {
   PayImplementation,
@@ -16,12 +15,11 @@ import {
 } from "./actions";
 import { normalizeConfiguration } from "./helpers";
 import { buildRedirectImplementation } from "./redirects";
+import { StripeDataModel } from "./schema";
 import { StoreImplementation } from "./store";
 import { SyncAllImplementation } from "./sync/all";
 import { InputConfiguration } from "./types";
 import { buildWebhookImplementation } from "./webhooks";
-import { Infer } from "convex/values";
-import { BillingDataModel } from "./schema";
 
 export * from "./schema";
 
@@ -29,11 +27,11 @@ export * from "./types";
 
 export * from "./helpers";
 
-export const internalConvexBilling = (configuration_: InputConfiguration) => {
+export const internalConvexStripe = (configuration_: InputConfiguration) => {
   const configuration = normalizeConfiguration(configuration_);
 
   return {
-    billing: {
+    stripe: {
       addHttpRoutes: (http: HttpRouter) => {
         http.route({
           path: "/stripe/webhook",
@@ -54,15 +52,15 @@ export const internalConvexBilling = (configuration_: InputConfiguration) => {
         );
       },
       portal: (
-        context: GenericActionCtx<BillingDataModel>,
+        context: GenericActionCtx<StripeDataModel>,
         args: Infer<typeof PortalImplementation.args>
       ) => PortalImplementation.handler(context, args, configuration),
       subscribe: (
-        context: GenericActionCtx<BillingDataModel>,
+        context: GenericActionCtx<StripeDataModel>,
         args: Infer<typeof SubscribeImplementation.args>
       ) => SubscribeImplementation.handler(context, args, configuration),
       pay: (
-        context: GenericActionCtx<BillingDataModel>,
+        context: GenericActionCtx<StripeDataModel>,
         args: Infer<typeof PayImplementation.args>
       ) => PayImplementation.handler(context, args, configuration),
     },

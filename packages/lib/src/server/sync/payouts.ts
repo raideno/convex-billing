@@ -3,7 +3,7 @@ import { v } from "convex/values";
 
 import { defineActionImplementation } from "@/helpers";
 import { PayoutStripeToConvex } from "@/schema/payout";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 export const PayoutsSyncImplementation = defineActionImplementation({
   args: v.object({}),
@@ -13,10 +13,10 @@ export const PayoutsSyncImplementation = defineActionImplementation({
       apiVersion: "2025-08-27.basil",
     });
 
-    const localPayoutsRes = await billingDispatchTyped(
+    const localPayoutsRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "convex_billing_payouts",
+        table: "convex_stripe_payouts",
       },
       context,
       configuration
@@ -34,10 +34,10 @@ export const PayoutsSyncImplementation = defineActionImplementation({
     for (const payout of payouts) {
       stripePayoutIds.add(payout.id);
 
-      await billingDispatchTyped(
+      await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_billing_payouts",
+          table: "convex_stripe_payouts",
           idField: "payoutId",
           data: {
             payoutId: payout.id,
@@ -52,10 +52,10 @@ export const PayoutsSyncImplementation = defineActionImplementation({
 
     for (const [payoutId] of localPayoutsById.entries()) {
       if (!stripePayoutIds.has(payoutId)) {
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_billing_payouts",
+            table: "convex_stripe_payouts",
             idField: "payoutId",
             idValue: payoutId,
           },

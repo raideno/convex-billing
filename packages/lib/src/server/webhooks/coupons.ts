@@ -1,5 +1,5 @@
 import { CouponStripeToConvex } from "@/schema/coupon";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 import { defineWebhookHandler } from "./types";
 
@@ -11,10 +11,10 @@ export const CouponsWebhooksHandler = defineWebhookHandler({
     switch (event.type) {
       case "coupon.created":
       case "coupon.updated":
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_billing_coupons",
+            table: "convex_stripe_coupons",
             idField: "couponId",
             data: {
               couponId: coupon.id,
@@ -27,10 +27,10 @@ export const CouponsWebhooksHandler = defineWebhookHandler({
         );
         break;
       case "coupon.deleted":
-        billingDispatchTyped(
+        storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_billing_coupons",
+            table: "convex_stripe_coupons",
             idField: "couponId",
             idValue: coupon.id,
           },

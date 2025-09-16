@@ -1,8 +1,8 @@
 import { cronJobs } from "convex/server";
-import { billing } from "./billing";
+import { stripe } from "./stripe";
 
 const crons = cronJobs();
 
-billing.addCronJobs(crons);
+stripe.addCronJobs(crons);
 
 export default crons;

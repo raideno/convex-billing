@@ -1,5 +1,5 @@
 import { ProductStripeToConvex } from "@/schema/product";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 import { defineWebhookHandler } from "./types";
 
@@ -11,10 +11,10 @@ export const ProductsWebhooksHandler = defineWebhookHandler({
     switch (event.type) {
       case "product.created":
       case "product.updated":
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_billing_products",
+            table: "convex_stripe_products",
             idField: "productId",
             data: {
               productId: product.id,
@@ -29,10 +29,10 @@ export const ProductsWebhooksHandler = defineWebhookHandler({
       // TODO: careful here as the deletion is just a soft delete in Stripe
       // so maybe we want to keep the record and just mark it as deleted?
       case "product.deleted":
-        billingDispatchTyped(
+        storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_billing_products",
+            table: "convex_stripe_products",
             idField: "productId",
             idValue: product.id,
           },

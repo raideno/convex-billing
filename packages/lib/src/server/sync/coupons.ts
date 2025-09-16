@@ -3,7 +3,7 @@ import Stripe from "stripe";
 
 import { defineActionImplementation } from "@/helpers";
 import { CouponStripeToConvex } from "@/schema/coupon";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 export const CouponsSyncImplementation = defineActionImplementation({
   args: v.object({}),
@@ -13,10 +13,10 @@ export const CouponsSyncImplementation = defineActionImplementation({
       apiVersion: "2025-08-27.basil",
     });
 
-    const localCouponsRes = await billingDispatchTyped(
+    const localCouponsRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "convex_billing_coupons",
+        table: "convex_stripe_coupons",
       },
       context,
       configuration
@@ -34,10 +34,10 @@ export const CouponsSyncImplementation = defineActionImplementation({
     for (const coupon of coupons) {
       stripeCouponIds.add(coupon.id);
 
-      await billingDispatchTyped(
+      await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_billing_coupons",
+          table: "convex_stripe_coupons",
           idField: "couponId",
           data: {
             couponId: coupon.id,
@@ -52,10 +52,10 @@ export const CouponsSyncImplementation = defineActionImplementation({
 
     for (const [couponId] of localCouponsById.entries()) {
       if (!stripeCouponIds.has(couponId)) {
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_billing_coupons",
+            table: "convex_stripe_coupons",
             idField: "couponId",
             idValue: couponId,
           },

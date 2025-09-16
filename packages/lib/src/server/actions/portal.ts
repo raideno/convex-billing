@@ -3,7 +3,7 @@ import Stripe from "stripe";
 
 import { SetupImplementation } from "@/actions/setup";
 import { buildSignedReturnUrl } from "@/redirects";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 import { defineActionImplementation } from "../helpers";
 
@@ -27,10 +27,10 @@ export const PortalImplementation = defineActionImplementation({
       apiVersion: "2025-08-27.basil",
     });
 
-    const stripeCustomer = await billingDispatchTyped(
+    const stripeCustomer = await storeDispatchTyped(
       {
         operation: "selectOne",
-        table: "convex_billing_customers",
+        table: "convex_stripe_customers",
         field: "entityId",
         value: args.entityId,
       },

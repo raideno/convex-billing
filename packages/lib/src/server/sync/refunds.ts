@@ -3,7 +3,7 @@ import Stripe from "stripe";
 
 import { defineActionImplementation } from "@/helpers";
 import { RefundStripeToConvex } from "@/schema/refund";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 export const RefundsSyncImplementation = defineActionImplementation({
   args: v.object({}),
@@ -13,10 +13,10 @@ export const RefundsSyncImplementation = defineActionImplementation({
       apiVersion: "2025-08-27.basil",
     });
 
-    const localRefundsRes = await billingDispatchTyped(
+    const localRefundsRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "convex_billing_refunds",
+        table: "convex_stripe_refunds",
       },
       context,
       configuration
@@ -34,10 +34,10 @@ export const RefundsSyncImplementation = defineActionImplementation({
     for (const refund of refunds) {
       stripeRefundIds.add(refund.id);
 
-      await billingDispatchTyped(
+      await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_billing_refunds",
+          table: "convex_stripe_refunds",
           idField: "refundId",
           data: {
             refundId: refund.id,
@@ -52,10 +52,10 @@ export const RefundsSyncImplementation = defineActionImplementation({
 
     for (const [refundId] of localRefundsById.entries()) {
       if (!stripeRefundIds.has(refundId)) {
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_billing_refunds",
+            table: "convex_stripe_refunds",
             idField: "refundId",
             idValue: refundId,
           },

@@ -52,7 +52,7 @@ type SelectAllArgsFor<M, T extends keyof M> = {
   table: T;
 };
 
-export type BillingArgsFor<
+export type StoreArgsFor<
   M,
   //   T extends keyof M,
   T extends keyof M & string,
@@ -69,7 +69,7 @@ export type BillingArgsFor<
           ? SelectAllArgsFor<M, T>
           : never;
 
-export type BillingDispatchArgs<M> = {
+export type StoreDispatchArgs<M> = {
   [T in Extract<keyof M, string>]:
     | UpsertArgsFor<M, T>
     | DeleteByIdArgsFor<M, T>
@@ -78,7 +78,7 @@ export type BillingDispatchArgs<M> = {
     | SelectAllArgsFor<M, T>;
 }[Extract<keyof M, string>];
 
-export type BillingResultFor<M, A extends BillingDispatchArgs<M>> = A extends {
+export type StoreResultFor<M, A extends StoreDispatchArgs<M>> = A extends {
   operation: "upsert";
   table: infer T extends keyof M & string;
 }

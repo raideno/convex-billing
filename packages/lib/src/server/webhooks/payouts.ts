@@ -1,5 +1,5 @@
 import { PayoutStripeToConvex } from "@/schema/payout";
-import { billingDispatchTyped } from "@/store";
+import { storeDispatchTyped } from "@/store";
 
 import { defineWebhookHandler } from "./types";
 
@@ -22,10 +22,10 @@ export const PayoutsWebhooksHandler = defineWebhookHandler({
       case "payout.failed":
       case "payout.paid":
       case "payout.reconciliation_completed":
-        await billingDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_billing_payouts",
+            table: "convex_stripe_payouts",
             idField: "payoutId",
             data: {
               payoutId: payout.id,

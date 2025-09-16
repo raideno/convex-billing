@@ -3,9 +3,9 @@ import { useAction, useQuery } from "convex/react";
 import { api } from "@/convex/api";
 
 export const ProductsForm = () => {
-  const intents = useQuery(api.billing.payments);
-  const products = useQuery(api.billing.products);
-  const purchase = useAction(api.billing.pay);
+  const intents = useQuery(api.stripe.payments);
+  const products = useQuery(api.stripe.products);
+  const purchase = useAction(api.stripe.pay);
 
   const handlePurchase = async (priceId: string) => {
     const checkout = await purchase({
