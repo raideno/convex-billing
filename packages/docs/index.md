@@ -172,6 +172,10 @@ The library automatically syncs:
 - [`stripe_invoices`](#stripe_invoices)
 - [`stripe_reviews`](#stripe_reviews)
 - [`stripe_plans`](#stripe_plans)
+- [`stripe_early_fraud_warnings`](#stripe_early_fraud_warnings)
+- [`stripe_disputes`](#stripe_disputes)
+- [`stripe_tax_ids`](#stripe_tax_ids)
+- [`stripe_setup_intents`](#stripe_setup_intents)
 
 You can query these tables at any time to:
 
@@ -409,6 +413,28 @@ The following events are handled and synced automatically:
 - `plan.updated`
 - `plan.deleted`
 
+**Early Fraud Warnings:**
+- `radar.early_fraud_warning.created`
+- `radar.early_fraud_warning.updated`
+
+**Disputes:**
+- `charge.dispute.created`
+- `charge.dispute.updated`
+- `charge.dispute.closed`
+- `charge.dispute.funds_reinstated`
+
+**Tax Ids:**
+- `customer.tax_id.created`
+- `customer.tax_id.deleted`
+- `customer.tax_id.updated`
+
+**Setup Intents:**
+- `setup_intent.canceled`
+- `setup_intent.created`
+- `setup_intent.requires_action`
+- `setup_intent.setup_failed`
+- `setup_intent.succeeded`
+
 ## 📚 Resources
 
 - [Convex Documentation](https://docs.convex.dev)  
@@ -585,7 +611,7 @@ Stores Stripe reviews.
 | `last_synced_at` | `number`        | Last sync timestamp                       |
 
 Index:
-- `byInvoiceId`
+- `byReviewId`
 
 ### `stripe_plans`
 Stores Stripe plans.
@@ -599,6 +625,45 @@ Stores Stripe plans.
 
 Index:
 - `byPlanId`
+
+### `stripe_early_fraud_warnings`
+Stores Stripe early fraud warnings.
+
+| Field                 | Type                             | Description                                                              |
+| --------------------- | -------------------------------- | ------------------------------------------------------------------------ |
+| `_id`                 | `string`                         | Convex document ID                                                       |
+| `earlyFraudWarningId` | `string`                         | Stripe early fraud warnings ID                                           |
+| `stripe`              | `Stripe.Radar.EarlyFraudWarning` | Full Stripe early fraud warnings object `Stripe.Radar.EarlyFraudWarning` |
+| `last_synced_at`      | `number`                         | Last sync timestamp                                                      |
+
+Index:
+- `byEarlyFraudWarningId`
+
+### `stripe_setup_intents`
+Stores Stripe setup intents.
+
+| Field            | Type             | Description                                          |
+| ---------------- | ---------------- | ---------------------------------------------------- |
+| `_id`            | `string`         | Convex document ID                                   |
+| `setupIntentId`  | `string`         | Stripe setup intent ID                               |
+| `stripe`         | `Stripe.Dispute` | Full Stripe setup intent object `Stripe.SetupIntent` |
+| `last_synced_at` | `number`         | Last sync timestamp                                  |
+
+Index:
+- `bySetupIntentId`
+
+### `stripe_tax_ids`
+Stores Stripe tax ids.
+
+| Field            | Type           | Description                              |
+| ---------------- | -------------- | ---------------------------------------- |
+| `_id`            | `string`       | Convex document ID                       |
+| `taxId`          | `string`       | Stripe tax id ID                         |
+| `stripe`         | `Stripe.TaxId` | Full Stripe tax id object `Stripe.TaxId` |
+| `last_synced_at` | `number`       | Last sync timestamp                      |
+
+Index:
+- `byTaxIdId`
 
 > ⚡ These tables are **synced automatically** via webhooks.  
 > You can query them directly in your Convex functions to check products, prices, and subscription status.

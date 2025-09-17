@@ -9,6 +9,8 @@ import { v } from "convex/values";
 import { CheckoutSessionSchema } from "@/schema/checkout-session";
 import { CouponSchema } from "@/schema/coupon";
 import { CustomerSchema } from "@/schema/customer";
+import { DisputeSchema } from "@/schema/dispute";
+import { EarlyFraudWarningSchema } from "@/schema/early-fraud-warning";
 import { InvoiceSchema } from "@/schema/invoice";
 import { PaymentIntentSchema } from "@/schema/payment-intent";
 import { PayoutSchema } from "@/schema/payout";
@@ -20,6 +22,8 @@ import { RefundSchema } from "@/schema/refund";
 import { ReviewSchema } from "@/schema/review";
 import { SubscriptionObject } from "@/schema/subscription";
 import { GenericDoc } from "@/types";
+import { SetupIntentSchema } from "./setup-intent";
+import { TaxIdSchema } from "./tax-id";
 
 export const stripeTables = {
   stripe_products: defineTable({
@@ -98,7 +102,27 @@ export const stripeTables = {
     planId: v.string(),
     stripe: v.object(PlanSchema),
     last_synced_at: v.number(),
-  }).index("planId", ["planId"]),
+  }).index("byPlanId", ["planId"]),
+  stripe_disputes: defineTable({
+    disputeId: v.string(),
+    stripe: v.object(DisputeSchema),
+    last_synced_at: v.number(),
+  }).index("byDisputeId", ["disputeId"]),
+  stripe_early_fraud_warnings: defineTable({
+    earlyFraudWarningId: v.string(),
+    stripe: v.object(EarlyFraudWarningSchema),
+    last_synced_at: v.number(),
+  }).index("byEarlyFraudWarningId", ["earlyFraudWarningId"]),
+  stripe_tax_ids: defineTable({
+    taxIdId: v.string(),
+    stripe: v.object(TaxIdSchema),
+    last_synced_at: v.number(),
+  }).index("byTaxIdId", ["taxIdId"]),
+  stripe_setup_intents: defineTable({
+    setupIntentId: v.string(),
+    stripe: v.object(SetupIntentSchema),
+    last_synced_at: v.number(),
+  }).index("bySetupIntentId", ["setupIntentId"]),
 };
 
 const defaultSchema = defineSchema(stripeTables);

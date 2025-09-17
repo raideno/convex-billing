@@ -4,7 +4,12 @@ import { storeDispatchTyped } from "@/store";
 import { defineWebhookHandler } from "./types";
 
 export default defineWebhookHandler({
-  events: ["refund.created", "refund.failed", "refund.updated"],
+  events: [
+    "refund.created",
+    "refund.failed",
+    "refund.updated",
+    "charge.refund.updated",
+  ],
   handle: async (event, context, configuration) => {
     if (configuration.sync.stripe_refunds !== true) return;
 

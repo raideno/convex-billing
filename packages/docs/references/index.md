@@ -28,6 +28,10 @@ export type InputConfiguration = {
     stripe_invoices?: boolean;
     stripe_reviews?: boolean;
     stripe_plans?: boolean;
+    stripe_early_fraud_warnings?: boolean;
+    stripe_disputes?: boolean;
+    stripe_tax_ids?: boolean;
+    stripe_setup_intents?: boolean;
   };
 
   /** Enable verbose logging */
@@ -53,21 +57,25 @@ Configuration for authenticating with Stripe.
 Controls which Convex tables get synced from Stripe.
 If omitted, **all tables are synced**.
 
-| Table                      | Default | Purpose                       |
-| -------------------------- | ------- | ----------------------------- |
-| `stripe_products`          | `true`  | Sync products                 |
-| `stripe_prices`            | `true`  | Sync prices                   |
-| `stripe_customers`         | `true`  | Sync customers                |
-| `stripe_subscriptions`     | `true`  | Sync subscriptions            |
-| `stripe_coupons`           | `true`  | Sync coupons                  |
-| `stripe_promotion_codes`   | `true`  | Sync promotion codes          |
-| `stripe_refunds`           | `true`  | Sync refunds events           |
-| `stripe_payouts`           | `true`  | Sync payout events            |
-| `stripe_payment_intents`   | `true`  | Sync payment intents events   |
-| `stripe_checkout_sessions` | `true`  | Sync checkout sessions events |
-| `stripe_invoices`          | `true`  | Sync invoices events          |
-| `stripe_reviews`           | `true`  | Sync reviews events           |
-| `stripe_plans`             | `true`  | Sync plans events             |
+| Table                         | Default | Purpose                   |
+| ----------------------------- | ------- | ------------------------- |
+| `stripe_products`             | `true`  | Sync products             |
+| `stripe_prices`               | `true`  | Sync prices               |
+| `stripe_customers`            | `true`  | Sync customers            |
+| `stripe_subscriptions`        | `true`  | Sync subscriptions        |
+| `stripe_coupons`              | `true`  | Sync coupons              |
+| `stripe_promotion_codes`      | `true`  | Sync promotion codes      |
+| `stripe_refunds`              | `true`  | Sync refunds              |
+| `stripe_payouts`              | `true`  | Sync payout               |
+| `stripe_payment_intents`      | `true`  | Sync payment intents      |
+| `stripe_checkout_sessions`    | `true`  | Sync checkout sessions    |
+| `stripe_invoices`             | `true`  | Sync invoices             |
+| `stripe_reviews`              | `true`  | Sync reviews              |
+| `stripe_plans`                | `true`  | Sync plans                |
+| `stripe_early_fraud_warnings` | `true`  | Sync early fraud warnings |
+| `stripe_disputes`             | `true`  | Sync disputes             |
+| `stripe_setup_intents`        | `true`  | Sync setup intents        |
+| `stripe_tax_ids`              | `true`  | Sync stripe ids           |
 
 ### `debug` (optional)
 - Type: `boolean`.
