@@ -26,6 +26,6 @@
   "scripts": {},
   "type": "module",
   "devDependencies": {
-    "@rollup/rollup-darwin-arm64": "^4.50.2"
+    "globals": "^16.4.0"
   }
 }
