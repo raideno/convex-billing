@@ -170,6 +170,7 @@ The library automatically syncs:
 - [`convex_stripe_checkout_sessions`](#convex_stripe_checkout_sessions)
 - [`convex_stripe_payment_intents`](#convex_stripe_payment_intents)
 - [`convex_stripe_invoices`](#convex_stripe_invoices)
+- [`convex_stripe_reviews`](#convex_stripe_reviews)
 
 You can query these tables at any time to:
 
@@ -399,6 +400,9 @@ The following events are handled and synced automatically:
 - `invoice.voided`
 - `invoice.will_be_due`
 
+**Reviews**
+- `...`
+
 ## 📚 Resources
 
 - [Convex Documentation](https://docs.convex.dev)  
@@ -560,6 +564,19 @@ Stores Stripe invoices.
 | `invoiceId`      | `string`         | Stripe invoice ID                           |
 | `stripe`         | `Stripe.Invoice` | Full Stripe invoice object `Stripe.Invoice` |
 | `last_synced_at` | `number`         | Last sync timestamp                         |
+
+Index:
+- `byInvoiceId`
+
+### `convex_stripe_reviews`
+Stores Stripe reviews.
+
+| Field            | Type            | Description                               |
+| ---------------- | --------------- | ----------------------------------------- |
+| `_id`            | `string`        | Convex document ID                        |
+| `reviewId`       | `string`        | Stripe review ID                          |
+| `stripe`         | `Stripe.Review` | Full Stripe review object `Stripe.Review` |
+| `last_synced_at` | `number`        | Last sync timestamp                       |
 
 Index:
 - `byInvoiceId`

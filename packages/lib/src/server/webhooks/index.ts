@@ -1,3 +1,7 @@
+// TODO: do something that'll automatically get all the files defined in the webhooks folder
+// Extract the handlers and put them in an array provided to the buildWebhookImplementation function
+// This way we don't have to manually add them when we create a new one
+
 import { GenericActionCtx, httpActionGeneric } from "convex/server";
 import Stripe from "stripe";
 
@@ -14,6 +18,7 @@ import { PricesWebhooksHandler } from "./prices";
 import { ProductsWebhooksHandler } from "./products";
 import { PromotionCodesWebhooksHandler } from "./promotion-codes";
 import { RefundsWebhooksHandler } from "./refunds";
+import { ReviewsWebhooksHandler } from "./reviews";
 import { SubscriptionsWebhooksHandler } from "./subscription";
 
 export const buildWebhookImplementation = (
@@ -53,6 +58,9 @@ export const buildWebhookImplementation = (
         : []),
       ...(configuration.sync.convex_stripe_invoices === true
         ? [InvoicesWebhooksHandler]
+        : []),
+      ...(configuration.sync.convex_stripe_reviews === true
+        ? [ReviewsWebhooksHandler]
         : []),
     ] as const;
 

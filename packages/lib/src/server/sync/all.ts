@@ -11,6 +11,7 @@ import { PricesSyncImplementation } from "./prices";
 import { ProductsSyncImplementation } from "./products";
 import { PromotionCodesSyncImplementation } from "./promotion-codes";
 import { RefundsSyncImplementation } from "./refunds";
+import { ReviewsSyncImplementation } from "./reviews";
 import { SubscriptionsSyncImplementation } from "./subscriptions";
 
 export const SyncAllImplementation = defineActionImplementation({
@@ -33,6 +34,7 @@ export const SyncAllImplementation = defineActionImplementation({
       configuration.sync.convex_stripe_payment_intents &&
         PaymentIntentsSyncImplementation,
       configuration.sync.convex_stripe_invoices && InvoicesSyncImplementation,
+      configuration.sync.convex_stripe_reviews && ReviewsSyncImplementation,
     ];
 
     for (const sync of syncs) {

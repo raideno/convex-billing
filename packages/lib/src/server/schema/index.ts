@@ -6,19 +6,19 @@ import {
 } from "convex/server";
 import { v } from "convex/values";
 
+import { CheckoutSessionSchema } from "@/schema/checkout-session";
 import { CouponSchema } from "@/schema/coupon";
 import { CustomerSchema } from "@/schema/customer";
+import { InvoiceSchema } from "@/schema/invoice";
+import { PaymentIntentSchema } from "@/schema/payment-intent";
+import { PayoutSchema } from "@/schema/payout";
 import { PriceSchema } from "@/schema/price";
 import { ProductSchema } from "@/schema/product";
 import { PromotionCodeSchema } from "@/schema/promotion-code";
+import { RefundSchema } from "@/schema/refund";
+import { ReviewSchema } from "@/schema/review";
 import { SubscriptionObject } from "@/schema/subscription";
 import { GenericDoc } from "@/types";
-
-import { CheckoutSessionSchema } from "./checkout-session";
-import { InvoiceSchema } from "./invoice";
-import { PaymentIntentSchema } from "./payment-intent";
-import { PayoutSchema } from "./payout";
-import { RefundSchema } from "./refund";
 
 export const stripeTables = {
   convex_stripe_products: defineTable({
@@ -88,6 +88,11 @@ export const stripeTables = {
     stripe: v.object(InvoiceSchema),
     last_synced_at: v.number(),
   }).index("byInvoiceId", ["invoiceId"]),
+  convex_stripe_reviews: defineTable({
+    reviewId: v.string(),
+    stripe: v.object(ReviewSchema),
+    last_synced_at: v.number(),
+  }).index("reviewId", ["reviewId"]),
 };
 
 const defaultSchema = defineSchema(stripeTables);
