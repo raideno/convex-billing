@@ -6,17 +6,25 @@ import { InternalConfiguration } from "@/types";
 
 import { WebhookHandler } from "./types";
 
-const HANDLERS_MODULES = import.meta.glob("./*.handler.ts", { eager: true });
+const HANDLERS_MODULES = Object.values(
+  import.meta.glob("./*.handler.ts", {
+    eager: true,
+  })
+) as unknown as Array<Record<string, WebhookHandler<Stripe.Event.Type>>>;
+
+if (HANDLERS_MODULES.some((handler) => Object.keys(handler).length > 1)) {
+  throw new Error(
+    "Each handler file should only have one export / default export"
+  );
+}
+
+// TODO: add a check to make sure the thing is of type ReturnType<typeof defineActionImplementation>
+const HANDLERS = HANDLERS_MODULES.map((exports) => Object.values(exports)[0]);
 
 export const buildWebhookImplementation = (
   configuration: InternalConfiguration
 ) =>
   httpActionGeneric(async (context_, request) => {
-    const HANDLERS = Object.values(HANDLERS_MODULES).map(
-      (handler) =>
-        (handler as { default: WebhookHandler<Stripe.Event.Type> }).default
-    );
-
     const context = context_ as unknown as GenericActionCtx<StripeDataModel>;
 
     const body = await request.text();

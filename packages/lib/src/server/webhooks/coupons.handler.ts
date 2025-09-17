@@ -29,7 +29,7 @@ export default defineWebhookHandler({
         );
         break;
       case "coupon.deleted":
-        storeDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "deleteById",
             table: "stripe_coupons",

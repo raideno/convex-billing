@@ -102,7 +102,7 @@ export const CustomerSchema = {
   // invoice_settings: v.object({
   //   // TODO: complete
   // }),
-  invoice_settings: v.any(),
+  invoice_settings: v.optional(v.any()),
   livemode: v.boolean(),
   next_invoice_sequence: v.optional(nullablenumber()),
   preferred_locales: v.optional(v.union(v.array(v.string()), v.null())),

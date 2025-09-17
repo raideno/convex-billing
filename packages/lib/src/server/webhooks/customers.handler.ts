@@ -16,7 +16,7 @@ export default defineWebhookHandler({
       case "customer.updated":
         if (!entityId)
           configuration.logger.warn(
-            "No entityId associated with newly created customer."
+            "No entityId associated with newly created customer. Skipping..."
           );
         else
           await storeDispatchTyped(
@@ -36,7 +36,7 @@ export default defineWebhookHandler({
           );
         break;
       case "customer.deleted":
-        storeDispatchTyped(
+        await storeDispatchTyped(
           {
             operation: "deleteById",
             table: "stripe_customers",

@@ -127,7 +127,7 @@ export const InvoiceSchema = {
   //   automatic_tax: v.object({
   //     // TODO: complete
   //   }),
-  automatic_tax: v.any(),
+  automatic_tax: v.optional(v.any()),
   collection_method: v.union(
     v.literal("charge_automatically"),
     v.literal("send_invoice")
@@ -135,7 +135,7 @@ export const InvoiceSchema = {
   //   confirmation_secret: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  confirmation_secret: v.any(),
+  confirmation_secret: v.optional(v.any()),
   currency: v.string(),
   customer: v.string(),
   description: v.optional(nullablestring()),
@@ -143,12 +143,12 @@ export const InvoiceSchema = {
   //   lines: v.object({
   //     // TODO: complete
   //   }),
-  lines: v.any(),
+  lines: v.optional(v.any()),
   metadata: v.optional(v.union(metadata(), v.null())),
   //   parent: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  parent: v.any(),
+  parent: v.optional(v.any()),
   period_end: v.number(),
   period_start: v.number(),
   status: v.union(
@@ -199,14 +199,14 @@ export const InvoiceSchema = {
   //   customer_address: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  customer_address: v.any(),
+  customer_address: v.optional(v.any()),
   customer_email: v.optional(nullablestring()),
   customer_name: v.optional(nullablestring()),
   customer_phone: v.optional(nullablestring()),
   //   customer_shipping: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  customer_shipping: v.any(),
+  customer_shipping: v.optional(v.any()),
   customer_tax_exempt: v.union(
     v.literal("exempt"),
     v.literal("none"),
@@ -241,16 +241,16 @@ export const InvoiceSchema = {
   //   from_invoice: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  from_invoice: v.any(),
+  from_invoice: v.optional(v.any()),
   invoice_pdf: v.optional(nullablestring()),
   //   issuer: v.object({
   //     // TODO: complete
   //   }),
-  issuer: v.any(),
+  issuer: v.optional(v.any()),
   //   last_finalization_error: optionalnullableobject({
   //     // TODO: complete,
   //   }),
-  last_finalization_error: v.any(),
+  last_finalization_error: v.optional(v.any()),
   latest_revision: v.optional(nullablestring()),
   livemode: v.boolean(),
   next_payment_attempt: v.optional(nullablenumber()),
@@ -259,39 +259,39 @@ export const InvoiceSchema = {
   //   payment_settings: v.object({
   //     // TODO: complete
   //   }),
-  payment_settings: v.any(),
+  payment_settings: v.optional(v.any()),
   //   payments: v.object({
   //     // TODO: complete
   //   }),
-  payments: v.any(),
+  payments: v.optional(v.any()),
   post_payment_credit_notes_amount: v.number(),
   pre_payment_credit_notes_amount: v.number(),
   receipt_number: v.optional(nullablestring()),
   //   rendering: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  rendering: v.any(),
+  rendering: v.optional(v.any()),
   //   shipping_cost: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  shipping_cost: v.any(),
+  shipping_cost: v.optional(v.any()),
   //   shipping_details: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  shipping_details: v.any(),
+  shipping_details: v.optional(v.any()),
   starting_balance: v.number(),
   statement_descriptor: v.optional(nullablestring()),
   //   status_transitions: v.object({
   //     // TODO: complete
   //   }),
-  status_transitions: v.any(),
+  status_transitions: v.optional(v.any()),
   subtotal: v.number(),
   subtotal_excluding_tax: v.optional(nullablenumber()),
   test_clock: v.optional(nullablestring()),
   //   threshold_reason: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  threshold_reason: v.any(),
+  threshold_reason: v.optional(v.any()),
   total_discount_amounts: v.optional(
     v.union(
       v.array(
