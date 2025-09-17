@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
+    "types": ["vite/client"],
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
     "lib": ["esnext", "ESNext.Array", "dom", "dom.iterable"],
     "declaration": true,
-    "declarationMap": true,
+    "declarationMap": false,
     "sourceMap": true,
     "outDir": "dist",
     "allowJs": true,
@@ -16,7 +17,7 @@
       "@/*": ["./src/server/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "*.mjs"],
+  "include": ["**/*.ts", "**/*.tsx", "*.mjs", "vite-env.d.ts"],
   "exclude": [
     "**/*.local*",
     "node_modules",

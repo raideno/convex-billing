@@ -3,7 +3,7 @@ import { storeDispatchTyped } from "@/store";
 
 import { defineWebhookHandler } from "./types";
 
-export const CheckoutSessionsWebhooksHandler = defineWebhookHandler({
+export default defineWebhookHandler({
   events: [
     "checkout.session.async_payment_failed",
     "checkout.session.async_payment_succeeded",
@@ -11,6 +11,8 @@ export const CheckoutSessionsWebhooksHandler = defineWebhookHandler({
     "checkout.session.expired",
   ],
   handle: async (event, context, configuration) => {
+    if (configuration.sync.stripe_checkout_sessions !== true) return;
+
     const checkout = event.data.object;
 
     switch (event.type) {
@@ -21,7 +23,7 @@ export const CheckoutSessionsWebhooksHandler = defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_stripe_checkout_sessions",
+            table: "stripe_checkout_sessions",
             idField: "checkoutSessionId",
             data: {
               checkoutSessionId: checkout.id,

@@ -41,7 +41,7 @@ export const SubscribeImplementation = defineActionImplementation({
     const stripeCustomer = await storeDispatchTyped(
       {
         operation: "selectOne",
-        table: "convex_stripe_customers",
+        table: "stripe_customers",
         field: "entityId",
         value: args.entityId,
       },
@@ -118,7 +118,7 @@ export const SubscribeImplementation = defineActionImplementation({
     await storeDispatchTyped(
       {
         operation: "upsert",
-        table: "convex_stripe_checkout_sessions",
+        table: "stripe_checkout_sessions",
         idField: "checkoutSessionId",
         data: {
           checkoutSessionId: checkout.id,
@@ -140,7 +140,7 @@ export const SubscribeImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_stripe_subscriptions",
+          table: "stripe_subscriptions",
           idField: "subscriptionId",
           data: {
             subscriptionId: subscription.id,

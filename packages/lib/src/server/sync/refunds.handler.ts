@@ -9,6 +9,8 @@ export const RefundsSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "refunds",
   handler: async (context, args, configuration) => {
+    if (configuration.sync.stripe_refunds !== true) return;
+
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
     });
@@ -16,7 +18,7 @@ export const RefundsSyncImplementation = defineActionImplementation({
     const localRefundsRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "convex_stripe_refunds",
+        table: "stripe_refunds",
       },
       context,
       configuration
@@ -37,7 +39,7 @@ export const RefundsSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_stripe_refunds",
+          table: "stripe_refunds",
           idField: "refundId",
           data: {
             refundId: refund.id,
@@ -55,7 +57,7 @@ export const RefundsSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_stripe_refunds",
+            table: "stripe_refunds",
             idField: "refundId",
             idValue: refundId,
           },

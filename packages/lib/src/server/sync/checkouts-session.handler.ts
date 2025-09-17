@@ -9,6 +9,8 @@ export const CheckoutSessionsSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "checkoutSessions",
   handler: async (context, args, configuration) => {
+    if (configuration.sync.stripe_checkout_sessions !== true) return;
+
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
     });
@@ -16,7 +18,7 @@ export const CheckoutSessionsSyncImplementation = defineActionImplementation({
     const localCheckoutSessionsRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "convex_stripe_checkout_sessions",
+        table: "stripe_checkout_sessions",
       },
       context,
       configuration
@@ -40,7 +42,7 @@ export const CheckoutSessionsSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_stripe_checkout_sessions",
+          table: "stripe_checkout_sessions",
           idField: "checkoutSessionId",
           data: {
             checkoutSessionId: checkoutSession.id,
@@ -58,7 +60,7 @@ export const CheckoutSessionsSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_stripe_checkout_sessions",
+            table: "stripe_checkout_sessions",
             idField: "checkoutSessionId",
             idValue: checkoutSessionId,
           },

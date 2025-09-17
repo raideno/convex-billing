@@ -3,9 +3,11 @@ import { storeDispatchTyped } from "@/store";
 
 import { defineWebhookHandler } from "./types";
 
-export const PromotionCodesWebhooksHandler = defineWebhookHandler({
+export default defineWebhookHandler({
   events: ["promotion_code.created", "promotion_code.updated"],
   handle: async (event, context, configuration) => {
+    if (configuration.sync.stripe_promotion_codes !== true) return;
+
     const promotionCode = event.data.object;
 
     switch (event.type) {
@@ -14,7 +16,7 @@ export const PromotionCodesWebhooksHandler = defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_stripe_promotion_codes",
+            table: "stripe_promotion_codes",
             idField: "promotionCodeId",
             data: {
               promotionCodeId: promotionCode.id,

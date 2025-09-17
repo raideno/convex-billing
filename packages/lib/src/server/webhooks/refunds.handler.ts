@@ -3,9 +3,11 @@ import { storeDispatchTyped } from "@/store";
 
 import { defineWebhookHandler } from "./types";
 
-export const RefundsWebhooksHandler = defineWebhookHandler({
+export default defineWebhookHandler({
   events: ["refund.created", "refund.failed", "refund.updated"],
   handle: async (event, context, configuration) => {
+    if (configuration.sync.stripe_refunds !== true) return;
+
     const refund = event.data.object;
 
     switch (event.type) {
@@ -15,7 +17,7 @@ export const RefundsWebhooksHandler = defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_stripe_refunds",
+            table: "stripe_refunds",
             idField: "refundId",
             data: {
               refundId: refund.id,

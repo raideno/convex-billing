@@ -120,7 +120,7 @@ export const PayImplementation = defineActionImplementation({
     const stripeCustomer = await storeDispatchTyped(
       {
         operation: "selectOne",
-        table: "convex_stripe_customers",
+        table: "stripe_customers",
         field: "entityId",
         value: args.entityId,
       },
@@ -201,7 +201,7 @@ export const PayImplementation = defineActionImplementation({
     await storeDispatchTyped(
       {
         operation: "upsert",
-        table: "convex_stripe_checkout_sessions",
+        table: "stripe_checkout_sessions",
         idField: "checkoutSessionId",
         data: {
           checkoutSessionId: checkout.id,
@@ -223,7 +223,7 @@ export const PayImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_stripe_payment_intents",
+          table: "stripe_payment_intents",
           idField: "paymentIntentId",
           data: {
             paymentIntentId: paymentIntent.id,

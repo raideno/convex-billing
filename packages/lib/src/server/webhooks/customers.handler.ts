@@ -3,9 +3,11 @@ import { storeDispatchTyped } from "@/store";
 
 import { defineWebhookHandler } from "./types";
 
-export const CustomersWebhookHandler = defineWebhookHandler({
+export default defineWebhookHandler({
   events: ["customer.created", "customer.updated", "customer.deleted"],
   handle: async (event, context, configuration) => {
+    if (configuration.sync.stripe_customers !== true) return;
+
     const customer = event.data.object;
     const entityId = customer.metadata.entityId;
 
@@ -20,7 +22,7 @@ export const CustomersWebhookHandler = defineWebhookHandler({
           await storeDispatchTyped(
             {
               operation: "upsert",
-              table: "convex_stripe_customers",
+              table: "stripe_customers",
               idField: "entityId",
               data: {
                 customerId: customer.id,
@@ -37,7 +39,7 @@ export const CustomersWebhookHandler = defineWebhookHandler({
         storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_stripe_customers",
+            table: "stripe_customers",
             idField: "customerId",
             idValue: customer.id,
           },

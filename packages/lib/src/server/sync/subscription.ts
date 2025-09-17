@@ -28,7 +28,7 @@ export const SubscriptionSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_stripe_subscriptions",
+          table: "stripe_subscriptions",
           idField: "customerId",
           data: {
             subscriptionId: null,
@@ -49,7 +49,7 @@ export const SubscriptionSyncImplementation = defineActionImplementation({
     await storeDispatchTyped(
       {
         operation: "upsert",
-        table: "convex_stripe_subscriptions",
+        table: "stripe_subscriptions",
         idField: "customerId",
         data: {
           subscriptionId: subscription.id,

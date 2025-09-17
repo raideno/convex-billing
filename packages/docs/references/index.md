@@ -15,18 +15,18 @@ export type InputConfiguration = {
 
   /** Which tables to sync */
   sync?: {
-    convex_stripe_coupons?: boolean;
-    convex_stripe_customers?: boolean;
-    convex_stripe_prices?: boolean;
-    convex_stripe_products?: boolean;
-    convex_stripe_promotion_codes?: boolean;
-    convex_stripe_subscriptions?: boolean;
-    convex_stripe_payouts?: boolean;
-    convex_stripe_refunds?: boolean;
-    convex_stripe_checkout_sessions?: boolean;
-    convex_stripe_payment_intents?: boolean;
-    convex_stripe_invoices?: boolean;
-    convex_stripe_reviews?: boolean;
+    stripe_coupons?: boolean;
+    stripe_customers?: boolean;
+    stripe_prices?: boolean;
+    stripe_products?: boolean;
+    stripe_promotion_codes?: boolean;
+    stripe_subscriptions?: boolean;
+    stripe_payouts?: boolean;
+    stripe_refunds?: boolean;
+    stripe_checkout_sessions?: boolean;
+    stripe_payment_intents?: boolean;
+    stripe_invoices?: boolean;
+    stripe_reviews?: boolean;
   };
 
   /** Enable verbose logging */
@@ -52,20 +52,20 @@ Configuration for authenticating with Stripe.
 Controls which Convex tables get synced from Stripe.
 If omitted, **all tables are synced**.
 
-| Table                             | Default | Purpose                       |
-| --------------------------------- | ------- | ----------------------------- |
-| `convex_stripe_products`          | `true`  | Sync products                 |
-| `convex_stripe_prices`            | `true`  | Sync prices                   |
-| `convex_stripe_customers`         | `true`  | Sync customers                |
-| `convex_stripe_subscriptions`     | `true`  | Sync subscriptions            |
-| `convex_stripe_coupons`           | `true`  | Sync coupons                  |
-| `convex_stripe_promotion_codes`   | `true`  | Sync promotion codes          |
-| `convex_stripe_refunds`           | `true`  | Sync refunds events           |
-| `convex_stripe_payouts`           | `true`  | Sync payout events            |
-| `convex_stripe_payment_intents`   | `true`  | Sync payment intents events   |
-| `convex_stripe_checkout_sessions` | `true`  | Sync checkout sessions events |
-| `convex_stripe_invoices`          | `true`  | Sync invoices events          |
-| `convex_stripe_reviews`           | `true`  | Sync reviews events           |
+| Table                      | Default | Purpose                       |
+| -------------------------- | ------- | ----------------------------- |
+| `stripe_products`          | `true`  | Sync products                 |
+| `stripe_prices`            | `true`  | Sync prices                   |
+| `stripe_customers`         | `true`  | Sync customers                |
+| `stripe_subscriptions`     | `true`  | Sync subscriptions            |
+| `stripe_coupons`           | `true`  | Sync coupons                  |
+| `stripe_promotion_codes`   | `true`  | Sync promotion codes          |
+| `stripe_refunds`           | `true`  | Sync refunds events           |
+| `stripe_payouts`           | `true`  | Sync payout events            |
+| `stripe_payment_intents`   | `true`  | Sync payment intents events   |
+| `stripe_checkout_sessions` | `true`  | Sync checkout sessions events |
+| `stripe_invoices`          | `true`  | Sync invoices events          |
+| `stripe_reviews`           | `true`  | Sync reviews events           |
 
 ### `debug` (optional)
 - Type: `boolean`.
@@ -97,7 +97,7 @@ export const { stripe, store, sync, setup } = internalConvexStripe({
   },
   debug: true,     // optional
   sync: {
-    convex_stripe_payouts: false, // disable syncing payouts
+    stripe_payouts: false, // disable syncing payouts
   },
 });
 ```

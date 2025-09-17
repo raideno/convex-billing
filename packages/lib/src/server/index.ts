@@ -17,14 +17,14 @@ import { buildRedirectImplementation } from "./redirects";
 import { StripeDataModel } from "./schema";
 import { StoreImplementation } from "./store";
 import { SyncAllImplementation } from "./sync/all";
-import { InputConfiguration } from "./types";
+import type { InputConfiguration } from "./types";
 import { buildWebhookImplementation } from "./webhooks";
 
-export * from "./schema";
+export { stripeTables } from "./schema";
 
-export * from "./types";
+export { Logger } from "./logger";
 
-export * from "./helpers";
+export { InputConfiguration };
 
 export const internalConvexStripe = (configuration_: InputConfiguration) => {
   const configuration = normalizeConfiguration(configuration_);

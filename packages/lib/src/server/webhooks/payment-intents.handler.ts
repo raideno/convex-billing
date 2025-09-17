@@ -3,7 +3,7 @@ import { storeDispatchTyped } from "@/store";
 
 import { defineWebhookHandler } from "./types";
 
-export const PaymentIntentsWebhooksHandler = defineWebhookHandler({
+export default defineWebhookHandler({
   events: [
     "payment_intent.created",
     "payment_intent.amount_capturable_updated",
@@ -15,6 +15,8 @@ export const PaymentIntentsWebhooksHandler = defineWebhookHandler({
     "payment_intent.succeeded",
   ],
   handle: async (event, context, configuration) => {
+    if (configuration.sync.stripe_payment_intents !== true) return;
+
     const paymentIntent = event.data.object;
 
     switch (event.type) {
@@ -29,7 +31,7 @@ export const PaymentIntentsWebhooksHandler = defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_stripe_payment_intents",
+            table: "stripe_payment_intents",
             idField: "paymentIntentId",
             data: {
               paymentIntentId: paymentIntent.id,

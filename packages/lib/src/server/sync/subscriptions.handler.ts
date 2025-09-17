@@ -11,6 +11,8 @@ export const SubscriptionsSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "subscriptions",
   handler: async (context, args, configuration) => {
+    if (configuration.sync.stripe_subscriptions !== true) return;
+
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
     });
@@ -41,7 +43,7 @@ export const SubscriptionsSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_stripe_customers",
+            table: "stripe_customers",
             idField: "customerId",
             idValue: subscription.customer.id,
           },
@@ -59,7 +61,7 @@ export const SubscriptionsSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_stripe_customers",
+            table: "stripe_customers",
             idField: "entityId",
             data: {
               entityId: entityId,
@@ -75,7 +77,7 @@ export const SubscriptionsSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_stripe_subscriptions",
+            table: "stripe_subscriptions",
             idField: "customerId",
             data: {
               customerId: customerId,
@@ -96,7 +98,7 @@ export const SubscriptionsSyncImplementation = defineActionImplementation({
     }
 
     const localSubsResponse = await storeDispatchTyped(
-      { operation: "selectAll", table: "convex_stripe_subscriptions" },
+      { operation: "selectAll", table: "stripe_subscriptions" },
       context,
       configuration
     );
@@ -110,7 +112,7 @@ export const SubscriptionsSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_stripe_subscriptions",
+            table: "stripe_subscriptions",
             idField: "customerId",
             data: {
               customerId: sub.customerId,

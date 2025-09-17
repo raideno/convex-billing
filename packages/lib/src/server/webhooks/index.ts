@@ -1,68 +1,21 @@
-// TODO: do something that'll automatically get all the files defined in the webhooks folder
-// Extract the handlers and put them in an array provided to the buildWebhookImplementation function
-// This way we don't have to manually add them when we create a new one
-
 import { GenericActionCtx, httpActionGeneric } from "convex/server";
 import Stripe from "stripe";
 
 import { StripeDataModel } from "@/schema";
 import { InternalConfiguration } from "@/types";
 
-import { CheckoutSessionsWebhooksHandler } from "./checkouts-session";
-import { CouponsWebhooksHandler } from "./coupons";
-import { CustomersWebhookHandler } from "./customers";
-import { InvoicesWebhooksHandler } from "./invoices";
-import { PaymentIntentsWebhooksHandler } from "./payment-intents";
-import { PayoutsWebhooksHandler } from "./payouts";
-import { PricesWebhooksHandler } from "./prices";
-import { ProductsWebhooksHandler } from "./products";
-import { PromotionCodesWebhooksHandler } from "./promotion-codes";
-import { RefundsWebhooksHandler } from "./refunds";
-import { ReviewsWebhooksHandler } from "./reviews";
-import { SubscriptionsWebhooksHandler } from "./subscription";
+import { WebhookHandler } from "./types";
+
+const HANDLERS_MODULES = import.meta.glob("./*.handler.ts", { eager: true });
 
 export const buildWebhookImplementation = (
   configuration: InternalConfiguration
 ) =>
   httpActionGeneric(async (context_, request) => {
-    const HANDLERS = [
-      ...(configuration.sync.convex_stripe_refunds === true
-        ? [RefundsWebhooksHandler]
-        : []),
-      ...(configuration.sync.convex_stripe_products === true
-        ? [ProductsWebhooksHandler]
-        : []),
-      ...(configuration.sync.convex_stripe_prices === true
-        ? [PricesWebhooksHandler]
-        : []),
-      ...(configuration.sync.convex_stripe_subscriptions === true
-        ? [SubscriptionsWebhooksHandler]
-        : []),
-      ...(configuration.sync.convex_stripe_customers === true
-        ? [CustomersWebhookHandler]
-        : []),
-      ...(configuration.sync.convex_stripe_promotion_codes === true
-        ? [PromotionCodesWebhooksHandler]
-        : []),
-      ...(configuration.sync.convex_stripe_coupons === true
-        ? [CouponsWebhooksHandler]
-        : []),
-      ...(configuration.sync.convex_stripe_payouts === true
-        ? [PayoutsWebhooksHandler]
-        : []),
-      ...(configuration.sync.convex_stripe_checkout_sessions === true
-        ? [CheckoutSessionsWebhooksHandler]
-        : []),
-      ...(configuration.sync.convex_stripe_payment_intents === true
-        ? [PaymentIntentsWebhooksHandler]
-        : []),
-      ...(configuration.sync.convex_stripe_invoices === true
-        ? [InvoicesWebhooksHandler]
-        : []),
-      ...(configuration.sync.convex_stripe_reviews === true
-        ? [ReviewsWebhooksHandler]
-        : []),
-    ] as const;
+    const HANDLERS = Object.values(HANDLERS_MODULES).map(
+      (handler) =>
+        (handler as { default: WebhookHandler<Stripe.Event.Type> }).default
+    );
 
     const context = context_ as unknown as GenericActionCtx<StripeDataModel>;
 

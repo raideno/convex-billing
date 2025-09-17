@@ -9,6 +9,8 @@ export const PromotionCodesSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "promotionCodes",
   handler: async (context, args, configuration) => {
+    if (configuration.sync.stripe_promotion_codes !== true) return;
+
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
     });
@@ -16,7 +18,7 @@ export const PromotionCodesSyncImplementation = defineActionImplementation({
     const localPromotionCodesRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "convex_stripe_promotion_codes",
+        table: "stripe_promotion_codes",
       },
       context,
       configuration
@@ -40,7 +42,7 @@ export const PromotionCodesSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_stripe_promotion_codes",
+          table: "stripe_promotion_codes",
           idField: "promotionCodeId",
           data: {
             promotionCodeId: promotionCode.id,
@@ -58,7 +60,7 @@ export const PromotionCodesSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_stripe_promotion_codes",
+            table: "stripe_promotion_codes",
             idField: "promotionCodeId",
             idValue: promotionCodeId,
           },

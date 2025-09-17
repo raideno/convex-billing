@@ -3,7 +3,7 @@ import { storeDispatchTyped } from "@/store";
 
 import { defineWebhookHandler } from "./types";
 
-export const InvoicesWebhooksHandler = defineWebhookHandler({
+export default defineWebhookHandler({
   events: [
     "invoice.created",
     "invoice.deleted",
@@ -23,6 +23,8 @@ export const InvoicesWebhooksHandler = defineWebhookHandler({
     "invoice.will_be_due",
   ],
   handle: async (event, context, configuration) => {
+    if (configuration.sync.stripe_invoices !== true) return;
+
     const invoice = event.data.object;
 
     switch (event.type) {
@@ -50,7 +52,7 @@ export const InvoicesWebhooksHandler = defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "convex_stripe_invoices",
+            table: "stripe_invoices",
             idField: "invoiceId",
             data: {
               invoiceId: invoice.id,

@@ -9,6 +9,8 @@ export const CouponsSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "coupons",
   handler: async (context, args, configuration) => {
+    if (configuration.sync.stripe_coupons !== true) return;
+
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
     });
@@ -16,7 +18,7 @@ export const CouponsSyncImplementation = defineActionImplementation({
     const localCouponsRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "convex_stripe_coupons",
+        table: "stripe_coupons",
       },
       context,
       configuration
@@ -37,7 +39,7 @@ export const CouponsSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_stripe_coupons",
+          table: "stripe_coupons",
           idField: "couponId",
           data: {
             couponId: coupon.id,
@@ -55,7 +57,7 @@ export const CouponsSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_stripe_coupons",
+            table: "stripe_coupons",
             idField: "couponId",
             idValue: couponId,
           },

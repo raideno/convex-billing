@@ -22,7 +22,7 @@ export const SetupImplementation = defineActionImplementation({
     const stripeCustomer = await storeDispatchTyped(
       {
         operation: "selectOne",
-        table: "convex_stripe_customers",
+        table: "stripe_customers",
         field: "entityId",
         value: args.entityId,
       },
@@ -46,7 +46,7 @@ export const SetupImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_stripe_customers",
+          table: "stripe_customers",
           idField: "entityId",
           data: {
             entityId: args.entityId,

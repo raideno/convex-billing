@@ -37,24 +37,26 @@
   "author": "raideno",
   "scripts": {
     "clean": "rimraf dist",
-    "build": "tsup",
-    "dev": "tsup --watch"
+    "build": "vite build",
+    "dev": "vite build --watch"
   },
   "type": "module",
-  "dependencies": {},
   "peerDependencies": {
     "convex": "^1.26.2",
     "stripe": "^18.5.0"
   },
   "devDependencies": {
+    "@convex-dev/auth": "^0.0.88",
     "@types/node": "^24.3.0",
+    "convex": "^1.0.2",
     "globals": "^16.3.0",
     "jiti": "^2.5.1",
+    "rollup-plugin-visualizer": "^6.0.3",
     "tsc": "^2.0.4",
-    "tsup": "^8.5.0",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.41.0",
-    "@convex-dev/auth": "^0.0.88",
-    "convex": "^1.0.2"
+    "vite": "^7.1.5",
+    "vite-plugin-dts": "^4.5.4",
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }

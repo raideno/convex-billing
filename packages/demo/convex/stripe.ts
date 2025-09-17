@@ -63,9 +63,7 @@ export const subscribe = action({
 export const payments = query({
   args: v.object({}),
   handler: async (context) => {
-    const intents = await context.db
-      .query("convex_stripe_payment_intents")
-      .collect();
+    const intents = await context.db.query("stripe_payment_intents").collect();
 
     return intents;
   },
@@ -74,8 +72,8 @@ export const payments = query({
 export const products = query({
   args: v.object({}),
   handler: async (context) => {
-    const prices = await context.db.query("convex_stripe_prices").collect();
-    const products = await context.db.query("convex_stripe_products").collect();
+    const prices = await context.db.query("stripe_prices").collect();
+    const products = await context.db.query("stripe_products").collect();
 
     return products.map((product) => ({
       ...product,
@@ -94,14 +92,14 @@ export const subscription = query({
     if (!userId) throw new Error("Unauthorized");
 
     const customer = await context.db
-      .query("convex_stripe_customers")
+      .query("stripe_customers")
       .withIndex("byEntityId", (q) => q.eq("entityId", userId))
       .unique();
 
     if (!customer) return null;
 
     const subscription = await context.db
-      .query("convex_stripe_subscriptions")
+      .query("stripe_subscriptions")
       .withIndex("byCustomerId", (q) => q.eq("customerId", customer.customerId))
       .unique();
 

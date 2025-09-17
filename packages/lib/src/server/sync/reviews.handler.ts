@@ -9,6 +9,8 @@ export const ReviewsSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "reviews",
   handler: async (context, args, configuration) => {
+    if (configuration.sync.stripe_reviews !== true) return;
+
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
     });
@@ -16,7 +18,7 @@ export const ReviewsSyncImplementation = defineActionImplementation({
     const localReviewsRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "convex_stripe_reviews",
+        table: "stripe_reviews",
       },
       context,
       configuration
@@ -37,7 +39,7 @@ export const ReviewsSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "convex_stripe_reviews",
+          table: "stripe_reviews",
           idField: "reviewId",
           data: {
             reviewId: review.id,
@@ -55,7 +57,7 @@ export const ReviewsSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "convex_stripe_reviews",
+            table: "stripe_reviews",
             idField: "reviewId",
             idValue: reviewId,
           },

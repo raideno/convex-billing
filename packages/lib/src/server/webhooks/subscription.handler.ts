@@ -2,7 +2,7 @@ import { SubscriptionSyncImplementation } from "@/sync/subscription";
 
 import { defineWebhookHandler } from "./types";
 
-export const SubscriptionsWebhooksHandler = defineWebhookHandler({
+export default defineWebhookHandler({
   events: [
     "checkout.session.completed",
     "customer.subscription.created",
@@ -24,6 +24,8 @@ export const SubscriptionsWebhooksHandler = defineWebhookHandler({
     "payment_intent.canceled",
   ],
   handle: async (event, context, configuration) => {
+    if (configuration.sync.stripe_subscriptions !== true) return;
+
     const customerId =
       typeof event.data.object.customer === "string"
         ? event.data.object.customer

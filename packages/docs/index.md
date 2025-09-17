@@ -159,18 +159,18 @@ export const createOrganization = query({
 The library automatically syncs:
 
 <!-- no toc -->
-- [`convex_stripe_products`](#convex_stripe_products)
-- [`convex_stripe_prices`](#convex_stripe_prices)
-- [`convex_stripe_customers`](#convex_stripe_customers)
-- [`convex_stripe_subscriptions`](#convex_stripe_subscriptions)
-- [`convex_stripe_payouts`](#convex_stripe_payouts)
-- [`convex_stripe_refunds`](#convex_stripe_refunds)
-- [`convex_stripe_promotion_codes`](#convex_stripe_promotion_codes)
-- [`convex_stripe_coupons`](#convex_stripe_coupons)
-- [`convex_stripe_checkout_sessions`](#convex_stripe_checkout_sessions)
-- [`convex_stripe_payment_intents`](#convex_stripe_payment_intents)
-- [`convex_stripe_invoices`](#convex_stripe_invoices)
-- [`convex_stripe_reviews`](#convex_stripe_reviews)
+- [`stripe_products`](#stripe_products)
+- [`stripe_prices`](#stripe_prices)
+- [`stripe_customers`](#stripe_customers)
+- [`stripe_subscriptions`](#stripe_subscriptions)
+- [`stripe_payouts`](#stripe_payouts)
+- [`stripe_refunds`](#stripe_refunds)
+- [`stripe_promotion_codes`](#stripe_promotion_codes)
+- [`stripe_coupons`](#stripe_coupons)
+- [`stripe_checkout_sessions`](#stripe_checkout_sessions)
+- [`stripe_payment_intents`](#stripe_payment_intents)
+- [`stripe_invoices`](#stripe_invoices)
+- [`stripe_reviews`](#stripe_reviews)
 
 You can query these tables at any time to:
 
@@ -415,7 +415,7 @@ The following events are handled and synced automatically:
 
 When you spread `stripeTables` into your Convex schema, the following tables are created automatically:
 
-### `convex_stripe_products`
+### `stripe_products`
 Stores Stripe products.
 
 | Field            | Type             | Description                  |
@@ -429,7 +429,7 @@ Indexes:
 - `byActive`
 - `byName`
 
-### `convex_stripe_prices`
+### `stripe_prices`
 Stores Stripe prices.
 
 | Field            | Type           | Description              |
@@ -445,7 +445,7 @@ Indexes:
 - `byRecurringInterval`
 - `byCurrency`
 
-### `convex_stripe_customers`
+### `stripe_customers`
 Stores mapping between your app’s entities (users/orgs) and Stripe customers.
 
 | Field            | Type              | Description                     |
@@ -461,7 +461,7 @@ Indexes:
 - `byCustomerId`
 
 
-### `convex_stripe_subscriptions`
+### `stripe_subscriptions`
 Stores Stripe subscriptions.
 
 | Field            | Type                          | Description                                                      |
@@ -476,7 +476,7 @@ Index:
 - `bySubscriptionId`
 - `byCustomerId`
 
-### `convex_stripe_coupons`
+### `stripe_coupons`
 Stores Stripe coupons.
 
 | Field            | Type            | Description                               |
@@ -489,7 +489,7 @@ Stores Stripe coupons.
 Index:
 - `byCouponId`
 
-### `convex_stripe_promotion_codes`
+### `stripe_promotion_codes`
 Stores Stripe promotion codes.
 
 | Field             | Type                   | Description                                              |
@@ -502,7 +502,7 @@ Stores Stripe promotion codes.
 Index:
 - `byPromotionCodeId`
 
-### `convex_stripe_payouts`
+### `stripe_payouts`
 Stores Stripe payouts.
 
 | Field            | Type            | Description                               |
@@ -515,7 +515,7 @@ Stores Stripe payouts.
 Index:
 - `byPayoutId`
 
-### `convex_stripe_refunds`
+### `stripe_refunds`
 Stores Stripe refunds.
 
 | Field            | Type            | Description                               |
@@ -529,7 +529,7 @@ Index:
 - `byRefundId`
 
 
-### `convex_stripe_checkout_sessions`
+### `stripe_checkout_sessions`
 Stores Stripe checkout sessions.
 
 | Field               | Type                      | Description                                                   |
@@ -542,7 +542,7 @@ Stores Stripe checkout sessions.
 Index:
 - `byCheckoutSessionId`
 
-### `convex_stripe_payment_intents`
+### `stripe_payment_intents`
 Stores Stripe payment intents.
 
 | Field             | Type                   | Description                                              |
@@ -555,7 +555,7 @@ Stores Stripe payment intents.
 Index:
 - `byPaymentIntentId`
 
-### `convex_stripe_invoices`
+### `stripe_invoices`
 Stores Stripe invoices.
 
 | Field            | Type             | Description                                 |
@@ -568,7 +568,7 @@ Stores Stripe invoices.
 Index:
 - `byInvoiceId`
 
-### `convex_stripe_reviews`
+### `stripe_reviews`
 Stores Stripe reviews.
 
 | Field            | Type            | Description                               |
