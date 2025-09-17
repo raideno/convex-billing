@@ -27,6 +27,7 @@ export type InputConfiguration = {
     stripe_payment_intents?: boolean;
     stripe_invoices?: boolean;
     stripe_reviews?: boolean;
+    stripe_plans?: boolean;
   };
 
   /** Enable verbose logging */
@@ -66,6 +67,7 @@ If omitted, **all tables are synced**.
 | `stripe_checkout_sessions` | `true`  | Sync checkout sessions events |
 | `stripe_invoices`          | `true`  | Sync invoices events          |
 | `stripe_reviews`           | `true`  | Sync reviews events           |
+| `stripe_plans`             | `true`  | Sync plans events             |
 
 ### `debug` (optional)
 - Type: `boolean`.

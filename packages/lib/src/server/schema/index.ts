@@ -12,6 +12,7 @@ import { CustomerSchema } from "@/schema/customer";
 import { InvoiceSchema } from "@/schema/invoice";
 import { PaymentIntentSchema } from "@/schema/payment-intent";
 import { PayoutSchema } from "@/schema/payout";
+import { PlanSchema } from "@/schema/plan";
 import { PriceSchema } from "@/schema/price";
 import { ProductSchema } from "@/schema/product";
 import { PromotionCodeSchema } from "@/schema/promotion-code";
@@ -93,6 +94,11 @@ export const stripeTables = {
     stripe: v.object(ReviewSchema),
     last_synced_at: v.number(),
   }).index("reviewId", ["reviewId"]),
+  stripe_plans: defineTable({
+    planId: v.string(),
+    stripe: v.object(PlanSchema),
+    last_synced_at: v.number(),
+  }).index("planId", ["planId"]),
 };
 
 const defaultSchema = defineSchema(stripeTables);

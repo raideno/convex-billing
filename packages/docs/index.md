@@ -171,6 +171,7 @@ The library automatically syncs:
 - [`stripe_payment_intents`](#stripe_payment_intents)
 - [`stripe_invoices`](#stripe_invoices)
 - [`stripe_reviews`](#stripe_reviews)
+- [`stripe_plans`](#stripe_plans)
 
 You can query these tables at any time to:
 
@@ -339,16 +340,16 @@ The following events are handled and synced automatically:
 - `price.updated`
 - `price.deleted`
 
-**Coupons**
+**Coupons:**
 - `coupon.created`
 - `coupon.updated`
 - `coupon.deleted`
 
-**Promotion Codes**
+**Promotion Codes:**
 - `promotion_code.created`
 - `promotion_code.updated`
 
-**Payouts**
+**Payouts:**
 - `payout.canceled`
 - `payout.created`
 - `payout.failed`
@@ -356,23 +357,23 @@ The following events are handled and synced automatically:
 - `payout.updated`
 - `payout.reconciliation_completed`
 
-**Refunds**
+**Refunds:**
 - `refund.created`
 - `refund.updated`
 - `refund.failed`
 
-**Customers**
+**Customers:**
 - `customer.created`
 - `customer.updated`
 - `customer.deleted`
 
-**Checkout Sessions**
+**Checkout Sessions:**
 - `checkout.session.async_payment_failed`
 - `checkout.session.async_payment_succeeded`
 - `checkout.session.completed`
 - `checkout.session.expired`
 
-**Payment Intents**
+**Payment Intents:**
 - `payment_intent.created`
 - `payment_intent.amount_capturable_updated`
 - `payment_intent.canceled`
@@ -382,7 +383,7 @@ The following events are handled and synced automatically:
 - `payment_intent.requires_action`
 - `payment_intent.succeeded`
 
-**Invoices**
+**Invoices:**
 - `invoice.created`
 - `invoice.deleted`
 - `invoice.finalization_failed`
@@ -400,8 +401,13 @@ The following events are handled and synced automatically:
 - `invoice.voided`
 - `invoice.will_be_due`
 
-**Reviews**
+**Reviews:**
 - `...`
+
+**Plans:**
+- `plan.created`
+- `plan.updated`
+- `plan.deleted`
 
 ## 📚 Resources
 
@@ -580,6 +586,19 @@ Stores Stripe reviews.
 
 Index:
 - `byInvoiceId`
+
+### `stripe_plans`
+Stores Stripe plans.
+
+| Field            | Type          | Description                           |
+| ---------------- | ------------- | ------------------------------------- |
+| `_id`            | `string`      | Convex document ID                    |
+| `planId`         | `string`      | Stripe plan ID                        |
+| `stripe`         | `Stripe.Plan` | Full Stripe plan object `Stripe.Plan` |
+| `last_synced_at` | `number`      | Last sync timestamp                   |
+
+Index:
+- `byPlanId`
 
 > ⚡ These tables are **synced automatically** via webhooks.  
 > You can query them directly in your Convex functions to check products, prices, and subscription status.
