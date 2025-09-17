@@ -15,10 +15,6 @@ npm install @raideno/convex-stripe stripe
 
 You can find the detailed documentation @ [https://raideno.github.io/convex-stripe](https://raideno.github.io/convex-stripe).
 
-## TODOs
-
-- [ ] Implement one time payment endpoint.
-
 ## Development
 
 Clone the repository:

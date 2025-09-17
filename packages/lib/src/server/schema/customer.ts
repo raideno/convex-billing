@@ -2,7 +2,6 @@ import { Infer, v } from "convex/values";
 import Stripe from "stripe";
 
 import { metadata, nullablenumber, nullablestring } from "@/helpers";
-import { currencies } from "@/schema/currencies";
 
 export const CustomerStripeToConvex = (customer: Stripe.Customer) => {
   const object: Infer<typeof CustomerObject> = {
@@ -80,7 +79,8 @@ export const CustomerSchema = {
     )
   ),
   created: v.number(),
-  currency: v.optional(v.union(currencies, v.string(), v.null())),
+  // currency: v.optional(v.union(currencies, v.string(), v.null())),
+  currency: v.optional(v.union(v.string(), v.null())),
   default_source: v.optional(nullablestring()),
   delinquent: v.optional(v.union(v.boolean(), v.null())),
   discount: v.optional(

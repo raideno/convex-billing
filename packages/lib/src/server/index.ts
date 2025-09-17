@@ -1,5 +1,4 @@
 import {
-  Crons,
   GenericActionCtx,
   HttpRouter,
   internalActionGeneric,
@@ -43,13 +42,6 @@ export const internalConvexStripe = (configuration_: InputConfiguration) => {
           method: "GET",
           handler: buildRedirectImplementation(configuration),
         });
-      },
-      addCronJobs: (crons: Crons) => {
-        crons.interval(
-          "stripe sync",
-          { hours: 1 },
-          `${configuration.base}:sync` as any
-        );
       },
       portal: (
         context: GenericActionCtx<StripeDataModel>,

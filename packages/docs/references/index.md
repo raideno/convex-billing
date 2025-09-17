@@ -22,6 +22,9 @@ export type InputConfiguration = {
     convex_stripe_promotion_codes?: boolean;
     convex_stripe_subscriptions?: boolean;
     convex_stripe_payouts?: boolean;
+    convex_stripe_checkout_sessions?: boolean;
+    convex_stripe_payment_intents?: boolean;
+    convex_stripe_invoices?: boolean;
   };
 
   /** Enable verbose logging */
@@ -59,6 +62,7 @@ If omitted, **all tables are synced**.
 | `convex_stripe_payouts`           | `true`  | Sync payout events            |
 | `convex_stripe_payment_intents`   | `true`  | Sync payment intents events   |
 | `convex_stripe_checkout_sessions` | `true`  | Sync checkout sessions events |
+| `convex_stripe_invoices`          | `true`  | Sync invoices events          |
 
 ### `debug` (optional)
 - Type: `boolean`.

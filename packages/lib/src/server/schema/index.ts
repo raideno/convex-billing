@@ -15,6 +15,7 @@ import { SubscriptionObject } from "@/schema/subscription";
 import { GenericDoc } from "@/types";
 
 import { CheckoutSessionSchema } from "./checkout-session";
+import { InvoiceSchema } from "./invoice";
 import { PaymentIntentSchema } from "./payment-intent";
 import { PayoutSchema } from "./payout";
 import { RefundSchema } from "./refund";
@@ -82,6 +83,11 @@ export const stripeTables = {
     stripe: v.object(CheckoutSessionSchema),
     last_synced_at: v.number(),
   }).index("byCheckoutSessionId", ["checkoutSessionId"]),
+  convex_stripe_invoices: defineTable({
+    invoiceId: v.string(),
+    stripe: v.object(InvoiceSchema),
+    last_synced_at: v.number(),
+  }).index("byInvoiceId", ["invoiceId"]),
 };
 
 const defaultSchema = defineSchema(stripeTables);
@@ -94,5 +100,3 @@ export type Doc<T extends TableNamesInDataModel<StripeDataModel>> = GenericDoc<
   StripeDataModel,
   T
 >;
-
-export * from "./currencies";

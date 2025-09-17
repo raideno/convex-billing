@@ -7,6 +7,7 @@ import { InternalConfiguration } from "@/types";
 import { CheckoutSessionsWebhooksHandler } from "./checkouts-session";
 import { CouponsWebhooksHandler } from "./coupons";
 import { CustomersWebhookHandler } from "./customers";
+import { InvoicesWebhooksHandler } from "./invoices";
 import { PaymentIntentsWebhooksHandler } from "./payment-intents";
 import { PayoutsWebhooksHandler } from "./payouts";
 import { PricesWebhooksHandler } from "./prices";
@@ -49,6 +50,9 @@ export const buildWebhookImplementation = (
         : []),
       ...(configuration.sync.convex_stripe_payment_intents === true
         ? [PaymentIntentsWebhooksHandler]
+        : []),
+      ...(configuration.sync.convex_stripe_invoices === true
+        ? [InvoicesWebhooksHandler]
         : []),
     ] as const;
 

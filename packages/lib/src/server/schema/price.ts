@@ -2,7 +2,6 @@ import { Infer, v } from "convex/values";
 import Stripe from "stripe";
 
 import { metadata, nullablenumber, nullablestring } from "../helpers";
-import { currencies } from "./currencies";
 
 export const PriceStripeToConvex = (price: Stripe.Price) => {
   const object: Infer<typeof PriceObject> = {
@@ -32,7 +31,8 @@ export const PriceSchema = {
   id: v.string(),
   object: v.string(),
   active: v.boolean(),
-  currency: currencies,
+  // currency: currencies,
+  currency: v.string(),
   metadata: v.optional(v.union(metadata(), v.null())),
   nickname: nullablestring(),
   recurring: v.union(

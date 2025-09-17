@@ -2,7 +2,6 @@ import { Infer, v } from "convex/values";
 import Stripe from "stripe";
 
 import { metadata, nullablenumber, nullablestring } from "@/helpers";
-import { currencies } from "@/schema/currencies";
 
 export const PayoutStripeToConvex = (payout: Stripe.Payout) => {
   const object: Infer<typeof PayoutObject> = {
@@ -38,7 +37,8 @@ export const PayoutSchema = {
   id: v.string(),
   amount: v.number(),
   arrival_date: v.number(),
-  currency: v.optional(v.union(currencies, v.null())),
+  // currency: v.optional(v.union(currencies, v.null())),
+  currency: v.optional(v.union(v.string(), v.null())),
   description: v.optional(nullablestring()),
   metadata: v.optional(v.union(metadata(), v.null())),
   statement_descriptor: v.optional(nullablestring()),

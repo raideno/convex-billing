@@ -4,6 +4,7 @@ import { v } from "convex/values";
 import { CheckoutSessionsSyncImplementation } from "./checkouts-session";
 import { CouponsSyncImplementation } from "./coupons";
 import { CustomersSyncImplementation } from "./customers";
+import { InvoicesSyncImplementation } from "./invoices";
 import { PaymentIntentsSyncImplementation } from "./payment-intent";
 import { PayoutsSyncImplementation } from "./payouts";
 import { PricesSyncImplementation } from "./prices";
@@ -31,6 +32,7 @@ export const SyncAllImplementation = defineActionImplementation({
         CheckoutSessionsSyncImplementation,
       configuration.sync.convex_stripe_payment_intents &&
         PaymentIntentsSyncImplementation,
+      configuration.sync.convex_stripe_invoices && InvoicesSyncImplementation,
     ];
 
     for (const sync of syncs) {

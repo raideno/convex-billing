@@ -2,7 +2,6 @@ import { Infer, v } from "convex/values";
 import Stripe from "stripe";
 
 import { metadata, nullablenumber } from "@/helpers";
-import { currencies } from "@/schema/currencies";
 
 import { CouponSchema } from "./coupon";
 
@@ -51,9 +50,10 @@ export const PromotionCodeSchema = {
     ),
     first_time_transaction: v.optional(v.boolean()),
     minimum_amount: v.optional(nullablenumber()),
-    minimum_amount_currency: v.optional(
-      v.union(currencies, v.string(), v.null())
-    ),
+    // minimum_amount_currency: v.optional(
+    //   v.union(currencies, v.string(), v.null())
+    // ),
+    minimum_amount_currency: v.optional(v.union(v.string(), v.null())),
   }),
   times_redeemed: v.number(),
 };

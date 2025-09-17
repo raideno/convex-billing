@@ -114,6 +114,7 @@ export async function storeDispatchTyped<
   configuration: InternalConfiguration
 ): Promise<StoreResultFor<StripeDataModel, A>> {
   return (await context.runMutation(
+    // TODO: make the "store" name configurable as well
     `${configuration.base}:store` as any,
     args
   )) as StoreResultFor<StripeDataModel, A>;

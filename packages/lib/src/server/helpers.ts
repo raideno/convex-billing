@@ -26,6 +26,7 @@ export const normalizeConfiguration = (
       convex_stripe_checkout_sessions: true,
       convex_stripe_payment_intents: true,
       convex_stripe_refunds: true,
+      convex_stripe_invoices: true,
     },
     debug: false,
     logger: new Logger(config.debug || false),

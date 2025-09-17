@@ -2,7 +2,6 @@ import { Infer, v } from "convex/values";
 import Stripe from "stripe";
 
 import { metadata, nullablenumber, nullablestring } from "@/helpers";
-import { currencies } from "@/schema/currencies";
 
 export const CheckoutSessionStripeToConvex = (
   session: Stripe.Checkout.Session
@@ -47,7 +46,8 @@ export const CheckoutSessionSchema = {
   // }),
   automatic_tax: v.any(),
   client_reference_id: v.optional(nullablestring()),
-  currency: v.optional(v.union(currencies, v.string(), v.null())),
+  // currency: v.optional(v.union(currencies, v.string(), v.null())),
+  currency: v.optional(v.union(v.string(), v.null())),
   customer: v.optional(nullablestring()),
   customer_email: v.optional(nullablestring()),
   line_items: v.optional(

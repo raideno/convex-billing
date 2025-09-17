@@ -1,9 +1,9 @@
 # Convex Stripe
 
-| Status      | Features                                                                                          |
-| ----------- | ------------------------------------------------------------------------------------------------- |
-| ✅ Supported | Subscriptions, One‑time payments, Checkout, Billing portal, Sync webhooks and cron, Multi-tenant. |
-| 🚧 Planned   | Usage tracking and credits.                                                                       |
+| Status      | Features                                                                                 |
+| ----------- | ---------------------------------------------------------------------------------------- |
+| ✅ Supported | Subscriptions, One‑time payments, Checkout, Billing portal, Sync webhooks, Multi-tenant. |
+| 🚧 Planned   | Usage tracking and credits.                                                              |
 
 A demo project is available at [https://convex-stripe-demo.vercel.app/](https://convex-stripe-demo.vercel.app/).
 
@@ -96,23 +96,7 @@ stripe.addHttpRoutes(http);
 export default http;
 ```
 
-6. **Set up cron jobs** to keep data in sync:
-
-```ts [convex/crons.ts]
-import { cronJobs } from "convex/server";
-import { stripe } from "./stripe";
-
-const crons = cronJobs();
-
-stripe.addCronJobs(crons);
-
-export default crons;
-```
-
-> **Note:** This is used as a way to sync data at startup and ensures data stays up to date, even if the server restarts or changes happen while it’s offline.
-> You can skip this if you prefer to run the sync action manually at startup.
-
-7. **Create Stripe customers** when entities (users/orgs) are created.  
+6. **Create Stripe customers** when entities (users/orgs) are created.  
   Example with [convex-auth](https://labs.convex.dev/auth):
 
 ```ts [convex/auth.ts]
@@ -133,7 +117,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 });
 ```
 
-8. **Run sync action** go to your project's dashboard in the convex website.  
+7. **Run sync action** go to your project's dashboard in the convex website.  
   In the *Functions* section search for a function called `sync` and run it. This is to sync already existing stripe data into convex.
   It must be done in both your development and production deployment.  
   This might not be necessary if you are starting with a fresh empty stripe project.
@@ -183,6 +167,9 @@ The library automatically syncs:
 - [`convex_stripe_refunds`](#convex_stripe_refunds)
 - [`convex_stripe_promotion_codes`](#convex_stripe_promotion_codes)
 - [`convex_stripe_coupons`](#convex_stripe_coupons)
+- [`convex_stripe_checkout_sessions`](#convex_stripe_checkout_sessions)
+- [`convex_stripe_payment_intents`](#convex_stripe_payment_intents)
+- [`convex_stripe_invoices`](#convex_stripe_invoices)
 
 You can query these tables at any time to:
 
@@ -394,6 +381,24 @@ The following events are handled and synced automatically:
 - `payment_intent.requires_action`
 - `payment_intent.succeeded`
 
+**Invoices**
+- `invoice.created`
+- `invoice.deleted`
+- `invoice.finalization_failed`
+- `invoice.finalized`
+- `invoice.marked_uncollectible`
+- `invoice.overdue`
+- `invoice.overpaid`
+- `invoice.paid`
+- `invoice.payment_action_required`
+- `invoice.payment_failed`
+- `invoice.payment_succeeded`
+- `invoice.sent`
+- `invoice.upcoming`
+- `invoice.updated`
+- `invoice.voided`
+- `invoice.will_be_due`
+
 ## 📚 Resources
 
 - [Convex Documentation](https://docs.convex.dev)  
@@ -516,9 +521,48 @@ Stores Stripe refunds.
 | `stripe`         | `Stripe.Refund` | Full Stripe refund object `Stripe.Refund` |
 | `last_synced_at` | `number`        | Last sync timestamp                       |
 
-
 Index:
 - `byRefundId`
 
-> ⚡ These tables are **synced automatically** via webhooks and cron jobs.  
+
+### `convex_stripe_checkout_sessions`
+Stores Stripe checkout sessions.
+
+| Field               | Type                      | Description                                                   |
+| ------------------- | ------------------------- | ------------------------------------------------------------- |
+| `_id`               | `string`                  | Convex document ID                                            |
+| `checkoutSessionId` | `string`                  | Stripe checkout session ID                                    |
+| `stripe`            | `Stripe.Checkout.Session` | Full Stripe checkout session object `Stripe.Checkout.Session` |
+| `last_synced_at`    | `number`                  | Last sync timestamp                                           |
+
+Index:
+- `byCheckoutSessionId`
+
+### `convex_stripe_payment_intents`
+Stores Stripe payment intents.
+
+| Field             | Type                   | Description                                              |
+| ----------------- | ---------------------- | -------------------------------------------------------- |
+| `_id`             | `string`               | Convex document ID                                       |
+| `paymentIntentId` | `string`               | Stripe payment intent ID                                 |
+| `stripe`          | `Stripe.PaymentIntent` | Full Stripe payment intent object `Stripe.PaymentIntent` |
+| `last_synced_at`  | `number`               | Last sync timestamp                                      |
+
+Index:
+- `byPaymentIntentId`
+
+### `convex_stripe_invoices`
+Stores Stripe invoices.
+
+| Field            | Type             | Description                                 |
+| ---------------- | ---------------- | ------------------------------------------- |
+| `_id`            | `string`         | Convex document ID                          |
+| `invoiceId`      | `string`         | Stripe invoice ID                           |
+| `stripe`         | `Stripe.Invoice` | Full Stripe invoice object `Stripe.Invoice` |
+| `last_synced_at` | `number`         | Last sync timestamp                         |
+
+Index:
+- `byInvoiceId`
+
+> ⚡ These tables are **synced automatically** via webhooks.  
 > You can query them directly in your Convex functions to check products, prices, and subscription status.

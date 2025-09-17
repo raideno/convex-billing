@@ -1,8 +1,7 @@
 import { Infer, v } from "convex/values";
+import Stripe from "stripe";
 
 import { metadata, nullablestring } from "@/helpers";
-import { currencies } from "@/schema/currencies";
-import Stripe from "stripe";
 
 export const RefundStripeToConvex = (refund: Stripe.Refund) => {
   const object: Infer<typeof RefundObject> = {
@@ -37,7 +36,8 @@ export const RefundSchema = {
   id: v.string(),
   amount: v.number(),
   charge: v.optional(nullablestring()),
-  currency: v.union(currencies, v.string()),
+  // currency: v.union(currencies, v.string()),
+  currency: v.string(),
   description: v.optional(nullablestring()),
   metadata: v.optional(v.union(metadata(), v.null())),
   payment_intent: v.optional(nullablestring()),
