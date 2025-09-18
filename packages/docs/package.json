@@ -19,14 +19,14 @@
   "license": "Apache-2.0",
   "author": "raideno",
   "scripts": {
+    "generate": "node --experimental-transform-types ./scripts/generate.ts",
     "dev": "vitepress dev",
     "build": "vitepress build",
     "preview": "vitepress preview"
   },
   "type": "module",
-  "dependencies": {},
-  "peerDependencies": {},
   "devDependencies": {
+    "tablemark": "^4.0.0",
     "vite": "^7.1.4",
     "vitepress": "^1.6.4",
     "vitepress-plugin-group-icons": "^1.6.3"

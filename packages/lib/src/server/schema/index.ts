@@ -149,10 +149,10 @@ export const stripeTables = {
   }).index("bySubscriptionScheduleId", ["subscriptionScheduleId"]),
 };
 
-const defaultSchema = defineSchema(stripeTables);
+const stripeSchema = defineSchema(stripeTables);
 
 export type StripeDataModel = DataModelFromSchemaDefinition<
-  typeof defaultSchema
+  typeof stripeSchema
 >;
 
 export type Doc<T extends TableNamesInDataModel<StripeDataModel>> = GenericDoc<

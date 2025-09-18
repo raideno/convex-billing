@@ -1,6 +1,4 @@
-# 🔧 References
-
-## `InputConfiguration`
+# `InputConfiguration`
 
 The **input configuration** is what you provide when calling
 `internalConvexStripe`.
@@ -15,23 +13,7 @@ export type InputConfiguration = {
 
   /** Which tables to sync */
   sync?: {
-    stripe_coupons?: boolean;
-    stripe_customers?: boolean;
-    stripe_prices?: boolean;
-    stripe_products?: boolean;
-    stripe_promotion_codes?: boolean;
-    stripe_subscriptions?: boolean;
-    stripe_payouts?: boolean;
-    stripe_refunds?: boolean;
-    stripe_checkout_sessions?: boolean;
-    stripe_payment_intents?: boolean;
-    stripe_invoices?: boolean;
-    stripe_reviews?: boolean;
-    stripe_plans?: boolean;
-    stripe_early_fraud_warnings?: boolean;
-    stripe_disputes?: boolean;
-    stripe_tax_ids?: boolean;
-    stripe_setup_intents?: boolean;
+  <!-- @include: ../generated/sync-config.md -->
   };
 
   /** Enable verbose logging */
@@ -45,6 +27,8 @@ export type InputConfiguration = {
 };
 ```
 
+## Properties
+
 ### `stripe` (**required**)
 Configuration for authenticating with Stripe.
 
@@ -57,28 +41,10 @@ Configuration for authenticating with Stripe.
 Controls which Convex tables get synced from Stripe.
 If omitted, **all tables are synced**.
 
-| Table                         | Default | Purpose                   |
-| ----------------------------- | ------- | ------------------------- |
-| `stripe_products`             | `true`  | Sync products             |
-| `stripe_prices`               | `true`  | Sync prices               |
-| `stripe_customers`            | `true`  | Sync customers            |
-| `stripe_subscriptions`        | `true`  | Sync subscriptions        |
-| `stripe_coupons`              | `true`  | Sync coupons              |
-| `stripe_promotion_codes`      | `true`  | Sync promotion codes      |
-| `stripe_refunds`              | `true`  | Sync refunds              |
-| `stripe_payouts`              | `true`  | Sync payout               |
-| `stripe_payment_intents`      | `true`  | Sync payment intents      |
-| `stripe_checkout_sessions`    | `true`  | Sync checkout sessions    |
-| `stripe_invoices`             | `true`  | Sync invoices             |
-| `stripe_reviews`              | `true`  | Sync reviews              |
-| `stripe_plans`                | `true`  | Sync plans                |
-| `stripe_early_fraud_warnings` | `true`  | Sync early fraud warnings |
-| `stripe_disputes`             | `true`  | Sync disputes             |
-| `stripe_setup_intents`        | `true`  | Sync setup intents        |
-| `stripe_tax_ids`              | `true`  | Sync stripe ids           |
+<!-- @include: ../generated/sync-table.md -->
 
 ### `debug` (optional)
-- Type: `boolean`.
+- Type: `boolean`.  
 - Default: `false`.
 If enabled, logs detailed information about sync operations, webhook processing,
 and internal actions.
@@ -95,7 +61,7 @@ File path exporting internal actions.
 Example: if `base = "subscriptions"`, actions will be registered under
 `internal.subscriptions.*`.
 
-### ✅ Example
+## Example
 
 ```ts
 import { internalConvexStripe } from "@raideno/convex-stripe/server";
@@ -105,9 +71,11 @@ export const { stripe, store, sync, setup } = internalConvexStripe({
     secret_key: process.env.STRIPE_SECRET_KEY!,
     webhook_secret: process.env.STRIPE_WEBHOOK_SECRET!,
   },
-  debug: true,     // optional
+  // optional
+  debug: true,
   sync: {
-    stripe_payouts: false, // disable syncing payouts
+    // disable syncing payouts
+    stripe_payouts: false,
   },
 });
 ```
