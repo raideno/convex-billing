@@ -2,7 +2,6 @@ import {
   DataModelFromSchemaDefinition,
   defineSchema,
   defineTable,
-  TableNamesInDataModel,
 } from "convex/server";
 import { v } from "convex/values";
 
@@ -27,7 +26,6 @@ import { SetupIntentSchema } from "@/schema/setup-intent";
 import { SubscriptionObject } from "@/schema/subscription";
 import { SubscriptionScheduleSchema } from "@/schema/subscription-schedule";
 import { TaxIdSchema } from "@/schema/tax-id";
-import { GenericDoc } from "@/types";
 
 export const stripeTables = {
   stripe_products: defineTable({
@@ -153,9 +151,4 @@ const stripeSchema = defineSchema(stripeTables);
 
 export type StripeDataModel = DataModelFromSchemaDefinition<
   typeof stripeSchema
->;
-
-export type Doc<T extends TableNamesInDataModel<StripeDataModel>> = GenericDoc<
-  StripeDataModel,
-  T
 >;

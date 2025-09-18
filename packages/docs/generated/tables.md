@@ -3,9 +3,9 @@
 
   | Field          | Type      | Description         |
 | :------------- | :-------- | :------------------ |
-| productId      | `string`  | Convex document ID. |
-| stripe         | `object`  | Convex document ID. |
-| last_synced_at | `float64` | Convex document ID. |
+| productId      | `string`  |                     |
+| stripe         | `object`  | Full Stripe object. |
+| last_synced_at | `float64` |                     |
 
 
   Indexes:
@@ -16,9 +16,9 @@
 
   | Field          | Type      | Description         |
 | :------------- | :-------- | :------------------ |
-| priceId        | `string`  | Convex document ID. |
-| stripe         | `object`  | Convex document ID. |
-| last_synced_at | `float64` | Convex document ID. |
+| priceId        | `string`  |                     |
+| stripe         | `object`  | Full Stripe object. |
+| last_synced_at | `float64` |                     |
 
 
   Indexes:
@@ -29,10 +29,10 @@
 
   | Field          | Type      | Description         |
 | :------------- | :-------- | :------------------ |
-| customerId     | `string`  | Convex document ID. |
-| entityId       | `string`  | Convex document ID. |
-| stripe         | `object`  | Convex document ID. |
-| last_synced_at | `float64` | Convex document ID. |
+| customerId     | `string`  |                     |
+| entityId       | `string`  |                     |
+| stripe         | `object`  | Full Stripe object. |
+| last_synced_at | `float64` |                     |
 
 
   Indexes:
@@ -43,10 +43,10 @@
 
   | Field          | Type      | Description         |
 | :------------- | :-------- | :------------------ |
-| subscriptionId | `union`   | Convex document ID. |
-| customerId     | `string`  | Convex document ID. |
-| stripe         | `any`     | Convex document ID. |
-| last_synced_at | `float64` | Convex document ID. |
+| subscriptionId | `union`   |                     |
+| customerId     | `string`  |                     |
+| stripe         | `any`     | Full Stripe object. |
+| last_synced_at | `float64` |                     |
 
 
   Indexes:
@@ -57,9 +57,9 @@
 
   | Field          | Type      | Description         |
 | :------------- | :-------- | :------------------ |
-| couponId       | `string`  | Convex document ID. |
-| stripe         | `object`  | Convex document ID. |
-| last_synced_at | `float64` | Convex document ID. |
+| couponId       | `string`  |                     |
+| stripe         | `object`  | Full Stripe object. |
+| last_synced_at | `float64` |                     |
 
 
   Indexes:
@@ -70,9 +70,9 @@
 
   | Field           | Type      | Description         |
 | :-------------- | :-------- | :------------------ |
-| promotionCodeId | `string`  | Convex document ID. |
-| stripe          | `object`  | Convex document ID. |
-| last_synced_at  | `float64` | Convex document ID. |
+| promotionCodeId | `string`  |                     |
+| stripe          | `object`  | Full Stripe object. |
+| last_synced_at  | `float64` |                     |
 
 
   Indexes:
@@ -83,9 +83,9 @@
 
   | Field          | Type      | Description         |
 | :------------- | :-------- | :------------------ |
-| payoutId       | `string`  | Convex document ID. |
-| stripe         | `object`  | Convex document ID. |
-| last_synced_at | `float64` | Convex document ID. |
+| payoutId       | `string`  |                     |
+| stripe         | `object`  | Full Stripe object. |
+| last_synced_at | `float64` |                     |
 
 
   Indexes:
@@ -96,9 +96,9 @@
 
   | Field          | Type      | Description         |
 | :------------- | :-------- | :------------------ |
-| refundId       | `string`  | Convex document ID. |
-| stripe         | `object`  | Convex document ID. |
-| last_synced_at | `float64` | Convex document ID. |
+| refundId       | `string`  |                     |
+| stripe         | `object`  | Full Stripe object. |
+| last_synced_at | `float64` |                     |
 
 
   Indexes:
@@ -109,9 +109,9 @@
 
   | Field           | Type      | Description         |
 | :-------------- | :-------- | :------------------ |
-| paymentIntentId | `string`  | Convex document ID. |
-| stripe          | `object`  | Convex document ID. |
-| last_synced_at  | `float64` | Convex document ID. |
+| paymentIntentId | `string`  |                     |
+| stripe          | `object`  | Full Stripe object. |
+| last_synced_at  | `float64` |                     |
 
 
   Indexes:
@@ -122,9 +122,9 @@
 
   | Field             | Type      | Description         |
 | :---------------- | :-------- | :------------------ |
-| checkoutSessionId | `string`  | Convex document ID. |
-| stripe            | `object`  | Convex document ID. |
-| last_synced_at    | `float64` | Convex document ID. |
+| checkoutSessionId | `string`  |                     |
+| stripe            | `object`  | Full Stripe object. |
+| last_synced_at    | `float64` |                     |
 
 
   Indexes:
@@ -135,9 +135,9 @@
 
   | Field          | Type      | Description         |
 | :------------- | :-------- | :------------------ |
-| invoiceId      | `string`  | Convex document ID. |
-| stripe         | `object`  | Convex document ID. |
-| last_synced_at | `float64` | Convex document ID. |
+| invoiceId      | `string`  |                     |
+| stripe         | `object`  | Full Stripe object. |
+| last_synced_at | `float64` |                     |
 
 
   Indexes:
@@ -148,9 +148,9 @@
 
   | Field          | Type      | Description         |
 | :------------- | :-------- | :------------------ |
-| reviewId       | `string`  | Convex document ID. |
-| stripe         | `object`  | Convex document ID. |
-| last_synced_at | `float64` | Convex document ID. |
+| reviewId       | `string`  |                     |
+| stripe         | `object`  | Full Stripe object. |
+| last_synced_at | `float64` |                     |
 
 
   Indexes:
@@ -161,9 +161,9 @@
 
   | Field          | Type      | Description         |
 | :------------- | :-------- | :------------------ |
-| planId         | `string`  | Convex document ID. |
-| stripe         | `object`  | Convex document ID. |
-| last_synced_at | `float64` | Convex document ID. |
+| planId         | `string`  |                     |
+| stripe         | `object`  | Full Stripe object. |
+| last_synced_at | `float64` |                     |
 
 
   Indexes:
@@ -174,9 +174,9 @@
 
   | Field          | Type      | Description         |
 | :------------- | :-------- | :------------------ |
-| disputeId      | `string`  | Convex document ID. |
-| stripe         | `object`  | Convex document ID. |
-| last_synced_at | `float64` | Convex document ID. |
+| disputeId      | `string`  |                     |
+| stripe         | `object`  | Full Stripe object. |
+| last_synced_at | `float64` |                     |
 
 
   Indexes:
@@ -187,9 +187,9 @@
 
   | Field               | Type      | Description         |
 | :------------------ | :-------- | :------------------ |
-| earlyFraudWarningId | `string`  | Convex document ID. |
-| stripe              | `object`  | Convex document ID. |
-| last_synced_at      | `float64` | Convex document ID. |
+| earlyFraudWarningId | `string`  |                     |
+| stripe              | `object`  | Full Stripe object. |
+| last_synced_at      | `float64` |                     |
 
 
   Indexes:
@@ -200,9 +200,9 @@
 
   | Field          | Type      | Description         |
 | :------------- | :-------- | :------------------ |
-| taxIdId        | `string`  | Convex document ID. |
-| stripe         | `object`  | Convex document ID. |
-| last_synced_at | `float64` | Convex document ID. |
+| taxIdId        | `string`  |                     |
+| stripe         | `object`  | Full Stripe object. |
+| last_synced_at | `float64` |                     |
 
 
   Indexes:
@@ -213,9 +213,9 @@
 
   | Field          | Type      | Description         |
 | :------------- | :-------- | :------------------ |
-| setupIntentId  | `string`  | Convex document ID. |
-| stripe         | `object`  | Convex document ID. |
-| last_synced_at | `float64` | Convex document ID. |
+| setupIntentId  | `string`  |                     |
+| stripe         | `object`  | Full Stripe object. |
+| last_synced_at | `float64` |                     |
 
 
   Indexes:
@@ -226,9 +226,9 @@
 
   | Field          | Type      | Description         |
 | :------------- | :-------- | :------------------ |
-| creditNoteId   | `string`  | Convex document ID. |
-| stripe         | `object`  | Convex document ID. |
-| last_synced_at | `float64` | Convex document ID. |
+| creditNoteId   | `string`  |                     |
+| stripe         | `object`  | Full Stripe object. |
+| last_synced_at | `float64` |                     |
 
 
   Indexes:
@@ -239,9 +239,9 @@
 
   | Field          | Type      | Description         |
 | :------------- | :-------- | :------------------ |
-| chargeId       | `string`  | Convex document ID. |
-| stripe         | `object`  | Convex document ID. |
-| last_synced_at | `float64` | Convex document ID. |
+| chargeId       | `string`  |                     |
+| stripe         | `object`  | Full Stripe object. |
+| last_synced_at | `float64` |                     |
 
 
   Indexes:
@@ -252,9 +252,9 @@
 
   | Field           | Type      | Description         |
 | :-------------- | :-------- | :------------------ |
-| paymentMethodId | `string`  | Convex document ID. |
-| stripe          | `object`  | Convex document ID. |
-| last_synced_at  | `float64` | Convex document ID. |
+| paymentMethodId | `string`  |                     |
+| stripe          | `object`  | Full Stripe object. |
+| last_synced_at  | `float64` |                     |
 
 
   Indexes:
@@ -265,9 +265,9 @@
 
   | Field                  | Type      | Description         |
 | :--------------------- | :-------- | :------------------ |
-| subscriptionScheduleId | `string`  | Convex document ID. |
-| stripe                 | `object`  | Convex document ID. |
-| last_synced_at         | `float64` | Convex document ID. |
+| subscriptionScheduleId | `string`  |                     |
+| stripe                 | `object`  | Full Stripe object. |
+| last_synced_at         | `float64` |                     |
 
 
   Indexes:

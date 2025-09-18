@@ -1,11 +1,12 @@
+import { Infer, v } from "convex/values";
+import Stripe from "stripe";
+
 import {
   metadata,
   nullablenumber,
   nullablestring,
   optionalnullableobject,
 } from "@/helpers";
-import { Infer, v } from "convex/values";
-import Stripe from "stripe";
 
 export const ChargeStripeToConvex = (charge: Stripe.Charge) => {
   const object: Infer<typeof ChargeObject> = {

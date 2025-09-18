@@ -1,12 +1,7 @@
-import {
-  DocumentByName,
-  GenericDataModel,
-  TableNamesInDataModel,
-} from "convex/server";
-import { GenericId, Infer, Validator } from "convex/values";
+import { Infer, Validator } from "convex/values";
 
-import { Logger } from "./logger";
-import { stripeTables } from "./schema";
+import { Logger } from "@/logger";
+import { stripeTables } from "@/schema";
 
 export interface InternalConfiguration {
   stripe: {
@@ -44,15 +39,4 @@ export type InferArgs<S extends ArgSchema> = {
   [K in keyof S as S[K] extends Validator<any, "optional", any>
     ? K
     : never]?: Infer<S[K]>;
-};
-
-/**
- * Convex document from a given table.
- */
-export type GenericDoc<
-  DataModel extends GenericDataModel,
-  TableName extends TableNamesInDataModel<DataModel>,
-> = DocumentByName<DataModel, TableName> & {
-  _id: GenericId<TableName>;
-  _creationTime: number;
 };

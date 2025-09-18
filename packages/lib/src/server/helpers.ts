@@ -1,14 +1,14 @@
 import { GenericActionCtx, GenericMutationCtx } from "convex/server";
 import { Infer, v, VObject } from "convex/values";
 
-import { Logger } from "./logger";
-import { StripeDataModel } from "./schema";
+import { Logger } from "@/logger";
+import { StripeDataModel } from "@/schema";
 import {
   ArgSchema,
   InferArgs,
   InputConfiguration,
   InternalConfiguration,
-} from "./types";
+} from "@/types";
 
 export const normalizeConfiguration = (
   config: InputConfiguration
@@ -28,6 +28,15 @@ export const normalizeConfiguration = (
       stripe_refunds: true,
       stripe_invoices: true,
       stripe_reviews: true,
+      stripe_charges: true,
+      stripe_credit_notes: true,
+      stripe_disputes: true,
+      stripe_early_fraud_warnings: true,
+      stripe_payment_methods: true,
+      stripe_plans: true,
+      stripe_setup_intents: true,
+      stripe_subscription_schedules: true,
+      stripe_tax_ids: true,
     },
     debug: false,
     logger: new Logger(config.debug || false),

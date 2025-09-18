@@ -1,11 +1,11 @@
 // TODO: make sure in the docs.yaml workflow that this have been run
 
+import fs from "fs";
 import path from "path";
 import url from "url";
-import fs from "fs";
 
-import { tablemark } from "tablemark";
 import { stripeTables } from "@raideno/convex-stripe/server";
+import { tablemark } from "tablemark";
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,7 +39,7 @@ fs.writeFileSync(
           return {
             Field: name,
             Type: `\`${validator.kind}\``,
-            Description: "Convex document ID.",
+            Description: name === "stripe" ? "Full Stripe object." : "",
           };
         })
       );
