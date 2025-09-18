@@ -6,13 +6,16 @@ import {
 } from "convex/server";
 import { v } from "convex/values";
 
+import { ChargeSchema } from "@/schema/charge";
 import { CheckoutSessionSchema } from "@/schema/checkout-session";
 import { CouponSchema } from "@/schema/coupon";
+import { CreditNoteSchema } from "@/schema/credit-note";
 import { CustomerSchema } from "@/schema/customer";
 import { DisputeSchema } from "@/schema/dispute";
 import { EarlyFraudWarningSchema } from "@/schema/early-fraud-warning";
 import { InvoiceSchema } from "@/schema/invoice";
 import { PaymentIntentSchema } from "@/schema/payment-intent";
+import { PaymentMethodSchema } from "@/schema/payment-method";
 import { PayoutSchema } from "@/schema/payout";
 import { PlanSchema } from "@/schema/plan";
 import { PriceSchema } from "@/schema/price";
@@ -20,10 +23,11 @@ import { ProductSchema } from "@/schema/product";
 import { PromotionCodeSchema } from "@/schema/promotion-code";
 import { RefundSchema } from "@/schema/refund";
 import { ReviewSchema } from "@/schema/review";
+import { SetupIntentSchema } from "@/schema/setup-intent";
 import { SubscriptionObject } from "@/schema/subscription";
+import { SubscriptionScheduleSchema } from "@/schema/subscription-schedule";
+import { TaxIdSchema } from "@/schema/tax-id";
 import { GenericDoc } from "@/types";
-import { SetupIntentSchema } from "./setup-intent";
-import { TaxIdSchema } from "./tax-id";
 
 export const stripeTables = {
   stripe_products: defineTable({
@@ -123,6 +127,26 @@ export const stripeTables = {
     stripe: v.object(SetupIntentSchema),
     last_synced_at: v.number(),
   }).index("bySetupIntentId", ["setupIntentId"]),
+  stripe_credit_notes: defineTable({
+    creditNoteId: v.string(),
+    stripe: v.object(CreditNoteSchema),
+    last_synced_at: v.number(),
+  }).index("byCreditNoteId", ["creditNoteId"]),
+  stripe_charges: defineTable({
+    chargeId: v.string(),
+    stripe: v.object(ChargeSchema),
+    last_synced_at: v.number(),
+  }).index("byChargeId", ["chargeId"]),
+  stripe_payment_methods: defineTable({
+    paymentMethodId: v.string(),
+    stripe: v.object(PaymentMethodSchema),
+    last_synced_at: v.number(),
+  }).index("byPaymentMethodId", ["paymentMethodId"]),
+  stripe_subscription_schedules: defineTable({
+    subscriptionScheduleId: v.string(),
+    stripe: v.object(SubscriptionScheduleSchema),
+    last_synced_at: v.number(),
+  }).index("bySubscriptionScheduleId", ["subscriptionScheduleId"]),
 };
 
 const defaultSchema = defineSchema(stripeTables);

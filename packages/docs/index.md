@@ -422,6 +422,7 @@ The following events are handled and synced automatically:
 - `charge.dispute.updated`
 - `charge.dispute.closed`
 - `charge.dispute.funds_reinstated`
+- `charge.dispute.funds_withdrawn`
 
 **Tax Ids:**
 - `customer.tax_id.created`

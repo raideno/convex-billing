@@ -9,6 +9,7 @@ export default defineWebhookHandler({
     "charge.dispute.updated",
     "charge.dispute.closed",
     "charge.dispute.funds_reinstated",
+    "charge.dispute.funds_withdrawn",
   ],
   handle: async (event, context, configuration) => {
     if (configuration.sync.stripe_disputes !== true) return;
@@ -16,6 +17,7 @@ export default defineWebhookHandler({
     const dispute = event.data.object;
 
     switch (event.type) {
+      case "charge.dispute.funds_withdrawn":
       case "charge.dispute.created":
       case "charge.dispute.updated":
       case "charge.dispute.closed":
