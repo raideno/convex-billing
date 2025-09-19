@@ -41,8 +41,8 @@ export const pay = action({
       entityId: userId,
       // metadata: {},
       line_items: [{ price: args.priceId, quantity: 1 }],
-      success: { url: `${process.env.SITE_URL}/?return-from-checkout=success` },
-      cancel: { url: `${process.env.SITE_URL}/?return-from-checkout=cancel` },
+      success: { url: `${process.env.SITE_URL}/?return-from-pay=success` },
+      cancel: { url: `${process.env.SITE_URL}/?return-from-pay=cancel` },
     });
 
     await context.runMutation(internal.stripe.createInternalPaymentRecord, {

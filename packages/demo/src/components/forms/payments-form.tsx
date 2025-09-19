@@ -4,12 +4,15 @@ import {
   Card,
   Flex,
   Heading,
+  IconButton,
+  Link,
   Skeleton,
   Table,
 } from "@radix-ui/themes";
 import { useQuery } from "convex/react";
 
 import { api } from "@/convex/api";
+import { ExternalLinkIcon } from "@radix-ui/react-icons";
 import { currencyToSymbol } from "./subscription-form";
 
 export const PaymentsForm = () => {
@@ -32,6 +35,7 @@ export const PaymentsForm = () => {
             <Table.Root>
               <Table.Header>
                 <Table.Row>
+                  <Table.ColumnHeaderCell>Link</Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell>Amount</Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
@@ -62,6 +66,17 @@ export const PaymentsForm = () => {
 
                   return (
                     <Table.Row key={payment._id}>
+                      <Table.Cell>
+                        <Link href={payment.checkout.stripe.url || "#"}>
+                          <IconButton
+                            disabled={!payment.checkout.stripe.url}
+                            variant="ghost"
+                            size="2"
+                          >
+                            <ExternalLinkIcon />
+                          </IconButton>
+                        </Link>
+                      </Table.Cell>
                       <Table.Cell>{name}</Table.Cell>
                       <Table.Cell>
                         {(

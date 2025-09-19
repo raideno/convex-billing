@@ -16,8 +16,7 @@ import { PaymentsForm } from "./components/forms/payments-form";
 import { ProductsForm } from "./components/forms/products-form";
 import { SubscriptionForm } from "./components/forms/subscription-form";
 import { UserForm } from "./components/forms/user-form";
-import { ReturnFromCheckoutModal } from "./components/modals/return-from-checkout-modal";
-import { ReturnFromPortalModal } from "./components/modals/return-from-portal-modal";
+import { GenericReturnFromModal } from "./components/modals/generic-return-from-modal";
 
 export default function App() {
   return (
@@ -78,8 +77,7 @@ export default function App() {
           <ProductsForm />
           <PaymentsForm />
         </Flex>
-        <ReturnFromCheckoutModal />
-        <ReturnFromPortalModal />
+        <GenericReturnFromModal />
       </Authenticated>
     </main>
   );
