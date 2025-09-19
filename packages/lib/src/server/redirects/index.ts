@@ -170,7 +170,11 @@ const _ = compileTime(() => {
 
   for (let i = 0; i < origins.length; i++) {
     for (let j = i + 1; j < origins.length; j++) {
-      if (origins[i].intersection(origins[j]).size > 0) {
+      const hasOverlap = [...origins[i]].some((origin) =>
+        origins[j].has(origin)
+      );
+
+      if (hasOverlap) {
         intersections.push([i, j]);
       }
     }
@@ -179,9 +183,7 @@ const _ = compileTime(() => {
   if (intersections.length > 0) {
     intersections.forEach(([i, j]) => {
       console.log(
-        `Error: Redirect handlers at index ${i} and ${j} have overlapping origins: ${[
-          ...origins[i].intersection(origins[j]),
-        ].join(", ")}`
+        `Error: Redirect handlers at index ${i} and ${j} have overlapping origins.`
       );
     });
     throw new Error("Redirect handlers have overlapping origins");
