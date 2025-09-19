@@ -15,6 +15,7 @@ export const normalizeConfiguration = (
 ): InternalConfiguration => {
   return {
     ...config,
+    redirectTtlMs: 15 * 60 * 1000,
     sync: {
       stripe_coupons: true,
       stripe_customers: true,

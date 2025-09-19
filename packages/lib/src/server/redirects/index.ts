@@ -85,26 +85,22 @@ export interface ReturnPayload<T> {
   targetUrl: string;
 }
 
-export const DEFAULT_TTL_MS = 15 * 60 * 1000;
-
 export async function buildSignedReturnUrl<O extends ReturnOrigin>({
   configuration,
   origin,
   targetUrl,
-  ttlMs = DEFAULT_TTL_MS,
   data,
 }: {
   configuration: InternalConfiguration;
   origin: O;
   targetUrl: string;
-  ttlMs?: number;
   data: ReturnDataMap[O];
 }): Promise<string> {
   const payload: ReturnPayload<ReturnDataMap[O]> = {
     origin,
     data,
     targetUrl,
-    exp: Date.now() + ttlMs,
+    exp: Date.now() + configuration.redirectTtlMs,
   };
 
   const data_ = toBase64Url(JSON.stringify(payload));

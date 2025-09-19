@@ -9,6 +9,8 @@ export interface InternalConfiguration {
     webhook_secret: string;
   };
 
+  redirectTtlMs: number;
+
   sync: Partial<Record<keyof typeof stripeTables, boolean>>;
 
   debug: boolean;
@@ -23,7 +25,7 @@ export type WithOptional<T, K extends keyof T = never> = Omit<T, K> &
 
 export type InputConfiguration = WithOptional<
   InternalConfiguration,
-  "base" | "debug" | "logger" | "sync"
+  "base" | "debug" | "logger" | "sync" | "redirectTtlMs"
 >;
 
 export type ArgSchema = Record<
