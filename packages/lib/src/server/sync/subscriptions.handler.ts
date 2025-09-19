@@ -2,11 +2,9 @@ import { v } from "convex/values";
 import Stripe from "stripe";
 
 import { defineActionImplementation } from "@/helpers";
-import { CustomerStripeToConvex } from "@/schema/customer";
 import { SubscriptionStripeToConvex } from "@/schema/subscription";
 import { storeDispatchTyped } from "@/store";
 
-// TODO: revisit
 export const SubscriptionsSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "subscriptions",
@@ -25,76 +23,37 @@ export const SubscriptionsSyncImplementation = defineActionImplementation({
       .autoPagingToArray({ limit: 10_000 });
 
     for (const subscription of subscriptions) {
-      if (
-        typeof subscription.customer !== "string" &&
-        !subscription.customer.deleted &&
-        !Object.keys(subscription.customer.metadata).includes("entityId")
-      ) {
-        configuration.logger.error(
-          `Skipping subscription ${subscription.id} because it has no entityId metadata. This is due to the subscription being created outside of the checkout flow created by convex-stripe.`
+      const customer = subscription.customer;
+      const customerId =
+        typeof subscription.customer === "string"
+          ? subscription.customer
+          : subscription.customer.id;
+      const entityId =
+        typeof customer !== "string" && "metadata" in customer
+          ? customer.metadata["entityId"]
+          : null;
+
+      if (!entityId) {
+        configuration.logger.warn(
+          `Subscription (${subscription.id}) don't have any entityId associated with it. This can be due to the subscription being created outside of convex-stripe's checkout flow.`
         );
-        continue;
       }
 
-      if (
-        typeof subscription.customer !== "string" &&
-        subscription.customer.deleted
-      ) {
-        await storeDispatchTyped(
-          {
-            operation: "deleteById",
-            table: "stripe_customers",
-            idField: "customerId",
-            idValue: subscription.customer.id,
+      await storeDispatchTyped(
+        {
+          operation: "upsert",
+          table: "stripe_subscriptions",
+          idField: "customerId",
+          data: {
+            customerId: customerId,
+            subscriptionId: subscription.id,
+            stripe: SubscriptionStripeToConvex(subscription),
+            last_synced_at: Date.now(),
           },
-          context,
-          configuration
-        );
-      } else if (
-        typeof subscription.customer !== "string" &&
-        !subscription.customer.deleted
-      ) {
-        const customer = subscription.customer;
-        const entityId = subscription.customer.metadata["entityId"];
-        const customerId = subscription.customer.id;
-
-        await storeDispatchTyped(
-          {
-            operation: "upsert",
-            table: "stripe_customers",
-            idField: "entityId",
-            data: {
-              entityId: entityId,
-              customerId: customerId,
-              stripe: CustomerStripeToConvex(customer),
-              last_synced_at: Date.now(),
-            },
-          },
-          context,
-          configuration
-        );
-
-        await storeDispatchTyped(
-          {
-            operation: "upsert",
-            table: "stripe_subscriptions",
-            idField: "customerId",
-            data: {
-              customerId: customerId,
-              subscriptionId: subscription.id,
-              stripe: SubscriptionStripeToConvex(subscription),
-              last_synced_at: Date.now(),
-            },
-          },
-          context,
-          configuration
-        );
-      } else {
-        configuration.logger.error(
-          `Skipping subscription ${subscription.id} because it has no entityId metadata. This is due to the subscription being created outside of the checkout flow created by convex-stripe.`
-        );
-        continue;
-      }
+        },
+        context,
+        configuration
+      );
     }
 
     const localSubsResponse = await storeDispatchTyped(

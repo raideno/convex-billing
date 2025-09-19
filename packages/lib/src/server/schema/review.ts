@@ -5,7 +5,7 @@ import {
   nullablenumber,
   nullablestring,
   optionalnullableobject,
-} from "../helpers";
+} from "@/helpers";
 
 export const ReviewStripeToConvex = (review: Stripe.Review) => {
   const object: Infer<typeof ReviewObject> = {

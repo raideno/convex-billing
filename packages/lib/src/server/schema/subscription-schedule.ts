@@ -119,7 +119,7 @@ export const SubscriptionScheduleSchema = {
   // phases: optionalnullableobject({
   //   // TODO: complete
   // }),
-  phases: v.any(),
+  phases: v.optional(v.any()),
   status: v.union(
     v.literal("active"),
     v.literal("canceled"),

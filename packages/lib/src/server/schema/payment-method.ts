@@ -1,6 +1,7 @@
-import { metadata, nullablestring, optionalnullableobject } from "@/helpers";
 import { Infer, v } from "convex/values";
 import Stripe from "stripe";
+
+import { metadata, nullablestring } from "@/helpers";
 
 export const PaymentMethodStripeToConvex = (
   paymentMethod: Stripe.PaymentMethod
@@ -78,7 +79,7 @@ export const PaymentMethodSchema = {
   // billing_details: optionalnullableobject({
   //     // TODO: complete
   // }),
-  billing_details: v.any(),
+  billing_details: v.optional(v.any()),
   customer: v.optional(nullablestring()),
   metadata: v.optional(v.union(metadata(), v.null())),
   type: v.string(),
@@ -86,19 +87,19 @@ export const PaymentMethodSchema = {
   //   acss_debit: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  acss_debit: v.any(),
+  acss_debit: v.optional(v.any()),
   //   affirm: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  affirm: v.any(),
+  affirm: v.optional(v.any()),
   //   afterpay_clearpay: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  afterpay_clearpay: v.any(),
+  afterpay_clearpay: v.optional(v.any()),
   //   alipay: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  alipay: v.any(),
+  alipay: v.optional(v.any()),
   allow_redisplay: v.union(
     v.literal("always"),
     v.literal("limited"),
@@ -108,193 +109,193 @@ export const PaymentMethodSchema = {
   //   alma: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  alma: v.any(),
+  alma: v.optional(v.any()),
   //   amazon_pay: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  amazon_pay: v.any(),
+  amazon_pay: v.optional(v.any()),
   //   au_becs_debit: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  au_becs_debit: v.any(),
+  au_becs_debit: v.optional(v.any()),
   //   bacs_debit: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  bacs_debit: v.any(),
+  bacs_debit: v.optional(v.any()),
   //   bancontact: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  bancontact: v.any(),
+  bancontact: v.optional(v.any()),
   //   billie: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  billie: v.any(),
+  billie: v.optional(v.any()),
   //   blik: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  blik: v.any(),
+  blik: v.optional(v.any()),
   //   boleto: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  boleto: v.any(),
+  boleto: v.optional(v.any()),
   //   card: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  card: v.any(),
+  card: v.optional(v.any()),
   //   card_present: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  card_present: v.any(),
+  card_present: v.optional(v.any()),
   //   cashapp: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  cashapp: v.any(),
+  cashapp: v.optional(v.any()),
   created: v.number(),
   //   crypto: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  crypto: v.any(),
+  crypto: v.optional(v.any()),
   //   customer_balance: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  customer_balance: v.any(),
+  customer_balance: v.optional(v.any()),
   //   eps: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  eps: v.any(),
+  eps: v.optional(v.any()),
   //   fpx: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  fpx: v.any(),
+  fpx: v.optional(v.any()),
   //   giropay: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  giropay: v.any(),
+  giropay: v.optional(v.any()),
   //   grabpay: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  grabpay: v.any(),
+  grabpay: v.optional(v.any()),
   //   ideal: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  ideal: v.any(),
+  ideal: v.optional(v.any()),
   //   interac_present: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  interac_present: v.any(),
+  interac_present: v.optional(v.any()),
   //   kakao_pay: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  kakao_pay: v.any(),
+  kakao_pay: v.optional(v.any()),
   //   klarna: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  klarna: v.any(),
+  klarna: v.optional(v.any()),
   //   konbini: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  konbini: v.any(),
+  konbini: v.optional(v.any()),
   //   kr_card: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  kr_card: v.any(),
+  kr_card: v.optional(v.any()),
   //   link: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  link: v.any(),
+  link: v.optional(v.any()),
   livemode: v.boolean(),
   //   mobilepay: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  mobilepay: v.any(),
+  mobilepay: v.optional(v.any()),
   //   multibanco: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  multibanco: v.any(),
+  multibanco: v.optional(v.any()),
   //   naver_pay: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  naver_pay: v.any(),
+  naver_pay: v.optional(v.any()),
   //   nz_bank_account: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  nz_bank_account: v.any(),
+  nz_bank_account: v.optional(v.any()),
   //   oxxo: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  oxxo: v.any(),
+  oxxo: v.optional(v.any()),
   //   p24: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  p24: v.any(),
+  p24: v.optional(v.any()),
   //   pay_by_bank: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  pay_by_bank: v.any(),
+  pay_by_bank: v.optional(v.any()),
   //   payco: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  payco: v.any(),
+  payco: v.optional(v.any()),
   //   paynow: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  paynow: v.any(),
+  paynow: v.optional(v.any()),
   //   paypal: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  paypal: v.any(),
+  paypal: v.optional(v.any()),
   //   pix: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  pix: v.any(),
+  pix: v.optional(v.any()),
   //   promptpay: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  promptpay: v.any(),
+  promptpay: v.optional(v.any()),
   //   radar_options: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  radar_options: v.any(),
+  radar_options: v.optional(v.any()),
   //   revolut_pay: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  revolut_pay: v.any(),
+  revolut_pay: v.optional(v.any()),
   //   samsung_pay: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  samsung_pay: v.any(),
+  samsung_pay: v.optional(v.any()),
   //   satispay: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  satispay: v.any(),
+  satispay: v.optional(v.any()),
   //   sepa_debit: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  sepa_debit: v.any(),
+  sepa_debit: v.optional(v.any()),
   //   sofort: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  sofort: v.any(),
+  sofort: v.optional(v.any()),
   //   swish: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  swish: v.any(),
+  swish: v.optional(v.any()),
   //   twint: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  twint: v.any(),
+  twint: v.optional(v.any()),
   //   us_bank_account: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  us_bank_account: v.any(),
+  us_bank_account: v.optional(v.any()),
   //   wechat_pay: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  wechat_pay: v.any(),
+  wechat_pay: v.optional(v.any()),
   //   zip: optionalnullableobject({
   //     // TODO: complete
   //   }),
-  zip: v.any(),
+  zip: v.optional(v.any()),
 };
 
 export const PaymentMethodObject = v.object(PaymentMethodSchema);

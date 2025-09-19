@@ -23,16 +23,16 @@ export const SyncAllImplementation = defineActionImplementation({
   args: v.object({}),
   name: "sync",
   handler: async (context, args, configuration) => {
-    // TODO: fix subscription.ts changing customers
-    // TODO: make it parallel again Promise.all
-    for (const handler of HANDLERS) {
-      try {
-        await handler.handler(context, {}, configuration);
-      } catch (error) {
-        configuration.logger.error(
-          `[STRIPE SYNC ${handler.name}](Error): ${error}`
-        );
-      }
-    }
+    await Promise.all(
+      HANDLERS.map(async (handler) => {
+        try {
+          await handler.handler(context, {}, configuration);
+        } catch (error) {
+          configuration.logger.error(
+            `[STRIPE SYNC ${handler.name}](Error): ${error}`
+          );
+        }
+      })
+    );
   },
 });

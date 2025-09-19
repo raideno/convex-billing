@@ -135,13 +135,13 @@ export const CreditNoteSchema = {
   // shipping_cost: optionalnullableobject({
   //     // TODO: complete
   // }),
-  shipping_cost: v.any(),
+  shipping_cost: v.optional(v.any()),
   subtotal_excluding_tax: v.optional(nullablenumber()),
   total_excluding_tax: v.optional(nullablenumber()),
   // total_taxes: optionalnullableobject({
   //     // TODO: complete
   // }),
-  total_taxes: v.any(),
+  total_taxes: v.optional(v.any()),
   type: v.union(
     v.literal("mixed"),
     v.literal("post_payment"),

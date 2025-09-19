@@ -1,6 +1,7 @@
-import { metadata, nullablestring, optionalnullableobject } from "@/helpers";
 import { Infer, v } from "convex/values";
 import Stripe from "stripe";
+
+import { metadata, nullablestring, optionalnullableobject } from "@/helpers";
 
 export const SetupIntentStripeToConvex = (setupIntent: Stripe.SetupIntent) => {
   const object: Infer<typeof SetupIntentObject> = {
@@ -65,12 +66,12 @@ export const SetupIntentSchema = {
   // last_setup_error: optionalnullableobject({
   //     // TODO: complete
   // }),
-  last_setup_error: v.any(),
+  last_setup_error: v.optional(v.any()),
   metadata: v.optional(v.union(metadata(), v.null())),
   // next_action: optionalnullableobject({
   //     // TODO: complete
   // }),
-  next_action: v.any(),
+  next_action: v.optional(v.any()),
   payment_method: v.optional(nullablestring()),
   status: v.union(
     v.literal("canceled"),
@@ -108,7 +109,7 @@ export const SetupIntentSchema = {
   // payment_method_options: optionalnullableobject({
   //     // TODO: complete
   // }),
-  payment_method_options: v.any(),
+  payment_method_options: v.optional(v.any()),
   payment_method_types: v.array(v.string()),
   single_use_mandate: v.optional(nullablestring()),
 };

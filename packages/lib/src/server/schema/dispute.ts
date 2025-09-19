@@ -75,7 +75,7 @@ export const DisputeSchema = {
   // payment_method_details: optionalnullableobject({
   //     // TODO: complete
   // }),
-  payment_method_details: v.any(),
+  payment_method_details: v.optional(v.any()),
 };
 
 export const DisputeObject = v.object(DisputeSchema);

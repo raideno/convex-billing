@@ -117,13 +117,13 @@ export const ChargeSchema = {
   // payment_method_details: optionalnullableobject({
   //     // TODO: complete
   // }),
-  payment_method_details: v.any(),
+  payment_method_details: v.optional(v.any()),
   receipt_email: v.optional(nullablestring()),
   refunded: v.boolean(),
   // shipping: optionalnullableobject({
   //     // TODO: complete
   // }),
-  shipping: v.any(),
+  shipping: v.optional(v.any()),
   statement_descriptor: v.optional(nullablestring()),
   statement_descriptor_suffix: v.optional(nullablestring()),
   status: v.union(
@@ -146,40 +146,40 @@ export const ChargeSchema = {
   // fraud_details: optionalnullableobject({
   //     // TODO: complete
   // }),
-  fraud_details: v.any(),
+  fraud_details: v.optional(v.any()),
   livemode: v.boolean(),
   on_behalf_of: v.optional(nullablestring()),
   // outcome: optionalnullableobject({
   //     // TODO: complete
   // }),
-  outcome: v.any(),
+  outcome: v.optional(v.any()),
   paid: v.boolean(),
   payment_method: v.optional(nullablestring()),
   // presentment_details: optionalnullableobject({
   //     // TODO: complete
   // }),
-  presentment_details: v.any(),
+  presentment_details: v.optional(v.any()),
   // radar_options: optionalnullableobject({
   //     // TODO: complete
   // }),
-  radar_options: v.any(),
+  radar_options: v.optional(v.any()),
   receipt_number: v.optional(nullablestring()),
   receipt_url: v.optional(nullablestring()),
   // refunds: optionalnullableobject({
   //     // TODO: complete
   // }),
-  refunds: v.any(),
+  refunds: v.optional(v.any()),
   review: v.optional(nullablestring()),
   source_transfer: v.optional(nullablestring()),
   transfer: v.optional(nullablestring()),
   // transfer_data: optionalnullableobject({
   //     // TODO: complete
   // }),
-  transfer_data: v.any(),
+  transfer_data: v.optional(v.any()),
   // transfer_group: optionalnullableobject({
   //     // TODO: complete
   // }),
-  transfer_group: v.any(),
+  transfer_group: v.optional(v.any()),
 };
 
 export const ChargeObject = v.object(ChargeSchema);

@@ -1,7 +1,7 @@
 import { Infer, v } from "convex/values";
 import Stripe from "stripe";
 
-import { metadata, nullablenumber, nullablestring } from "../helpers";
+import { metadata, nullablenumber, nullablestring } from "@/helpers";
 
 export const PriceStripeToConvex = (price: Stripe.Price) => {
   const object: Infer<typeof PriceObject> = {
