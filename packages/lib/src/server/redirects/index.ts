@@ -1,7 +1,8 @@
 import { GenericActionCtx, httpActionGeneric } from "convex/server";
 
-import { StripeDataModel } from "../schema";
-import { InferArgs, InternalConfiguration } from "../types";
+import { StripeDataModel } from "@/schema";
+import { InferArgs, InternalConfiguration } from "@/types";
+
 import { PayReturnImplementation } from "./pay";
 import { PortalReturnImplementation } from "./portal";
 import { SubscribeReturnImplementation } from "./subscribe";
@@ -47,7 +48,6 @@ export async function signData(
   const keyData = encoder.encode(secret);
   const messageData = encoder.encode(data);
 
-  // Import the secret as a CryptoKey
   const key = await crypto.subtle.importKey(
     "raw",
     keyData,
@@ -154,23 +154,44 @@ export async function decodeSignedPayload<O extends ReturnOrigin>({
   }
 }
 
-// TODO: it is important to not have two handlers with the same origin
-// in this case we'll just throw an error on startup
-// and when handling, only the first one will be executed
-// export const REDIRECT_HANDLERS = [
-//   PortalReturnImplementation,
-//   SubscriptionCheckoutReturnImplementation,
-//   OtpCheckoutReturnImplementation,
-// ] as const;
+// NOTE: multiple handlers with the same origin are not supported yet
 export const REDIRECT_HANDLERS = [
   PortalReturnImplementation,
   SubscribeReturnImplementation,
   PayReturnImplementation,
 ] as const;
 
+const _ = compileTime(() => {
+  console.log();
+
+  const origins = REDIRECT_HANDLERS.map((handler) => new Set(handler.origins));
+
+  const intersections: Array<[number, number]> = [];
+
+  for (let i = 0; i < origins.length; i++) {
+    for (let j = i + 1; j < origins.length; j++) {
+      if (origins[i].intersection(origins[j]).size > 0) {
+        intersections.push([i, j]);
+      }
+    }
+  }
+
+  if (intersections.length > 0) {
+    intersections.forEach(([i, j]) => {
+      console.log(
+        `Error: Redirect handlers at index ${i} and ${j} have overlapping origins: ${[
+          ...origins[i].intersection(origins[j]),
+        ].join(", ")}`
+      );
+    });
+    throw new Error("Redirect handlers have overlapping origins");
+  }
+
+  return true;
+});
+
 type AllRedirectHandlers = (typeof REDIRECT_HANDLERS)[number];
 
-// Build the global mapping type from all registered handlers
 type ReturnDataMap = {
   [H in AllRedirectHandlers as H["origins"][number]]: H extends RedirectHandler<
     any,
@@ -245,16 +266,18 @@ export const buildRedirectImplementation = (
 
     for (const handler of REDIRECT_HANDLERS) {
       if (handler.origins.includes(origin as never)) {
-        // TODO: handle errors in case one handler fails, do we still redirect?
-        // TODO: what if we have multiple handlers with the same origin and different data shapes?
-        // TODO: we shouldn't allow multiple handlers with the same origin
-        await handler.handle(
-          origin as never,
-          context,
-          // TODO: fix the any
-          decoded.data as any,
-          configuration
-        );
+        try {
+          await handler.handle(
+            origin as never,
+            context,
+            decoded.data as never,
+            configuration
+          );
+        } catch (error) {
+          configuration.logger.error(
+            `[STRIPE RETURN ${origin}](Error): ${error}`
+          );
+        }
         return new Response(null, {
           status: 302,
           headers: { Location: decoded.targetUrl },
