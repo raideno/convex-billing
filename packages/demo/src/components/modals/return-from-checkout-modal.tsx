@@ -46,7 +46,7 @@ export const ReturnFromCheckoutModal = () => {
           <AlertDialog.Description>{body}</AlertDialog.Description>
           <Button
             mt={"4"}
-            className="w-full"
+            className="!w-full"
             variant="outline"
             onClick={handleClose}
           >

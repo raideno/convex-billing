@@ -43,7 +43,7 @@ export const ReturnFromPortalModal = () => {
           <AlertDialog.Description>{body}</AlertDialog.Description>
           <Button
             mt={"4"}
-            className="w-full"
+            className="!w-full"
             variant="classic"
             onClick={handleClose}
           >

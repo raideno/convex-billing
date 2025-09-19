@@ -30,23 +30,23 @@ bun add @raideno/convex-stripe stripe
 
 ## Configuration
 
-1. **Set up Stripe**  
-   - Create a Stripe account.  
-   - Configure a webhook pointing to:  
-     ```
-     https://<your-convex-app>.convex.site/stripe/webhook
-     ```
-   - Enable the following [Stripe Events](./references/events.md).  
-   - Enable the Stripe Billing Portal.
+### 1. Set up Stripe  
+- Create a Stripe account.  
+- Configure a webhook pointing to:  
+  ```
+  https://<your-convex-app>.convex.site/stripe/webhook
+  ```
+- Enable the following [Stripe Events](./references/events.md).  
+- Enable the Stripe Billing Portal.
 
-2. **Set environment variables** in your Convex backend:
+### 2. Set ENV
 
 ```bash
 npx convex env set STRIPE_SECRET_KEY "<secret>"
 npx convex env set STRIPE_WEBHOOK_SECRET "<secret>"
 ```
 
-3. **Add stripe tables** to your schema:
+### 3. Add tables.
 
 Check [Tables Schemas](./references/tables.md) to know more about the synced tables.
 
@@ -60,7 +60,7 @@ export default defineSchema({
 });
 ```
 
-4. **Initialize the library** in `convex/stripe.ts`:
+### 4. Initialize the library
 
 ```ts [convex/stripe.ts]
 import { internalConvexStripe } from "@raideno/convex-stripe/server";
@@ -76,7 +76,7 @@ export const { stripe, store, sync, setup } = internalConvexStripe({
 > **Note:** All exposed actions (store, sync, setup) are **internal**. Meaning they can only be called from other convex functions, you can wrap them in public actions when needed.  
 > **Important:** `store` must always be exported, as it is used internally.
 
-5. **Register HTTP routes** in `convex/http.ts`:
+### 5. Register HTTP routes
 
 ```ts [convex/http.ts]
 import { httpRouter } from "convex/server";
@@ -91,10 +91,21 @@ stripe.addHttpRoutes(http);
 export default http;
 ```
 
-6. **Create Stripe customers** when entities (users/orgs) are created.  
-  Example with [convex-auth](https://labs.convex.dev/auth):
+### 6. Stripe customers
 
-```ts [convex/auth.ts]
+Ideally you want to create a stripe customer the moment a new entity (user, organization, etc) is created.
+
+An `entityId` refers to something you are billing. It can be a user, organization or any other thing. With each entity must be associated a stripe customer and the stripe customer can be created using the [`setup` action](#setup-action).
+
+Below are with different auth providers examples where the user is the entity we are billing.
+
+::: code-group
+
+```ts [convex-auth]
+"convex/auth.ts"
+
+// example with convex-auth: https://labs.convex.dev/auth
+
 import { convexAuth } from "@convex-dev/auth/server";
 import { Password } from "@convex-dev/auth/providers/Password";
 import { internal } from "./_generated/api";
@@ -112,42 +123,39 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 });
 ```
 
-7. **Run sync action** go to your project's dashboard in the convex website.  
-  In the *Functions* section search for a function called `sync` and run it. This is to sync already existing stripe data into convex.
-  It must be done in both your development and production deployment.  
-  This might not be necessary if you are starting with a fresh empty stripe project.
+```ts [better-auth]
+"convex/auth.ts"
 
-## Organization-Based Billing
+// example with better-auth: https://convex-better-auth.netlify.app/
 
-If you bill organizations instead of users, call `setup` when creating an organization:
-
-```ts [convex/organizations.ts]
-import { v } from "convex/values";
-import { query } from "convex/server";
-import { getAuthUserId } from "@convex-dev/auth/server";
-
-import { internal } from "./_generated/api";
-
-export const createOrganization = query({
-  args: { name: v.string() },
-  handler: async (context, args) => {
-    const userId = await getAuthUserId(context);
-    if (!userId) throw new Error("Not authorized.");
-
-    const orgId = await context.db.insert("organizations", {
-      name: args.name,
-      ownerId: userId,
-    });
-
-    await context.scheduler.runAfter(0, internal.stripe.setup, {
-      entityId: orgId,
-    });
-
-    return orgId;
-  },
-});
+// coming soon...
 ```
 
+```ts [clerk]
+"convex/auth.ts"
+
+// example with clerk: https://docs.convex.dev/auth/clerk
+
+// coming soon...
+```
+
+:::
+
+### 7. Run `sync` action
+
+In your convex project's dashboard. Go the **Functions** section and execute the `sync` action.
+
+This is done to sync already existing stripe data into your convex database.
+It must be done in both your development and production deployments.
+
+This might not be necessary if you are starting with a fresh empty stripe project.
+
+### 8. Start building 
+Now you can use the different provided functions to:
+- Generate a subscription or payment link [`stripe.subscribe`](#subscribe-function), [`stripe.pay`](#pay-function) for a given entity.
+- Generate a link to the entity's [`stripe.portal`](#portal-function) to manage their subscriptions.
+- Consult the different synced tables.
+- Etc.
 
 ## Usage
 
@@ -194,7 +202,7 @@ export const setupCustomer = action({
 - `customerId` is stripe's internal ID.
 - `email` is optional, but recommended so the Stripe customer has a contact email.
 - If the entity already has a Stripe customer, setup will return the existing one instead of creating a duplicate.
-- Typically, you’ll call this automatically in your user/org creation flow (see [Configuration - 6](#️configuration)).
+- Typically, you’ll call this automatically in your user/org creation flow (see [Configuration - 6](#configuration)).
 
 ### `sync` Action
 

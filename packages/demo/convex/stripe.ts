@@ -2,11 +2,27 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { internalConvexStripe } from "@raideno/convex-stripe/server";
 import { v } from "convex/values";
 
-import { action, query } from "./_generated/server";
+import { action, internalMutation, mutation, query } from "./_generated/server";
 import configuration from "./stripe.config";
+import { internal } from "./_generated/api";
 
 export const { stripe, store, sync, setup } =
   internalConvexStripe(configuration);
+
+export const createInternalPaymentRecord = internalMutation({
+  args: {
+    priceId: v.string(),
+    checkoutSessionId: v.string(),
+    userId: v.id("users"),
+  },
+  handler: async (context, args) => {
+    await context.db.insert("payments", {
+      priceId: args.priceId,
+      userId: args.userId,
+      checkoutSessionId: args.checkoutSessionId,
+    });
+  },
+});
 
 export const pay = action({
   args: {
@@ -29,7 +45,11 @@ export const pay = action({
       cancel: { url: `${process.env.SITE_URL}/?return-from-checkout=cancel` },
     });
 
-    checkout.payment_intent;
+    await context.runMutation(internal.stripe.createInternalPaymentRecord, {
+      priceId: args.priceId,
+      checkoutSessionId: checkout.id,
+      userId: userId,
+    });
 
     return checkout;
   },
@@ -63,9 +83,31 @@ export const subscribe = action({
 export const payments = query({
   args: v.object({}),
   handler: async (context) => {
-    const intents = await context.db.query("stripe_payment_intents").collect();
+    const userId = await getAuthUserId(context);
 
-    return intents;
+    if (!userId) throw new Error("Unauthorized");
+
+    const checkouts = await context.db
+      .query("stripe_checkout_sessions")
+      .filter((query) =>
+        query.eq(query.field("stripe.metadata.entityId"), userId)
+      )
+      .collect();
+
+    const payments = (
+      await context.db
+        .query("payments")
+        .withIndex("byUserId", (q) => q.eq("userId", userId))
+        .collect()
+    ).map((payment) => ({
+      ...payment,
+      checkout:
+        checkouts.find(
+          (checkout) => checkout.checkoutSessionId === payment.checkoutSessionId
+        ) || null,
+    }));
+
+    return payments;
   },
 });
 

@@ -7,7 +7,7 @@ export const AuthForm = () => {
   const { signIn } = useAuthActions();
 
   const [loading, setLoading] = React.useState(false);
-  const [step, setStep] = React.useState<"signUp" | "signIn">("signIn");
+  const [step, setStep] = React.useState<"signUp" | "signIn">("signUp");
 
   const handleSubmission = async (event: React.FormEvent<HTMLFormElement>) => {
     try {
@@ -22,8 +22,10 @@ export const AuthForm = () => {
 
       toast.success("Welcome!");
     } catch (error) {
-      console.error(error);
-      toast.error("An error occurred. Please try again.");
+      console.log("[error]:", error);
+      toast.error(
+        "An error occurred. To short password, signUp instead of signIn, wrong identifiers."
+      );
     } finally {
       setLoading(false);
     }
@@ -35,13 +37,25 @@ export const AuthForm = () => {
         <form onSubmit={handleSubmission}>
           <Flex direction="column" gap="4">
             <Heading size="6">Welcome</Heading>
-            <TextField.Root name="email" placeholder="Email" type="text" />
             <TextField.Root
+              size={"3"}
+              name="email"
+              placeholder="Email"
+              type="text"
+            />
+            <TextField.Root
+              size={"3"}
               name="password"
               placeholder="Password"
               type="password"
             />
-            <TextField.Root name="flow" type="hidden" value={step} />
+            <TextField.Root
+              size={"3"}
+              className="!hidden"
+              name="flow"
+              type="hidden"
+              value={step}
+            />
             <Button loading={loading} variant="classic" type="submit">
               {step === "signIn" ? "Sign in" : "Sign up"}
             </Button>

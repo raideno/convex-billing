@@ -1,5 +1,6 @@
-import "@radix-ui/themes/styles.css";
 import "./index.css";
+
+import "@radix-ui/themes/styles.css";
 
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { Theme } from "@radix-ui/themes";

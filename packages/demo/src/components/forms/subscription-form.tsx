@@ -1,11 +1,9 @@
-import { InfoCircledIcon } from "@radix-ui/react-icons";
 import {
   Box,
   Button,
-  Callout,
   Card,
-  Code,
   Flex,
+  Grid,
   Heading,
   Skeleton,
   Text,
@@ -17,7 +15,7 @@ import { toast } from "sonner";
 import { api } from "@/convex/api";
 import Stripe from "stripe";
 
-const currencyToSymbol: Record<string, string> = {
+export const currencyToSymbol: Record<string, string> = {
   usd: "$",
   eur: "€",
   gbp: "£",
@@ -34,7 +32,7 @@ export const SubscriptionForm = () => {
 
   const [loading, setLoading] = React.useState<string | null>(null);
 
-  const handleCheckout = async (priceId: string) => {
+  const handleSubscribe = async (priceId: string) => {
     try {
       setLoading(priceId);
       if (!priceId) {
@@ -97,15 +95,14 @@ export const SubscriptionForm = () => {
     return (
       <Card>
         <Box>
-          <Heading size={"6"}>You are already subscribed</Heading>
+          <Heading weight={"regular"} size={"6"}>
+            You are subscribed{" "}
+            <Text weight={"bold"}>
+              {product ? product.stripe.name : "Unknown"}
+            </Text>{" "}
+            Plan
+          </Heading>
           <Box mt={"4"} mb={"5"}>
-            <Text as="div">
-              You are currently subscribed to the{" "}
-              <Text weight={"bold"}>
-                {product ? product.stripe.name : "Unknown Plan"}
-              </Text>{" "}
-              Plan.
-            </Text>
             <Text as="div">
               Period: <Text weight={"bold"}>{start.toLocaleDateString()}</Text>{" "}
               - <Text weight={"bold"}>{end.toLocaleDateString()}</Text>
@@ -119,7 +116,7 @@ export const SubscriptionForm = () => {
             </Text>
           </Box>
           <Button
-            className="w-full"
+            className="!w-full"
             variant="classic"
             onClick={handlePortal}
             loading={loading === "portal"}
@@ -135,18 +132,8 @@ export const SubscriptionForm = () => {
     <Box>
       <Flex direction="column" gap="4">
         <Heading size={"6"}>Select a plan</Heading>
-        <Callout.Root>
-          <Callout.Icon>
-            <InfoCircledIcon />
-          </Callout.Icon>
-          <Callout.Text>
-            Stripe is in test mode. Use the card{" "}
-            <Code>5555 5555 5555 4444</Code> with any future date and any CVC
-            code.
-          </Callout.Text>
-        </Callout.Root>
-        <Flex
-          direction={{ initial: "column", md: "row" }}
+        <Grid
+          columns={{ initial: "1", sm: "2", md: "3" }}
           justify={"between"}
           gap="4"
         >
@@ -186,8 +173,8 @@ export const SubscriptionForm = () => {
                     variant="classic"
                     disabled={loading !== null && loading !== price.priceId}
                     loading={loading === price.priceId}
-                    className="w-full"
-                    onClick={handleCheckout.bind(null, price.priceId)}
+                    className="!w-full"
+                    onClick={handleSubscribe.bind(null, price.priceId)}
                   >
                     Subscribe
                   </Button>
@@ -195,7 +182,7 @@ export const SubscriptionForm = () => {
               </Card>
             );
           })}
-        </Flex>
+        </Grid>
       </Flex>
     </Box>
   );

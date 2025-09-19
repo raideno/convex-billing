@@ -1,12 +1,23 @@
-import { Box, Button, Card, Flex, Heading, Link, Text } from "@radix-ui/themes";
+import {
+  Box,
+  Button,
+  Card,
+  Flex,
+  Heading,
+  Link,
+  Skeleton,
+  Text,
+} from "@radix-ui/themes";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 
 import { AuthForm } from "./components/forms/auth-form";
+import { CreditCardForm } from "./components/forms/credit-card-form";
+import { PaymentsForm } from "./components/forms/payments-form";
+import { ProductsForm } from "./components/forms/products-form";
 import { SubscriptionForm } from "./components/forms/subscription-form";
 import { UserForm } from "./components/forms/user-form";
 import { ReturnFromCheckoutModal } from "./components/modals/return-from-checkout-modal";
 import { ReturnFromPortalModal } from "./components/modals/return-from-portal-modal";
-import { ProductsForm } from "./components/forms/products-form";
 
 export default function App() {
   return (
@@ -28,7 +39,7 @@ export default function App() {
               href="https://github.com/raideno/convex-stripe/tree/main/packages/demo"
               target="_blank"
             >
-              <Button variant="classic" className="w-full">
+              <Button variant="classic" className="!w-full">
                 Code
               </Button>
             </Link>
@@ -36,7 +47,7 @@ export default function App() {
               href="https://raideno.github.io/convex-stripe/"
               target="_blank"
             >
-              <Button variant="classic" className="w-full">
+              <Button variant="classic" className="!w-full">
                 Documentation
               </Button>
             </Link>
@@ -44,7 +55,7 @@ export default function App() {
               href="https://github.com/raideno/convex-stripe"
               target="_blank"
             >
-              <Button variant="classic" className="w-full">
+              <Button variant="classic" className="!w-full">
                 Github
               </Button>
             </Link>
@@ -56,14 +67,16 @@ export default function App() {
       </Unauthenticated>
       <AuthLoading>
         <Box>
-          <div>Loading...</div>
+          <Skeleton style={{ width: "100%", height: "256px" }} />
         </Box>
       </AuthLoading>
       <Authenticated>
         <Flex direction={"column"} gap="6">
           <UserForm />
+          <CreditCardForm />
           <SubscriptionForm />
-          {/* <ProductsForm /> */}
+          <ProductsForm />
+          <PaymentsForm />
         </Flex>
         <ReturnFromCheckoutModal />
         <ReturnFromPortalModal />

@@ -1,9 +1,7 @@
+@import "tailwindcss";
+
 .radix-themes {
   --cursor-button: pointer !important;
-}
-
-.w-full {
-  width: 100%;
 }
 
 main {
