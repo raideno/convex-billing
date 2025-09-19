@@ -9,17 +9,22 @@ export const PromotionCodeStripeToConvex = (
   promotionCode: Stripe.PromotionCode
 ) => {
   const object: Infer<typeof PromotionCodeObject> = {
-    ...promotionCode,
+    id: promotionCode.id,
+    code: promotionCode.code,
+    metadata: promotionCode.metadata,
+    object: promotionCode.object,
+    active: promotionCode.active,
+    created: promotionCode.created,
+    expires_at: promotionCode.expires_at ?? null,
+    livemode: promotionCode.livemode,
+    max_redemptions: promotionCode.max_redemptions ?? null,
+    restrictions: promotionCode.restrictions,
+    times_redeemed: promotionCode.times_redeemed,
     customer:
       typeof promotionCode.customer === "string"
         ? promotionCode.customer
         : promotionCode.customer?.id || null,
-    coupon: {
-      ...promotionCode.coupon,
-      currency: promotionCode.coupon.currency as Infer<
-        (typeof PromotionCodeSchema)["coupon"]
-      >["currency"],
-    },
+    coupon: promotionCode.coupon,
   };
   return object;
 };

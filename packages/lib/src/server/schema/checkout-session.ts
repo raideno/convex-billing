@@ -7,7 +7,70 @@ export const CheckoutSessionStripeToConvex = (
   session: Stripe.Checkout.Session
 ) => {
   const object: Infer<typeof CheckoutSessionObject> = {
-    ...session,
+    id: session.id,
+    automatic_tax: session.automatic_tax,
+    client_reference_id: session.client_reference_id || null,
+    currency: session.currency || null,
+    customer_email: session.customer_email || null,
+    metadata: session.metadata,
+    mode: session.mode,
+    payment_status: session.payment_status,
+    return_url: session.return_url || null,
+    status: session.status || null,
+    success_url: session.success_url || null,
+    ui_mode: session.ui_mode || null,
+    url: session.url || null,
+    object: session.object,
+    adaptive_pricing: session.adaptive_pricing || null,
+    after_expiration: session.after_expiration || null,
+    allow_promotion_codes:
+      typeof session.allow_promotion_codes === "boolean"
+        ? session.allow_promotion_codes
+        : null,
+    amount_subtotal: session.amount_subtotal ?? null,
+    amount_total: session.amount_total ?? null,
+    billing_address_collection: session.billing_address_collection || null,
+    cancel_url: session.cancel_url || null,
+    client_secret: session.client_secret || null,
+    collected_information: session.collected_information || null,
+    consent: session.consent || null,
+    consent_collection: session.consent_collection || null,
+    created: session.created,
+    currency_conversion: session.currency_conversion || null,
+    custom_fields: session.custom_fields || [],
+    // custom_text: session.custom_text || null,
+    custom_text: session.custom_text || {},
+    customer_creation: session.customer_creation || null,
+    customer_details: session.customer_details || null,
+    discounts: session.discounts || null,
+    expires_at: session.expires_at,
+    invoice_creation: session.invoice_creation || null,
+    livemode: session.livemode,
+    locale: session.locale || null,
+    optional_items: session.optional_items || null,
+    origin_context: session.origin_context || null,
+    payment_method_collection: session.payment_method_collection || null,
+    payment_method_configuration_details:
+      session.payment_method_configuration_details || null,
+    payment_method_options: session.payment_method_options || null,
+    payment_method_types: session.payment_method_types,
+    permissions: session.permissions || null,
+    phone_number_collection: session.phone_number_collection || null,
+    presentment_details: session.presentment_details || null,
+    recovered_from: session.recovered_from || null,
+    redirect_on_completion: session.redirect_on_completion || null,
+    saved_payment_method_options: session.saved_payment_method_options || null,
+    shipping_address_collection: session.shipping_address_collection || null,
+    shipping_cost: session.shipping_cost || null,
+    shipping_options: session.shipping_options || [],
+    submit_type: session.submit_type || null,
+    tax_id_collection: session.tax_id_collection || null,
+    total_details: session.total_details || null,
+    wallet_options: session.wallet_options || null,
+    // References
+    // Some of these can be expanded objects or just IDs, we store only the ID in Convex
+    // see https://stripe.com/docs/api/checkout/sessions/object#checkout_session_object-customer
+    // for more details
     subscription:
       typeof session.subscription === "string"
         ? session.subscription

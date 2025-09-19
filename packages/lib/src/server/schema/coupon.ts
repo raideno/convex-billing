@@ -5,10 +5,27 @@ import { metadata, nullablenumber, nullablestring } from "@/helpers";
 
 export const CouponStripeToConvex = (coupon: Stripe.Coupon) => {
   const object: Infer<typeof CouponObject> = {
-    ...coupon,
-    currency:
-      (coupon.currency as Infer<(typeof CouponSchema)["currency"]>) ||
-      undefined,
+    id: coupon.id,
+    amount_off: coupon.amount_off ?? null,
+    currency: coupon.currency ?? null,
+    duration: coupon.duration,
+    metadata: coupon.metadata,
+    name: coupon.name ?? null,
+    percent_off: coupon.percent_off ?? null,
+    object: coupon.object,
+    applies_to: coupon.applies_to
+      ? {
+          products: coupon.applies_to.products,
+        }
+      : null,
+    created: coupon.created,
+    currency_options: coupon.currency_options ?? null,
+    duration_in_months: coupon.duration_in_months ?? null,
+    livemode: coupon.livemode,
+    max_redemptions: coupon.max_redemptions ?? null,
+    redeem_by: coupon.redeem_by ?? null,
+    times_redeemed: coupon.times_redeemed,
+    valid: coupon.valid,
   };
   return object;
 };

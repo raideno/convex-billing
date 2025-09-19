@@ -5,7 +5,29 @@ import { metadata, nullablenumber, nullablestring } from "@/helpers";
 
 export const PayoutStripeToConvex = (payout: Stripe.Payout) => {
   const object: Infer<typeof PayoutObject> = {
-    ...payout,
+    id: payout.id,
+    amount: payout.amount,
+    arrival_date: payout.arrival_date,
+    application_fee:
+      typeof payout.application_fee === "string"
+        ? payout.application_fee
+        : payout.application_fee?.id || null,
+    application_fee_amount: payout.application_fee_amount ?? null,
+    automatic: payout.automatic,
+    created: payout.created,
+    description: payout.description ?? null,
+    failure_code: payout.failure_code ?? null,
+    failure_message: payout.failure_message ?? null,
+    livemode: payout.livemode,
+    metadata: payout.metadata,
+    method: payout.method,
+    object: payout.object,
+    payout_method: payout.payout_method ?? null,
+    reconciliation_status: payout.reconciliation_status,
+    source_type: payout.source_type,
+    status: payout.status,
+    trace_id: payout.trace_id,
+    type: payout.type,
     original_payout:
       typeof payout.original_payout === "string"
         ? payout.original_payout
@@ -44,7 +66,7 @@ export const PayoutSchema = {
   statement_descriptor: v.optional(nullablestring()),
   status: v.string(),
   object: v.string(),
-  application_only: v.optional(nullablestring()),
+  application_fee: v.optional(nullablestring()),
   application_fee_amount: v.optional(nullablenumber()),
   automatic: v.boolean(),
   balance_transaction: v.optional(nullablestring()),
@@ -83,7 +105,8 @@ export const PayoutSchema = {
     v.union(
       v.literal("completed"),
       v.literal("in_progress"),
-      v.literal("not_applicable")
+      v.literal("not_applicable"),
+      v.null()
     )
   ),
   reversed_by: v.optional(nullablestring()),

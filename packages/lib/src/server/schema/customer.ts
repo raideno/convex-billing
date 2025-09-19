@@ -5,7 +5,47 @@ import { metadata, nullablenumber, nullablestring } from "@/helpers";
 
 export const CustomerStripeToConvex = (customer: Stripe.Customer) => {
   const object: Infer<typeof CustomerObject> = {
-    ...customer,
+    id: customer.id,
+    address: customer.address
+      ? {
+          city: customer.address.city ?? null,
+          country: customer.address.country ?? null,
+          line1: customer.address.line1 ?? null,
+          line2: customer.address.line2 ?? null,
+          postal_code: customer.address.postal_code ?? null,
+          state: customer.address.state ?? null,
+        }
+      : null,
+    description: customer.description ?? null,
+    email: customer.email ?? null,
+    metadata: customer.metadata,
+    name: customer.name ?? null,
+    phone: customer.phone ?? null,
+    shipping: customer.shipping,
+    tax: customer.tax,
+    object: customer.object,
+    balance: customer.balance,
+    cash_balance: customer.cash_balance ?? null,
+    created: customer.created,
+    currency: customer.currency ?? null,
+    delinquent:
+      typeof customer.delinquent === "boolean" ? customer.delinquent : null,
+    discount: customer.discount ?? null,
+    invoice_credit_balance: customer.invoice_credit_balance,
+    invoice_prefix: customer.invoice_prefix ?? null,
+    invoice_settings: customer.invoice_settings ?? {},
+    livemode: customer.livemode,
+    next_invoice_sequence: customer.next_invoice_sequence ?? null,
+    preferred_locales: customer.preferred_locales ?? null,
+    sources: customer.sources ?? null,
+    subscriptions: customer.subscriptions ?? null,
+    tax_exempt:
+      customer.tax_exempt === "exempt" ||
+      customer.tax_exempt === "none" ||
+      customer.tax_exempt === "reverse"
+        ? customer.tax_exempt
+        : null,
+    tax_ids: customer.tax_ids ?? null,
     default_source:
       typeof customer.default_source === "string"
         ? customer.default_source

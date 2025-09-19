@@ -5,7 +5,21 @@ import { metadata, nullablestring } from "@/helpers";
 
 export const RefundStripeToConvex = (refund: Stripe.Refund) => {
   const object: Infer<typeof RefundObject> = {
-    ...refund,
+    id: refund.id,
+    amount: refund.amount,
+    created: refund.created,
+    currency: refund.currency,
+    description: refund.description,
+    failure_reason: refund.failure_reason,
+    instructions_email: refund.instructions_email,
+    metadata: refund.metadata,
+    next_action: refund.next_action,
+    object: refund.object,
+    pending_reason: refund.pending_reason,
+    receipt_number: refund.receipt_number,
+    reason: refund.reason,
+    status: refund.status,
+    destination_details: refund.destination_details,
     charge:
       typeof refund.charge === "string" ? refund.charge : refund.charge?.id,
     balance_transaction:
