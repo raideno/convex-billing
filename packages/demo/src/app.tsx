@@ -63,7 +63,7 @@ export default function App() {
         <Flex direction={"column"} gap="6">
           <UserForm />
           <SubscriptionForm />
-          <ProductsForm />
+          {/* <ProductsForm /> */}
         </Flex>
         <ReturnFromCheckoutModal />
         <ReturnFromPortalModal />

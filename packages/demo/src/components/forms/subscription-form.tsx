@@ -145,16 +145,23 @@ export const SubscriptionForm = () => {
             code.
           </Callout.Text>
         </Callout.Root>
-        <Flex direction={{ initial: "column", md: "row" }} gap="4">
+        <Flex
+          direction={{ initial: "column", md: "row" }}
+          justify={"between"}
+          gap="4"
+        >
           {products.map((product) => {
             // NOTE: products can have multiple prices, but in this demo we only use one price per product, we can have one price for monthly and one for yearly
             if (product.prices.length === 0) return null;
 
             const price = product.prices[0];
 
-            if (price.stripe.unit_amount === null) return null;
-
-            if (product.stripe.active === false) return null;
+            if (
+              price.stripe.recurring === null ||
+              price.stripe.unit_amount === null ||
+              product.stripe.active === false
+            )
+              return null;
 
             return (
               <Card key={price.priceId}>

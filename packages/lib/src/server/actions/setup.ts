@@ -30,10 +30,10 @@ export const SetupImplementation = defineActionImplementation({
       configuration
     );
 
-    let customerId = stripeCustomer?.doc!.customerId || null;
+    let customerId = stripeCustomer?.doc?.customerId || null;
 
     if (customerId) {
-      return { customerId: stripeCustomer.doc!.stripe.id };
+      return { customerId: customerId };
     } else {
       const customer = await stripe.customers.create({
         email: args.email ? args.email : undefined,
