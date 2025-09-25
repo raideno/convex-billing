@@ -9,7 +9,7 @@ export const SubscriptionsSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "subscriptions",
   handler: async (context, args, configuration) => {
-    if (configuration.sync.stripe_subscriptions !== true) return;
+    if (configuration.sync.stripeSubscriptions !== true) return;
 
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
@@ -42,13 +42,13 @@ export const SubscriptionsSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "stripe_subscriptions",
+          table: "stripeSubscriptions",
           idField: "customerId",
           data: {
             customerId: customerId,
             subscriptionId: subscription.id,
             stripe: SubscriptionStripeToConvex(subscription),
-            last_synced_at: Date.now(),
+            lastSyncedAt: Date.now(),
           },
         },
         context,
@@ -57,7 +57,7 @@ export const SubscriptionsSyncImplementation = defineActionImplementation({
     }
 
     const localSubsResponse = await storeDispatchTyped(
-      { operation: "selectAll", table: "stripe_subscriptions" },
+      { operation: "selectAll", table: "stripeSubscriptions" },
       context,
       configuration
     );
@@ -71,13 +71,13 @@ export const SubscriptionsSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "stripe_subscriptions",
+            table: "stripeSubscriptions",
             idField: "customerId",
             data: {
               customerId: sub.customerId,
               subscriptionId: null,
               stripe: null,
-              last_synced_at: Date.now(),
+              lastSyncedAt: Date.now(),
             },
           },
           context,

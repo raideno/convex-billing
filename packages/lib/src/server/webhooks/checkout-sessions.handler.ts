@@ -11,7 +11,7 @@ export default defineWebhookHandler({
     "checkout.session.expired",
   ],
   handle: async (event, context, configuration) => {
-    if (configuration.sync.stripe_checkout_sessions !== true) return;
+    if (configuration.sync.stripeCheckoutSessions !== true) return;
 
     const checkoutSession = event.data.object;
 
@@ -23,12 +23,12 @@ export default defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "stripe_checkout_sessions",
+            table: "stripeCheckoutSessions",
             idField: "checkoutSessionId",
             data: {
               checkoutSessionId: checkoutSession.id,
               stripe: CheckoutSessionStripeToConvex(checkoutSession),
-              last_synced_at: Date.now(),
+              lastSyncedAt: Date.now(),
             },
           },
           context,

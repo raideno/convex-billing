@@ -12,7 +12,7 @@ export default defineWebhookHandler({
     "charge.dispute.funds_withdrawn",
   ],
   handle: async (event, context, configuration) => {
-    if (configuration.sync.stripe_disputes !== true) return;
+    if (configuration.sync.stripeDisputes !== true) return;
 
     const dispute = event.data.object;
 
@@ -25,12 +25,12 @@ export default defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "stripe_disputes",
+            table: "stripeDisputes",
             idField: "disputeId",
             data: {
               disputeId: dispute.id,
               stripe: DisputeStripeToConvex(dispute),
-              last_synced_at: Date.now(),
+              lastSyncedAt: Date.now(),
             },
           },
           context,

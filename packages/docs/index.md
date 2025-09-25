@@ -146,7 +146,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 In your convex project's dashboard. Go the **Functions** section and execute the `sync` action.
 
 This is done to sync already existing stripe data into your convex database.
-It must be done in both your development and production deployments.
+It must be done in both your development and production deployments after installing or updating the library.
 
 This might not be necessary if you are starting with a fresh empty stripe project.
 

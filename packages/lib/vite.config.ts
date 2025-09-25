@@ -10,7 +10,6 @@ export default defineConfig({
   build: {
     lib: {
       entry: {
-        index: "src/index.ts",
         server: "src/server/index.ts",
       },
       formats: ["es"],
@@ -27,12 +26,13 @@ export default defineConfig({
   plugins: [
     tsconfigPaths(),
     dts({
-      // rollupTypes: true,
+      rollupTypes: true,
       insertTypesEntry: true,
       tsconfigPath: "./tsconfig.json",
       outDir: "dist",
       entryRoot: "src",
       copyDtsFiles: false,
+      include: ["src/index.ts", "src/server/index.ts"],
     }),
     compileTime(),
     visualizer({

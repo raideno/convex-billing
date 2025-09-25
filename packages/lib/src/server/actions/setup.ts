@@ -22,7 +22,7 @@ export const SetupImplementation = defineActionImplementation({
     const stripeCustomer = await storeDispatchTyped(
       {
         operation: "selectOne",
-        table: "stripe_customers",
+        table: "stripeCustomers",
         field: "entityId",
         value: args.entityId,
       },
@@ -46,7 +46,7 @@ export const SetupImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "stripe_customers",
+          table: "stripeCustomers",
           idField: "entityId",
           data: {
             entityId: args.entityId,
@@ -87,7 +87,7 @@ export const SetupImplementation = defineActionImplementation({
                   ? customer.test_clock
                   : customer.test_clock?.id,
             },
-            last_synced_at: Date.now(),
+            lastSyncedAt: Date.now(),
           },
         },
         context,

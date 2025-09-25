@@ -16,6 +16,7 @@ import { PaymentsForm } from "./components/forms/payments-form";
 import { ProductsForm } from "./components/forms/products-form";
 import { SubscriptionForm } from "./components/forms/subscription-form";
 import { UserForm } from "./components/forms/user-form";
+import { ChatForm } from "./components/forms/chat-form";
 import { GenericReturnFromModal } from "./components/modals/generic-return-from-modal";
 
 export default function App() {
@@ -69,6 +70,9 @@ export default function App() {
           <Skeleton style={{ width: "100%", height: "256px" }} />
         </Box>
       </AuthLoading>
+      <Box my="8">
+        <ChatForm />
+      </Box>
       <Authenticated>
         <Flex direction={"column"} gap="6">
           <UserForm />

@@ -9,7 +9,7 @@ export const DisputesSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "disputes",
   handler: async (context, args, configuration) => {
-    if (configuration.sync.stripe_disputes !== true) return;
+    if (configuration.sync.stripeDisputes !== true) return;
 
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
@@ -18,7 +18,7 @@ export const DisputesSyncImplementation = defineActionImplementation({
     const localDisputesRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "stripe_disputes",
+        table: "stripeDisputes",
       },
       context,
       configuration
@@ -39,12 +39,12 @@ export const DisputesSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "stripe_disputes",
+          table: "stripeDisputes",
           idField: "disputeId",
           data: {
             disputeId: dispute.id,
             stripe: DisputeStripeToConvex(dispute),
-            last_synced_at: Date.now(),
+            lastSyncedAt: Date.now(),
           },
         },
         context,
@@ -57,7 +57,7 @@ export const DisputesSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "stripe_disputes",
+            table: "stripeDisputes",
             idField: "disputeId",
             idValue: disputeId,
           },

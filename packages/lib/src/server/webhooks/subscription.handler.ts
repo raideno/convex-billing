@@ -24,7 +24,7 @@ export default defineWebhookHandler({
     "payment_intent.canceled",
   ],
   handle: async (event, context, configuration) => {
-    if (configuration.sync.stripe_subscriptions !== true) return;
+    if (configuration.sync.stripeSubscriptions !== true) return;
 
     const customerId =
       typeof event.data.object.customer === "string"

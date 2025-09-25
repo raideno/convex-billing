@@ -11,7 +11,7 @@ export default defineWebhookHandler({
     "charge.refund.updated",
   ],
   handle: async (event, context, configuration) => {
-    if (configuration.sync.stripe_refunds !== true) return;
+    if (configuration.sync.stripeRefunds !== true) return;
 
     const refund = event.data.object;
 
@@ -22,12 +22,12 @@ export default defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "stripe_refunds",
+            table: "stripeRefunds",
             idField: "refundId",
             data: {
               refundId: refund.id,
               stripe: RefundStripeToConvex(refund),
-              last_synced_at: Date.now(),
+              lastSyncedAt: Date.now(),
             },
           },
           context,

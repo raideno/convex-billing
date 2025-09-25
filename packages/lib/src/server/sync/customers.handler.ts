@@ -9,7 +9,7 @@ export const CustomersSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "customers",
   handler: async (context, args, configuration) => {
-    if (configuration.sync.stripe_customers !== true) return;
+    if (configuration.sync.stripeCustomers !== true) return;
 
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
@@ -18,7 +18,7 @@ export const CustomersSyncImplementation = defineActionImplementation({
     const localCustomersRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "stripe_customers",
+        table: "stripeCustomers",
       },
       context,
       configuration
@@ -46,13 +46,13 @@ export const CustomersSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "stripe_customers",
+          table: "stripeCustomers",
           idField: "customerId",
           data: {
             customerId: customer.id,
             entityId: customer.metadata.entityId,
             stripe: CustomerStripeToConvex(customer),
-            last_synced_at: Date.now(),
+            lastSyncedAt: Date.now(),
           },
         },
         context,
@@ -65,7 +65,7 @@ export const CustomersSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "stripe_customers",
+            table: "stripeCustomers",
             idField: "customerId",
             idValue: customerId,
           },

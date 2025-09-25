@@ -9,7 +9,7 @@ export const EarlyFraudWarningsSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "early_fraud_warnings",
   handler: async (context, args, configuration) => {
-    if (configuration.sync.stripe_early_fraud_warnings !== true) return;
+    if (configuration.sync.stripeEarlyFraudWarnings !== true) return;
 
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
@@ -18,7 +18,7 @@ export const EarlyFraudWarningsSyncImplementation = defineActionImplementation({
     const localEarlyFraudWarningsRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "stripe_early_fraud_warnings",
+        table: "stripeEarlyFraudWarnings",
       },
       context,
       configuration
@@ -42,12 +42,12 @@ export const EarlyFraudWarningsSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "stripe_early_fraud_warnings",
+          table: "stripeEarlyFraudWarnings",
           idField: "earlyFraudWarningId",
           data: {
             earlyFraudWarningId: early_fraud_warning.id,
             stripe: EarlyFraudWarningStripeToConvex(early_fraud_warning),
-            last_synced_at: Date.now(),
+            lastSyncedAt: Date.now(),
           },
         },
         context,
@@ -62,7 +62,7 @@ export const EarlyFraudWarningsSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "stripe_early_fraud_warnings",
+            table: "stripeEarlyFraudWarnings",
             idField: "earlyFraudWarningId",
             idValue: early_fraud_warningId,
           },

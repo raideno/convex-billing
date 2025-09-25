@@ -12,7 +12,7 @@ export default defineWebhookHandler({
     "setup_intent.succeeded",
   ],
   handle: async (event, context, configuration) => {
-    if (configuration.sync.stripe_setup_intents !== true) return;
+    if (configuration.sync.stripeSetupIntents !== true) return;
 
     const setupIntent = event.data.object;
 
@@ -30,12 +30,12 @@ export default defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "stripe_setup_intents",
+            table: "stripeSetupIntents",
             idField: "setupIntentId",
             data: {
               setupIntentId: setupIntent.id,
               stripe: SetupIntentStripeToConvex(setupIntent),
-              last_synced_at: Date.now(),
+              lastSyncedAt: Date.now(),
             },
           },
           context,

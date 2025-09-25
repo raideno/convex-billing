@@ -9,7 +9,7 @@ export const TaxIdsSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "taxIds",
   handler: async (context, args, configuration) => {
-    if (configuration.sync.stripe_tax_ids !== true) return;
+    if (configuration.sync.stripeTaxIds !== true) return;
 
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
@@ -18,7 +18,7 @@ export const TaxIdsSyncImplementation = defineActionImplementation({
     const localTaxIdsRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "stripe_tax_ids",
+        table: "stripeTaxIds",
       },
       context,
       configuration
@@ -39,12 +39,12 @@ export const TaxIdsSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "stripe_tax_ids",
+          table: "stripeTaxIds",
           idField: "taxIdId",
           data: {
             taxIdId: taxId.id,
             stripe: TaxIdStripeToConvex(taxId),
-            last_synced_at: Date.now(),
+            lastSyncedAt: Date.now(),
           },
         },
         context,
@@ -57,7 +57,7 @@ export const TaxIdsSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "stripe_tax_ids",
+            table: "stripeTaxIds",
             idField: "taxIdId",
             idValue: taxIdId,
           },

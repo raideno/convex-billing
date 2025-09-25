@@ -15,7 +15,7 @@ export default defineWebhookHandler({
     "payment_intent.succeeded",
   ],
   handle: async (event, context, configuration) => {
-    if (configuration.sync.stripe_payment_intents !== true) return;
+    if (configuration.sync.stripePaymentIntents !== true) return;
 
     const paymentIntent = event.data.object;
 
@@ -31,12 +31,12 @@ export default defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "stripe_payment_intents",
+            table: "stripePaymentIntents",
             idField: "paymentIntentId",
             data: {
               paymentIntentId: paymentIntent.id,
               stripe: PaymentIntentStripeToConvex(paymentIntent),
-              last_synced_at: Date.now(),
+              lastSyncedAt: Date.now(),
             },
           },
           context,

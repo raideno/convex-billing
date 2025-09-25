@@ -1,11 +1,14 @@
 import {
   GenericActionCtx,
+  GenericDataModel,
+  httpActionGeneric,
   HttpRouter,
   internalActionGeneric,
   internalMutationGeneric,
+  RoutableMethod,
 } from "convex/server";
 import { Infer } from "convex/values";
-
+import Stripe from "stripe";
 import {
   PayImplementation,
   PortalImplementation,
@@ -13,12 +16,12 @@ import {
   SubscribeImplementation,
 } from "./actions";
 import { normalizeConfiguration } from "./helpers";
-import { buildRedirectImplementation } from "./redirects";
+import { redirectImplementation } from "./redirects";
 import { StripeDataModel } from "./schema";
 import { StoreImplementation } from "./store";
 import { SyncAllImplementation } from "./sync/all";
-import type { InputConfiguration } from "./types";
-import { buildWebhookImplementation } from "./webhooks";
+import type { InputConfiguration, InternalConfiguration } from "./types";
+import { webhookImplementation } from "./webhooks";
 
 export { stripeTables } from "./schema";
 
@@ -26,21 +29,61 @@ export { Logger } from "./logger";
 
 export { InputConfiguration };
 
+const buildHttp = (configuration: InternalConfiguration) => ({
+  webhook: {
+    path: "/stripe/webhook",
+    method: "POST" as const as RoutableMethod,
+    handler: (
+      context: GenericActionCtx<GenericDataModel>,
+      request: Request,
+      stripe?: Stripe
+    ) => {
+      return webhookImplementation(
+        configuration,
+        context as unknown as GenericActionCtx<StripeDataModel>,
+        request,
+        stripe
+      );
+    },
+  },
+  redirect: {
+    pathPrefix: "/stripe/return/",
+    method: "GET" as const as RoutableMethod,
+    handler: (
+      context: GenericActionCtx<GenericDataModel>,
+      request: Request
+    ) => {
+      return redirectImplementation(
+        configuration,
+        context as unknown as GenericActionCtx<StripeDataModel>,
+        request
+      );
+    },
+  } as const,
+});
+
 export const internalConvexStripe = (configuration_: InputConfiguration) => {
   const configuration = normalizeConfiguration(configuration_);
+  const http_ = buildHttp(configuration);
 
   return {
     stripe: {
-      addHttpRoutes: (http: HttpRouter) => {
+      http: http_,
+      addHttpRoutes: (http: HttpRouter, config?: InputConfiguration) => {
+        config = normalizeConfiguration(config || configuration_);
         http.route({
-          path: "/stripe/webhook",
-          method: "POST",
-          handler: buildWebhookImplementation(configuration),
+          path: http_.webhook.path,
+          method: http_.webhook.method,
+          handler: httpActionGeneric((context, request) => {
+            return http_.webhook.handler(context, request);
+          }),
         });
         http.route({
-          pathPrefix: "/stripe/return/",
-          method: "GET",
-          handler: buildRedirectImplementation(configuration),
+          pathPrefix: http_.redirect.pathPrefix,
+          method: http_.redirect.method,
+          handler: httpActionGeneric((context, request) => {
+            return http_.redirect.handler(context, request);
+          }),
         });
       },
       portal: (
@@ -56,7 +99,6 @@ export const internalConvexStripe = (configuration_: InputConfiguration) => {
         args: Infer<typeof PayImplementation.args>
       ) => PayImplementation.handler(context, args, configuration),
     },
-    // --- --- ---
     store: internalMutationGeneric({
       args: StoreImplementation.args,
       handler: async (context, args) =>

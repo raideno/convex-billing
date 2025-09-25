@@ -1,4 +1,4 @@
-import { GenericActionCtx, httpActionGeneric } from "convex/server";
+import { GenericActionCtx } from "convex/server";
 
 import { StripeDataModel } from "@/schema";
 import { InferArgs, InternalConfiguration } from "@/types";
@@ -161,36 +161,36 @@ export const REDIRECT_HANDLERS = [
   PayReturnImplementation,
 ] as const;
 
-const _ = compileTime(() => {
-  console.log();
+// const _ = compileTime(() => {
+//   console.log();
 
-  const origins = REDIRECT_HANDLERS.map((handler) => new Set(handler.origins));
+//   const origins = REDIRECT_HANDLERS.map((handler) => new Set(handler.origins));
 
-  const intersections: Array<[number, number]> = [];
+//   const intersections: Array<[number, number]> = [];
 
-  for (let i = 0; i < origins.length; i++) {
-    for (let j = i + 1; j < origins.length; j++) {
-      const hasOverlap = [...origins[i]].some((origin) =>
-        origins[j].has(origin)
-      );
+//   for (let i = 0; i < origins.length; i++) {
+//     for (let j = i + 1; j < origins.length; j++) {
+//       const hasOverlap = [...origins[i]].some((origin) =>
+//         origins[j].has(origin)
+//       );
 
-      if (hasOverlap) {
-        intersections.push([i, j]);
-      }
-    }
-  }
+//       if (hasOverlap) {
+//         intersections.push([i, j]);
+//       }
+//     }
+//   }
 
-  if (intersections.length > 0) {
-    intersections.forEach(([i, j]) => {
-      console.log(
-        `Error: Redirect handlers at index ${i} and ${j} have overlapping origins.`
-      );
-    });
-    throw new Error("Redirect handlers have overlapping origins");
-  }
+//   if (intersections.length > 0) {
+//     intersections.forEach(([i, j]) => {
+//       console.log(
+//         `Error: Redirect handlers at index ${i} and ${j} have overlapping origins.`
+//       );
+//     });
+//     throw new Error("Redirect handlers have overlapping origins");
+//   }
 
-  return true;
-});
+//   return true;
+// });
 
 type AllRedirectHandlers = (typeof REDIRECT_HANDLERS)[number];
 
@@ -209,86 +209,83 @@ export const RETURN_ORIGINS = REDIRECT_HANDLERS.map(
 
 export type ReturnOrigin = (typeof RETURN_ORIGINS)[number];
 
-export const buildRedirectImplementation = (
-  configuration: InternalConfiguration
-) =>
-  httpActionGeneric(async (context_, request) => {
-    const context = context_ as unknown as GenericActionCtx<StripeDataModel>;
-    const url = new URL(request.url);
+export const redirectImplementation = async (
+  configuration: InternalConfiguration,
+  context: GenericActionCtx<StripeDataModel>,
+  request: Request
+) => {
+  const url = new URL(request.url);
 
-    const segments = url.pathname.split("/").filter(Boolean);
+  const segments = url.pathname.split("/").filter(Boolean);
 
-    const origin_ = segments[segments.length - 1];
+  const origin_ = segments[segments.length - 1];
 
-    if (
-      !origin_ ||
-      !REDIRECT_HANDLERS.map((handler) => handler.origins)
-        .flat()
-        .includes(origin_ as ReturnOrigin)
-    ) {
-      return new Response("Invalid return origin", { status: 400 });
-    }
+  if (
+    !origin_ ||
+    !REDIRECT_HANDLERS.map((handler) => handler.origins)
+      .flat()
+      .includes(origin_ as ReturnOrigin)
+  ) {
+    return new Response("Invalid return origin", { status: 400 });
+  }
 
-    const origin = origin_ as ReturnOrigin;
+  const origin = origin_ as ReturnOrigin;
 
-    const data = url.searchParams.get("data");
-    const signature = url.searchParams.get("signature");
+  const data = url.searchParams.get("data");
+  const signature = url.searchParams.get("signature");
 
-    if (!data || !signature) {
-      return new Response("Missing signature", { status: 400 });
-    }
+  if (!data || !signature) {
+    return new Response("Missing signature", { status: 400 });
+  }
 
-    const response = await decodeSignedPayload({
-      origin,
-      secret: configuration.stripe.webhook_secret,
-      data,
-      signature,
-    });
-
-    if (response.error) {
-      return new Response(response.error, { status: 400 });
-    }
-
-    const decoded = response.data!;
-
-    if (decoded.origin !== origin) {
-      return new Response("Origin mismatch", { status: 400 });
-    }
-
-    if (!decoded.exp || Date.now() > decoded.exp) {
-      return new Response("Link expired", { status: 400 });
-    }
-
-    if (
-      typeof decoded.targetUrl !== "string" ||
-      decoded.targetUrl.length === 0
-    ) {
-      return new Response("Invalid target", { status: 400 });
-    }
-
-    for (const handler of REDIRECT_HANDLERS) {
-      if (handler.origins.includes(origin as never)) {
-        try {
-          await handler.handle(
-            origin as never,
-            context,
-            decoded.data as never,
-            configuration
-          );
-        } catch (error) {
-          configuration.logger.error(
-            `[STRIPE RETURN ${origin}](Error): ${error}`
-          );
-        }
-        return new Response(null, {
-          status: 302,
-          headers: { Location: decoded.targetUrl },
-        });
-      }
-    }
-
-    return new Response(null, {
-      status: 302,
-      headers: { Location: decoded.targetUrl },
-    });
+  const response = await decodeSignedPayload({
+    origin,
+    secret: configuration.stripe.webhook_secret,
+    data,
+    signature,
   });
+
+  if (response.error) {
+    return new Response(response.error, { status: 400 });
+  }
+
+  const decoded = response.data!;
+
+  if (decoded.origin !== origin) {
+    return new Response("Origin mismatch", { status: 400 });
+  }
+
+  if (!decoded.exp || Date.now() > decoded.exp) {
+    return new Response("Link expired", { status: 400 });
+  }
+
+  if (typeof decoded.targetUrl !== "string" || decoded.targetUrl.length === 0) {
+    return new Response("Invalid target", { status: 400 });
+  }
+
+  for (const handler of REDIRECT_HANDLERS) {
+    if (handler.origins.includes(origin as never)) {
+      try {
+        await handler.handle(
+          origin as never,
+          context,
+          decoded.data as never,
+          configuration
+        );
+      } catch (error) {
+        configuration.logger.error(
+          `[STRIPE RETURN ${origin}](Error): ${error}`
+        );
+      }
+      return new Response(null, {
+        status: 302,
+        headers: { Location: decoded.targetUrl },
+      });
+    }
+  }
+
+  return new Response(null, {
+    status: 302,
+    headers: { Location: decoded.targetUrl },
+  });
+};

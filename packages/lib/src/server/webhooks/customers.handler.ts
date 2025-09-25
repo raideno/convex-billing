@@ -6,7 +6,7 @@ import { defineWebhookHandler } from "./types";
 export default defineWebhookHandler({
   events: ["customer.created", "customer.updated", "customer.deleted"],
   handle: async (event, context, configuration) => {
-    if (configuration.sync.stripe_customers !== true) return;
+    if (configuration.sync.stripeCustomers !== true) return;
 
     const customer = event.data.object;
     const entityId = customer.metadata.entityId;
@@ -22,13 +22,13 @@ export default defineWebhookHandler({
           await storeDispatchTyped(
             {
               operation: "upsert",
-              table: "stripe_customers",
+              table: "stripeCustomers",
               idField: "entityId",
               data: {
                 customerId: customer.id,
                 entityId: entityId,
                 stripe: CustomerStripeToConvex(customer),
-                last_synced_at: Date.now(),
+                lastSyncedAt: Date.now(),
               },
             },
             context,
@@ -39,7 +39,7 @@ export default defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "stripe_customers",
+            table: "stripeCustomers",
             idField: "customerId",
             idValue: customer.id,
           },

@@ -23,7 +23,7 @@ export default defineWebhookHandler({
     "invoice.will_be_due",
   ],
   handle: async (event, context, configuration) => {
-    if (configuration.sync.stripe_invoices !== true) return;
+    if (configuration.sync.stripeInvoices !== true) return;
 
     const invoice = event.data.object;
 
@@ -52,7 +52,7 @@ export default defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "stripe_invoices",
+            table: "stripeInvoices",
             idField: "invoiceId",
             data: {
               invoiceId: invoice.id,
@@ -60,7 +60,7 @@ export default defineWebhookHandler({
                 id: invoice.id,
                 ...invoice,
               }),
-              last_synced_at: Date.now(),
+              lastSyncedAt: Date.now(),
             },
           },
           context,

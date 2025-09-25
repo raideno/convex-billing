@@ -14,4 +14,12 @@ export default defineSchema({
     .index("byUserId", ["userId"])
     .index("byCheckoutSessionId", ["checkoutSessionId"])
     .index("byPriceId", ["priceId"]),
+  messages: defineTable({
+    userId: v.id("users"),
+    name: v.string(),
+    message: v.string(),
+    planPriceId: v.optional(v.string()),
+    planName: v.optional(v.string()),
+    successfulPayments: v.number(),
+  }).index("byUserId", ["userId"]),
 });

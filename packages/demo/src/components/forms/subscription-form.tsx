@@ -13,7 +13,6 @@ import React from "react";
 import { toast } from "sonner";
 
 import { api } from "@/convex/api";
-import Stripe from "stripe";
 
 export const currencyToSymbol: Record<string, string> = {
   usd: "$",
@@ -27,7 +26,6 @@ export const SubscriptionForm = () => {
   const products = useQuery(api.stripe.products);
   const subscription = useQuery(api.stripe.subscription);
 
-  const portal = useAction(api.stripe.portal);
   const checkout = useAction(api.stripe.subscribe);
 
   const [loading, setLoading] = React.useState<string | null>(null);
@@ -55,78 +53,15 @@ export const SubscriptionForm = () => {
     }
   };
 
-  const handlePortal = async () => {
-    try {
-      setLoading("portal");
-
-      toast.info("Redirecting to portal...");
-
-      const { url } = await portal();
-
-      if (url) {
-        window.location.href = url;
-      } else {
-        toast.error("Failed to create portal session.");
-      }
-    } catch (error) {
-      toast.error("Failed to redirect to portal.");
-    } finally {
-      setLoading(null);
-    }
-  };
-
   if (products === undefined || subscription === undefined)
     return (
       <>
+        <div>from ehre</div>
         <Skeleton style={{ width: "100%", height: "102px" }} />
       </>
     );
 
-  if (subscription && subscription.stripe) {
-    const sub = subscription.stripe as Stripe.Subscription;
-
-    const product = products.find(
-      (p) => p.productId === sub.items.data[0].price.product
-    );
-
-    const start = new Date(sub.items.data[0].current_period_end * 1000);
-    const end = new Date(sub.items.data[0].current_period_start * 1000);
-
-    return (
-      <Card>
-        <Box>
-          <Heading weight={"regular"} size={"6"}>
-            You are subscribed{" "}
-            <Text weight={"bold"}>
-              {product ? product.stripe.name : "Unknown"}
-            </Text>{" "}
-            Plan
-          </Heading>
-          <Box mt={"4"} mb={"5"}>
-            <Text as="div">
-              Period: <Text weight={"bold"}>{start.toLocaleDateString()}</Text>{" "}
-              - <Text weight={"bold"}>{end.toLocaleDateString()}</Text>
-            </Text>
-            <Text as="div">
-              Status: <Text weight={"bold"}>{sub.status}</Text>
-            </Text>
-            <Text as="div">
-              Will be canceled at period end:{" "}
-              <Text weight={"bold"}>{String(sub.cancel_at_period_end)}</Text>
-            </Text>
-          </Box>
-          <Button
-            className="!w-full"
-            variant="classic"
-            onClick={handlePortal}
-            loading={loading === "portal"}
-          >
-            Manage Subscription
-          </Button>
-        </Box>
-      </Card>
-    );
-  }
+  if (subscription && subscription.stripe) return null;
 
   return (
     <Box>

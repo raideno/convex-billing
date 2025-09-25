@@ -30,7 +30,7 @@ export const PortalImplementation = defineActionImplementation({
     const stripeCustomer = await storeDispatchTyped(
       {
         operation: "selectOne",
-        table: "stripe_customers",
+        table: "stripeCustomers",
         field: "entityId",
         value: args.entityId,
       },

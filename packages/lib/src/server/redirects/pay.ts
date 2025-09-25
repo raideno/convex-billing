@@ -16,7 +16,7 @@ export const PayReturnImplementation = defineRedirectHandler({
     const customer = await storeDispatchTyped(
       {
         operation: "selectOne",
-        table: "stripe_customers",
+        table: "stripeCustomers",
         field: "entityId",
         value: data.entityId,
       },

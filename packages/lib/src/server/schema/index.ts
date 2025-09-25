@@ -28,122 +28,122 @@ import { SubscriptionScheduleSchema } from "@/schema/subscription-schedule";
 import { TaxIdSchema } from "@/schema/tax-id";
 
 export const stripeTables = {
-  stripe_products: defineTable({
+  stripeProducts: defineTable({
     productId: v.string(),
     stripe: v.object(ProductSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   })
     .index("byActive", ["stripe.active"])
     .index("byName", ["stripe.name"]),
-  stripe_prices: defineTable({
+  stripePrices: defineTable({
     priceId: v.string(),
     stripe: v.object(PriceSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   })
     .index("byPriceId", ["priceId"])
     .index("byActive", ["stripe.active"])
     .index("byRecurringInterval", ["stripe.recurring.interval"])
     .index("byCurrency", ["stripe.currency"]),
-  stripe_customers: defineTable({
+  stripeCustomers: defineTable({
     customerId: v.string(),
     entityId: v.string(),
     stripe: v.object(CustomerSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   })
     .index("byCustomerId", ["customerId"])
     .index("byEntityId", ["entityId"]),
-  stripe_subscriptions: defineTable({
+  stripeSubscriptions: defineTable({
     subscriptionId: v.union(v.string(), v.null()),
     customerId: v.string(),
     stripe: SubscriptionObject,
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   })
     .index("bySubscriptionId", ["subscriptionId"])
     .index("byCustomerId", ["customerId"]),
-  stripe_coupons: defineTable({
+  stripeCoupons: defineTable({
     couponId: v.string(),
     stripe: v.object(CouponSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   }).index("byCouponId", ["couponId"]),
-  stripe_promotion_codes: defineTable({
+  stripePromotionCodes: defineTable({
     promotionCodeId: v.string(),
     stripe: v.object(PromotionCodeSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   }).index("byPromotionCodeId", ["promotionCodeId"]),
-  stripe_payouts: defineTable({
+  stripePayouts: defineTable({
     payoutId: v.string(),
     stripe: v.object(PayoutSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   }).index("byPayoutId", ["payoutId"]),
-  stripe_refunds: defineTable({
+  stripeRefunds: defineTable({
     refundId: v.string(),
     stripe: v.object(RefundSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   }).index("byRefundId", ["refundId"]),
-  stripe_payment_intents: defineTable({
+  stripePaymentIntents: defineTable({
     paymentIntentId: v.string(),
     stripe: v.object(PaymentIntentSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   }).index("byPaymentIntentId", ["paymentIntentId"]),
-  stripe_checkout_sessions: defineTable({
+  stripeCheckoutSessions: defineTable({
     checkoutSessionId: v.string(),
     stripe: v.object(CheckoutSessionSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   }).index("byCheckoutSessionId", ["checkoutSessionId"]),
-  stripe_invoices: defineTable({
+  stripeInvoices: defineTable({
     invoiceId: v.string(),
     stripe: v.object(InvoiceSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   }).index("byInvoiceId", ["invoiceId"]),
-  stripe_reviews: defineTable({
+  stripeReviews: defineTable({
     reviewId: v.string(),
     stripe: v.object(ReviewSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   }).index("reviewId", ["reviewId"]),
-  stripe_plans: defineTable({
+  stripePlans: defineTable({
     planId: v.string(),
     stripe: v.object(PlanSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   }).index("byPlanId", ["planId"]),
-  stripe_disputes: defineTable({
+  stripeDisputes: defineTable({
     disputeId: v.string(),
     stripe: v.object(DisputeSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   }).index("byDisputeId", ["disputeId"]),
-  stripe_early_fraud_warnings: defineTable({
+  stripeEarlyFraudWarnings: defineTable({
     earlyFraudWarningId: v.string(),
     stripe: v.object(EarlyFraudWarningSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   }).index("byEarlyFraudWarningId", ["earlyFraudWarningId"]),
-  stripe_tax_ids: defineTable({
+  stripeTaxIds: defineTable({
     taxIdId: v.string(),
     stripe: v.object(TaxIdSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   }).index("byTaxIdId", ["taxIdId"]),
-  stripe_setup_intents: defineTable({
+  stripeSetupIntents: defineTable({
     setupIntentId: v.string(),
     stripe: v.object(SetupIntentSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   }).index("bySetupIntentId", ["setupIntentId"]),
-  stripe_credit_notes: defineTable({
+  stripeCreditNotes: defineTable({
     creditNoteId: v.string(),
     stripe: v.object(CreditNoteSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   }).index("byCreditNoteId", ["creditNoteId"]),
-  stripe_charges: defineTable({
+  stripeCharges: defineTable({
     chargeId: v.string(),
     stripe: v.object(ChargeSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   }).index("byChargeId", ["chargeId"]),
-  stripe_payment_methods: defineTable({
+  stripePaymentMethods: defineTable({
     paymentMethodId: v.string(),
     stripe: v.object(PaymentMethodSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   }).index("byPaymentMethodId", ["paymentMethodId"]),
-  stripe_subscription_schedules: defineTable({
+  stripeSubscriptionSchedules: defineTable({
     subscriptionScheduleId: v.string(),
     stripe: v.object(SubscriptionScheduleSchema),
-    last_synced_at: v.number(),
+    lastSyncedAt: v.number(),
   }).index("bySubscriptionScheduleId", ["subscriptionScheduleId"]),
 };
 

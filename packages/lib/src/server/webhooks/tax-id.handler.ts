@@ -10,7 +10,7 @@ export default defineWebhookHandler({
     "customer.tax_id.updated",
   ],
   handle: async (event, context, configuration) => {
-    if (configuration.sync.stripe_tax_ids !== true) return;
+    if (configuration.sync.stripeTaxIds !== true) return;
 
     const taxId = event.data.object;
 
@@ -26,12 +26,12 @@ export default defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "stripe_tax_ids",
+            table: "stripeTaxIds",
             idField: "taxIdId",
             data: {
               taxIdId: taxId.id,
               stripe: TaxIdStripeToConvex(taxId),
-              last_synced_at: Date.now(),
+              lastSyncedAt: Date.now(),
             },
           },
           context,

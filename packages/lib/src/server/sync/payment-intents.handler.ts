@@ -9,7 +9,7 @@ export const PaymentIntentsSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "paymentIntents",
   handler: async (context, args, configuration) => {
-    if (configuration.sync.stripe_payment_intents !== true) return;
+    if (configuration.sync.stripePaymentIntents !== true) return;
 
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
@@ -18,7 +18,7 @@ export const PaymentIntentsSyncImplementation = defineActionImplementation({
     const localPaymentIntentsRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "stripe_payment_intents",
+        table: "stripePaymentIntents",
       },
       context,
       configuration
@@ -42,12 +42,12 @@ export const PaymentIntentsSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "stripe_payment_intents",
+          table: "stripePaymentIntents",
           idField: "paymentIntentId",
           data: {
             paymentIntentId: paymentIntent.id,
             stripe: PaymentIntentStripeToConvex(paymentIntent),
-            last_synced_at: Date.now(),
+            lastSyncedAt: Date.now(),
           },
         },
         context,
@@ -60,7 +60,7 @@ export const PaymentIntentsSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "stripe_payment_intents",
+            table: "stripePaymentIntents",
             idField: "paymentIntentId",
             idValue: paymentIntentId,
           },

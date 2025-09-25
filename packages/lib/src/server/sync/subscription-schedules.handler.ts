@@ -10,7 +10,7 @@ export const SubscriptionSchedulesSyncImplementation =
     args: v.object({}),
     name: "subscriptionSchedules",
     handler: async (context, args, configuration) => {
-      if (configuration.sync.stripe_subscription_schedules !== true) return;
+      if (configuration.sync.stripeSubscriptionschedules !== true) return;
 
       const stripe = new Stripe(configuration.stripe.secret_key, {
         apiVersion: "2025-08-27.basil",
@@ -19,7 +19,7 @@ export const SubscriptionSchedulesSyncImplementation =
       const localSubscriptionSchedulesRes = await storeDispatchTyped(
         {
           operation: "selectAll",
-          table: "stripe_subscription_schedules",
+          table: "stripeSubscriptionschedules",
         },
         context,
         configuration
@@ -35,20 +35,20 @@ export const SubscriptionSchedulesSyncImplementation =
         .list({ limit: 100 })
         .autoPagingToArray({ limit: 10_000 });
 
-      const stripeSubscriptionScheduleIds = new Set<string>();
+      const stripeSubscriptionscheduleIds = new Set<string>();
 
       for (const subscriptionSchedule of subscriptionSchedules) {
-        stripeSubscriptionScheduleIds.add(subscriptionSchedule.id);
+        stripeSubscriptionscheduleIds.add(subscriptionSchedule.id);
 
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "stripe_subscription_schedules",
+            table: "stripeSubscriptionschedules",
             idField: "subscriptionScheduleId",
             data: {
               subscriptionScheduleId: subscriptionSchedule.id,
               stripe: SubscriptionScheduleStripeToConvex(subscriptionSchedule),
-              last_synced_at: Date.now(),
+              lastSyncedAt: Date.now(),
             },
           },
           context,
@@ -59,11 +59,11 @@ export const SubscriptionSchedulesSyncImplementation =
       for (const [
         subscriptionScheduleId,
       ] of localSubscriptionSchedulesById.entries()) {
-        if (!stripeSubscriptionScheduleIds.has(subscriptionScheduleId)) {
+        if (!stripeSubscriptionscheduleIds.has(subscriptionScheduleId)) {
           await storeDispatchTyped(
             {
               operation: "deleteById",
-              table: "stripe_subscription_schedules",
+              table: "stripeSubscriptionschedules",
               idField: "subscriptionScheduleId",
               idValue: subscriptionScheduleId,
             },

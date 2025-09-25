@@ -13,7 +13,7 @@ export default defineWebhookHandler({
     "payout.updated",
   ],
   handle: async (event, context, configuration) => {
-    if (configuration.sync.stripe_payouts !== true) return;
+    if (configuration.sync.stripePayouts !== true) return;
 
     const payout = event.data.object;
 
@@ -27,12 +27,12 @@ export default defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "stripe_payouts",
+            table: "stripePayouts",
             idField: "payoutId",
             data: {
               payoutId: payout.id,
               stripe: PayoutStripeToConvex(payout),
-              last_synced_at: Date.now(),
+              lastSyncedAt: Date.now(),
             },
           },
           context,

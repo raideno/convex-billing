@@ -9,7 +9,7 @@ export const ProductsSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "products",
   handler: async (context, args, configuration) => {
-    if (configuration.sync.stripe_products !== true) return;
+    if (configuration.sync.stripeProducts !== true) return;
 
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
@@ -18,7 +18,7 @@ export const ProductsSyncImplementation = defineActionImplementation({
     const localProductsResponse = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "stripe_products",
+        table: "stripeProducts",
       },
       context,
       configuration
@@ -44,12 +44,12 @@ export const ProductsSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "stripe_products",
+          table: "stripeProducts",
           idField: "productId",
           data: {
             productId: product.id,
             stripe: ProductStripeToConvex(product),
-            last_synced_at: Date.now(),
+            lastSyncedAt: Date.now(),
           },
         },
         context,
@@ -62,7 +62,7 @@ export const ProductsSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "stripe_products",
+            table: "stripeProducts",
             idField: "productId",
             idValue: productId,
           },

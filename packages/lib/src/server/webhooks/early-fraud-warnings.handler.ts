@@ -9,7 +9,7 @@ export default defineWebhookHandler({
     "radar.early_fraud_warning.updated",
   ],
   handle: async (event, context, configuration) => {
-    if (configuration.sync.stripe_disputes !== true) return;
+    if (configuration.sync.stripeDisputes !== true) return;
 
     const earlyFraudWarning = event.data.object;
 
@@ -19,12 +19,12 @@ export default defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "stripe_early_fraud_warnings",
+            table: "stripeEarlyFraudWarnings",
             idField: "earlyFraudWarningId",
             data: {
               earlyFraudWarningId: earlyFraudWarning.id,
               stripe: EarlyFraudWarningStripeToConvex(earlyFraudWarning),
-              last_synced_at: Date.now(),
+              lastSyncedAt: Date.now(),
             },
           },
           context,

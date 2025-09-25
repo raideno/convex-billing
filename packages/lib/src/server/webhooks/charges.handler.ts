@@ -14,7 +14,7 @@ export default defineWebhookHandler({
     "charge.updated",
   ],
   handle: async (event, context, configuration) => {
-    if (configuration.sync.stripe_charges !== true) return;
+    if (configuration.sync.stripeCharges !== true) return;
 
     const charge = event.data.object;
 
@@ -29,12 +29,12 @@ export default defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "stripe_charges",
+            table: "stripeCharges",
             idField: "chargeId",
             data: {
               chargeId: charge.id,
               stripe: ChargeStripeToConvex(charge),
-              last_synced_at: Date.now(),
+              lastSyncedAt: Date.now(),
             },
           },
           context,

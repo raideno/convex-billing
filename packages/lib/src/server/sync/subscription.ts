@@ -28,13 +28,13 @@ export const SubscriptionSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "stripe_subscriptions",
+          table: "stripeSubscriptions",
           idField: "customerId",
           data: {
             subscriptionId: null,
             customerId: customerId,
             stripe: null,
-            last_synced_at: Date.now(),
+            lastSyncedAt: Date.now(),
           },
         },
         context,
@@ -49,13 +49,13 @@ export const SubscriptionSyncImplementation = defineActionImplementation({
     await storeDispatchTyped(
       {
         operation: "upsert",
-        table: "stripe_subscriptions",
+        table: "stripeSubscriptions",
         idField: "customerId",
         data: {
           subscriptionId: subscription.id,
           customerId: customerId,
           stripe: subscription,
-          last_synced_at: Date.now(),
+          lastSyncedAt: Date.now(),
         },
       },
       context,

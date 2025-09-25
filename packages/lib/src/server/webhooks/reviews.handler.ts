@@ -6,7 +6,7 @@ import { defineWebhookHandler } from "./types";
 export default defineWebhookHandler({
   events: ["review.closed", "review.opened"],
   handle: async (event, context, configuration) => {
-    if (configuration.sync.stripe_reviews !== true) return;
+    if (configuration.sync.stripeReviews !== true) return;
 
     const review = event.data.object;
 
@@ -16,12 +16,12 @@ export default defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "stripe_reviews",
+            table: "stripeReviews",
             idField: "reviewId",
             data: {
               reviewId: review.id,
               stripe: ReviewStripeToConvex(review),
-              last_synced_at: Date.now(),
+              lastSyncedAt: Date.now(),
             },
           },
           context,

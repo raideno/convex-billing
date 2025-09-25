@@ -9,7 +9,7 @@ export const InvoicesSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "invoices",
   handler: async (context, args, configuration) => {
-    if (configuration.sync.stripe_invoices !== true) return;
+    if (configuration.sync.stripeInvoices !== true) return;
 
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
@@ -18,7 +18,7 @@ export const InvoicesSyncImplementation = defineActionImplementation({
     const localInvoicesRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "stripe_invoices",
+        table: "stripeInvoices",
       },
       context,
       configuration
@@ -44,7 +44,7 @@ export const InvoicesSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "stripe_invoices",
+          table: "stripeInvoices",
           idField: "invoiceId",
           data: {
             invoiceId: invoice.id,
@@ -52,7 +52,7 @@ export const InvoicesSyncImplementation = defineActionImplementation({
               id: invoice.id,
               ...invoice,
             }),
-            last_synced_at: Date.now(),
+            lastSyncedAt: Date.now(),
           },
         },
         context,
@@ -65,7 +65,7 @@ export const InvoicesSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "stripe_invoices",
+            table: "stripeInvoices",
             idField: "invoiceId",
             idValue: invoiceId,
           },

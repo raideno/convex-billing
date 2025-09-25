@@ -9,7 +9,7 @@ export const PlansSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "plans",
   handler: async (context, args, configuration) => {
-    if (configuration.sync.stripe_plans !== true) return;
+    if (configuration.sync.stripePlans !== true) return;
 
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
@@ -18,7 +18,7 @@ export const PlansSyncImplementation = defineActionImplementation({
     const localPlansRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "stripe_plans",
+        table: "stripePlans",
       },
       context,
       configuration
@@ -39,12 +39,12 @@ export const PlansSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "stripe_plans",
+          table: "stripePlans",
           idField: "planId",
           data: {
             planId: plan.id,
             stripe: PlanStripeToConvex(plan),
-            last_synced_at: Date.now(),
+            lastSyncedAt: Date.now(),
           },
         },
         context,
@@ -57,7 +57,7 @@ export const PlansSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "stripe_plans",
+            table: "stripePlans",
             idField: "planId",
             idValue: planId,
           },

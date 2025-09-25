@@ -17,13 +17,13 @@ export async function upsert<TableName extends keyof StripeDataModel>(
   if (existing) {
     await context.db.patch(existing._id, {
       ...data,
-      last_synced_at: Date.now(),
+      lastSyncedAt: Date.now(),
     });
     return existing._id;
   } else {
     return await context.db.insert(table, {
       ...data,
-      last_synced_at: Date.now(),
+      lastSyncedAt: Date.now(),
     });
   }
 }

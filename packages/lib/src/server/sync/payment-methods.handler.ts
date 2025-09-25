@@ -9,7 +9,7 @@ export const PaymentMethodsSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "paymentMethods",
   handler: async (context, args, configuration) => {
-    if (configuration.sync.stripe_payment_methods !== true) return;
+    if (configuration.sync.stripePaymentMethods !== true) return;
 
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
@@ -18,7 +18,7 @@ export const PaymentMethodsSyncImplementation = defineActionImplementation({
     const localPaymentMethodsRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "stripe_payment_methods",
+        table: "stripePaymentMethods",
       },
       context,
       configuration
@@ -42,12 +42,12 @@ export const PaymentMethodsSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "stripe_payment_methods",
+          table: "stripePaymentMethods",
           idField: "paymentMethodId",
           data: {
             paymentMethodId: paymentMethod.id,
             stripe: PaymentMethodStripeToConvex(paymentMethod),
-            last_synced_at: Date.now(),
+            lastSyncedAt: Date.now(),
           },
         },
         context,
@@ -60,7 +60,7 @@ export const PaymentMethodsSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "stripe_payment_methods",
+            table: "stripePaymentMethods",
             idField: "paymentMethodId",
             idValue: paymentMethodId,
           },

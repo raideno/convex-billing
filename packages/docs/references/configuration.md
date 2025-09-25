@@ -75,7 +75,7 @@ export const { stripe, store, sync, setup } = internalConvexStripe({
   debug: true,
   sync: {
     // disable syncing payouts
-    stripe_payouts: false,
+    stripePayouts: false,
   },
 });
 ```

@@ -9,7 +9,7 @@ export const CreditNotesSyncImplementation = defineActionImplementation({
   args: v.object({}),
   name: "creditNotes",
   handler: async (context, args, configuration) => {
-    if (configuration.sync.stripe_credit_notes !== true) return;
+    if (configuration.sync.stripeCreditNotes !== true) return;
 
     const stripe = new Stripe(configuration.stripe.secret_key, {
       apiVersion: "2025-08-27.basil",
@@ -18,7 +18,7 @@ export const CreditNotesSyncImplementation = defineActionImplementation({
     const localCreditNotesRes = await storeDispatchTyped(
       {
         operation: "selectAll",
-        table: "stripe_credit_notes",
+        table: "stripeCreditNotes",
       },
       context,
       configuration
@@ -39,12 +39,12 @@ export const CreditNotesSyncImplementation = defineActionImplementation({
       await storeDispatchTyped(
         {
           operation: "upsert",
-          table: "stripe_credit_notes",
+          table: "stripeCreditNotes",
           idField: "creditNoteId",
           data: {
             creditNoteId: creditNote.id,
             stripe: CreditNoteStripeToConvex(creditNote),
-            last_synced_at: Date.now(),
+            lastSyncedAt: Date.now(),
           },
         },
         context,
@@ -57,7 +57,7 @@ export const CreditNotesSyncImplementation = defineActionImplementation({
         await storeDispatchTyped(
           {
             operation: "deleteById",
-            table: "stripe_credit_notes",
+            table: "stripeCreditNotes",
             idField: "creditNoteId",
             idValue: creditNoteId,
           },

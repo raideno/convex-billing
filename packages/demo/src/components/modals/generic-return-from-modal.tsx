@@ -51,7 +51,7 @@ export const GenericReturnFromModal = () => {
     setOpen(false);
     try {
       const url = new URL(window.location.href);
-      url.searchParams.delete("return-from-checkout");
+      url.searchParams.delete(key); // Remove the actual detected query param
       window.history.replaceState({}, document.title, url.toString());
     } catch (err) {}
   };
