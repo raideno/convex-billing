@@ -4,6 +4,7 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 export const MAX_MESSAGE_LENGTH = 320;
+export const MAX_MESSAGES = 32;
 
 export const post = mutation({
   args: { message: v.string() },
@@ -73,9 +74,11 @@ export const post = mutation({
       (c) => (c as any).stripe.payment_status === "paid"
     ).length;
 
+    const username = user.name || user.email.split("@")[0] || "Unknown";
+
     await context.db.insert("messages", {
       userId,
-      name: user.name || user.email || "Unknown",
+      name: username,
       message: args.message,
       planPriceId,
       planName,
@@ -87,6 +90,8 @@ export const post = mutation({
 export const list = query({
   args: {},
   handler: async (context) => {
-    return await context.db.query("messages").order("asc").take(100);
+    return (
+      await context.db.query("messages").order("desc").take(MAX_MESSAGES)
+    ).reverse();
   },
 });

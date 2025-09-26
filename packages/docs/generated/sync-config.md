@@ -18,4 +18,4 @@
 	stripeCreditNotes?: boolean;
 	stripeCharges?: boolean;
 	stripePaymentMethods?: boolean;
-	stripeSubscriptionschedules?: boolean;
+	stripeSubscriptionSchedules?: boolean;

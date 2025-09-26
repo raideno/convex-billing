@@ -34,7 +34,7 @@ fs.writeFileSync(
   path.join(GENERATIONS_DIRECTORY, "tables.md"),
   Object.entries(stripeTables)
     .map(([tableName, table]) => {
-      const markdown = tablemark(
+      const tableMarkdown = tablemark(
         Object.entries(table.validator.fields).map(([name, validator]) => {
           return {
             Field: name,
@@ -43,14 +43,21 @@ fs.writeFileSync(
           };
         })
       );
+      const indexesMarkdown = table.indexes
+        .map((index) => {
+          return `- \`${index.indexDescriptor}\`: ${index.fields
+            .map((field) => `\`${field}\``)
+            .join(",")}`;
+        })
+        .join("\n");
       const content = `
-  ## \`${tableName}\`
-  Stores Stripe ${tableName.split("_").join(" ")}.
+## \`${tableName}\`
+Stores Stripe ${tableName.split("_").join(" ")}.
 
-  ${markdown}
+${tableMarkdown}
 
-  Indexes:
-  - ...
+Indexes:
+${indexesMarkdown}
   `.trim();
       return content;
     })

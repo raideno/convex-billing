@@ -1,274 +1,280 @@
 ## `stripeProducts`
-  Stores Stripe stripe products.
+Stores Stripe stripeProducts.
 
-  | Field        | Type      | Description         |
-  | :----------- | :-------- | :------------------ |
-  | productId    | `string`  |                     |
-  | stripe       | `object`  | Full Stripe object. |
-  | lastSyncedAt | `float64` |                     |
+| Field        | Type      | Description         |
+| :----------- | :-------- | :------------------ |
+| productId    | `string`  |                     |
+| stripe       | `object`  | Full Stripe object. |
+| lastSyncedAt | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `byActive`: `stripe.active`
+- `byName`: `stripe.name`
 
 ## `stripePrices`
-  Stores Stripe stripe prices.
+Stores Stripe stripePrices.
 
-  | Field        | Type      | Description         |
-  | :----------- | :-------- | :------------------ |
-  | priceId      | `string`  |                     |
-  | stripe       | `object`  | Full Stripe object. |
-  | lastSyncedAt | `float64` |                     |
+| Field        | Type      | Description         |
+| :----------- | :-------- | :------------------ |
+| priceId      | `string`  |                     |
+| stripe       | `object`  | Full Stripe object. |
+| lastSyncedAt | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `byPriceId`: `priceId`
+- `byActive`: `stripe.active`
+- `byRecurringInterval`: `stripe.recurring.interval`
+- `byCurrency`: `stripe.currency`
 
 ## `stripeCustomers`
-  Stores Stripe stripe customers.
+Stores Stripe stripeCustomers.
 
-  | Field        | Type      | Description         |
-  | :----------- | :-------- | :------------------ |
-  | customerId   | `string`  |                     |
-  | entityId     | `string`  |                     |
-  | stripe       | `object`  | Full Stripe object. |
-  | lastSyncedAt | `float64` |                     |
+| Field        | Type      | Description         |
+| :----------- | :-------- | :------------------ |
+| customerId   | `string`  |                     |
+| entityId     | `string`  |                     |
+| stripe       | `object`  | Full Stripe object. |
+| lastSyncedAt | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `byCustomerId`: `customerId`
+- `byEntityId`: `entityId`
 
 ## `stripeSubscriptions`
-  Stores Stripe stripe subscriptions.
+Stores Stripe stripeSubscriptions.
 
-  | Field          | Type      | Description         |
-  | :------------- | :-------- | :------------------ |
-  | subscriptionId | `union`   |                     |
-  | customerId     | `string`  |                     |
-  | stripe         | `any`     | Full Stripe object. |
-  | lastSyncedAt   | `float64` |                     |
+| Field          | Type      | Description         |
+| :------------- | :-------- | :------------------ |
+| subscriptionId | `union`   |                     |
+| customerId     | `string`  |                     |
+| stripe         | `any`     | Full Stripe object. |
+| lastSyncedAt   | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `bySubscriptionId`: `subscriptionId`
+- `byCustomerId`: `customerId`
 
 ## `stripeCoupons`
-  Stores Stripe stripe coupons.
+Stores Stripe stripeCoupons.
 
-  | Field        | Type      | Description         |
-  | :----------- | :-------- | :------------------ |
-  | couponId     | `string`  |                     |
-  | stripe       | `object`  | Full Stripe object. |
-  | lastSyncedAt | `float64` |                     |
+| Field        | Type      | Description         |
+| :----------- | :-------- | :------------------ |
+| couponId     | `string`  |                     |
+| stripe       | `object`  | Full Stripe object. |
+| lastSyncedAt | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `byCouponId`: `couponId`
 
 ## `stripePromotionCodes`
-  Stores Stripe stripe promotion codes.
+Stores Stripe stripePromotionCodes.
 
-  | Field           | Type      | Description         |
-  | :-------------- | :-------- | :------------------ |
-  | promotionCodeId | `string`  |                     |
-  | stripe          | `object`  | Full Stripe object. |
-  | lastSyncedAt    | `float64` |                     |
+| Field           | Type      | Description         |
+| :-------------- | :-------- | :------------------ |
+| promotionCodeId | `string`  |                     |
+| stripe          | `object`  | Full Stripe object. |
+| lastSyncedAt    | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `byPromotionCodeId`: `promotionCodeId`
 
 ## `stripePayouts`
-  Stores Stripe stripe payouts.
+Stores Stripe stripePayouts.
 
-  | Field        | Type      | Description         |
-  | :----------- | :-------- | :------------------ |
-  | payoutId     | `string`  |                     |
-  | stripe       | `object`  | Full Stripe object. |
-  | lastSyncedAt | `float64` |                     |
+| Field        | Type      | Description         |
+| :----------- | :-------- | :------------------ |
+| payoutId     | `string`  |                     |
+| stripe       | `object`  | Full Stripe object. |
+| lastSyncedAt | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `byPayoutId`: `payoutId`
 
 ## `stripeRefunds`
-  Stores Stripe stripe refunds.
+Stores Stripe stripeRefunds.
 
-  | Field        | Type      | Description         |
-  | :----------- | :-------- | :------------------ |
-  | refundId     | `string`  |                     |
-  | stripe       | `object`  | Full Stripe object. |
-  | lastSyncedAt | `float64` |                     |
+| Field        | Type      | Description         |
+| :----------- | :-------- | :------------------ |
+| refundId     | `string`  |                     |
+| stripe       | `object`  | Full Stripe object. |
+| lastSyncedAt | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `byRefundId`: `refundId`
 
 ## `stripePaymentIntents`
-  Stores Stripe stripe payment intents.
+Stores Stripe stripePaymentIntents.
 
-  | Field           | Type      | Description         |
-  | :-------------- | :-------- | :------------------ |
-  | paymentIntentId | `string`  |                     |
-  | stripe          | `object`  | Full Stripe object. |
-  | lastSyncedAt    | `float64` |                     |
+| Field           | Type      | Description         |
+| :-------------- | :-------- | :------------------ |
+| paymentIntentId | `string`  |                     |
+| stripe          | `object`  | Full Stripe object. |
+| lastSyncedAt    | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `byPaymentIntentId`: `paymentIntentId`
 
 ## `stripeCheckoutSessions`
-  Stores Stripe stripe checkout sessions.
+Stores Stripe stripeCheckoutSessions.
 
-  | Field             | Type      | Description         |
-  | :---------------- | :-------- | :------------------ |
-  | checkoutSessionId | `string`  |                     |
-  | stripe            | `object`  | Full Stripe object. |
-  | lastSyncedAt      | `float64` |                     |
+| Field             | Type      | Description         |
+| :---------------- | :-------- | :------------------ |
+| checkoutSessionId | `string`  |                     |
+| stripe            | `object`  | Full Stripe object. |
+| lastSyncedAt      | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `byCheckoutSessionId`: `checkoutSessionId`
 
 ## `stripeInvoices`
-  Stores Stripe stripe invoices.
+Stores Stripe stripeInvoices.
 
-  | Field        | Type      | Description         |
-  | :----------- | :-------- | :------------------ |
-  | invoiceId    | `string`  |                     |
-  | stripe       | `object`  | Full Stripe object. |
-  | lastSyncedAt | `float64` |                     |
+| Field        | Type      | Description         |
+| :----------- | :-------- | :------------------ |
+| invoiceId    | `string`  |                     |
+| stripe       | `object`  | Full Stripe object. |
+| lastSyncedAt | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `byInvoiceId`: `invoiceId`
 
 ## `stripeReviews`
-  Stores Stripe stripe reviews.
+Stores Stripe stripeReviews.
 
-  | Field        | Type      | Description         |
-  | :----------- | :-------- | :------------------ |
-  | reviewId     | `string`  |                     |
-  | stripe       | `object`  | Full Stripe object. |
-  | lastSyncedAt | `float64` |                     |
+| Field        | Type      | Description         |
+| :----------- | :-------- | :------------------ |
+| reviewId     | `string`  |                     |
+| stripe       | `object`  | Full Stripe object. |
+| lastSyncedAt | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `reviewId`: `reviewId`
 
 ## `stripePlans`
-  Stores Stripe stripe plans.
+Stores Stripe stripePlans.
 
-  | Field        | Type      | Description         |
-  | :----------- | :-------- | :------------------ |
-  | planId       | `string`  |                     |
-  | stripe       | `object`  | Full Stripe object. |
-  | lastSyncedAt | `float64` |                     |
+| Field        | Type      | Description         |
+| :----------- | :-------- | :------------------ |
+| planId       | `string`  |                     |
+| stripe       | `object`  | Full Stripe object. |
+| lastSyncedAt | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `byPlanId`: `planId`
 
 ## `stripeDisputes`
-  Stores Stripe stripe disputes.
+Stores Stripe stripeDisputes.
 
-  | Field        | Type      | Description         |
-  | :----------- | :-------- | :------------------ |
-  | disputeId    | `string`  |                     |
-  | stripe       | `object`  | Full Stripe object. |
-  | lastSyncedAt | `float64` |                     |
+| Field        | Type      | Description         |
+| :----------- | :-------- | :------------------ |
+| disputeId    | `string`  |                     |
+| stripe       | `object`  | Full Stripe object. |
+| lastSyncedAt | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `byDisputeId`: `disputeId`
 
 ## `stripeEarlyFraudWarnings`
-  Stores Stripe stripe early fraud warnings.
+Stores Stripe stripeEarlyFraudWarnings.
 
-  | Field               | Type      | Description         |
-  | :------------------ | :-------- | :------------------ |
-  | earlyFraudWarningId | `string`  |                     |
-  | stripe              | `object`  | Full Stripe object. |
-  | lastSyncedAt        | `float64` |                     |
+| Field               | Type      | Description         |
+| :------------------ | :-------- | :------------------ |
+| earlyFraudWarningId | `string`  |                     |
+| stripe              | `object`  | Full Stripe object. |
+| lastSyncedAt        | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `byEarlyFraudWarningId`: `earlyFraudWarningId`
 
 ## `stripeTaxIds`
-  Stores Stripe stripe tax ids.
+Stores Stripe stripeTaxIds.
 
-  | Field        | Type      | Description         |
-  | :----------- | :-------- | :------------------ |
-  | taxIdId      | `string`  |                     |
-  | stripe       | `object`  | Full Stripe object. |
-  | lastSyncedAt | `float64` |                     |
+| Field        | Type      | Description         |
+| :----------- | :-------- | :------------------ |
+| taxIdId      | `string`  |                     |
+| stripe       | `object`  | Full Stripe object. |
+| lastSyncedAt | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `byTaxIdId`: `taxIdId`
 
 ## `stripeSetupIntents`
-  Stores Stripe stripe setup intents.
+Stores Stripe stripeSetupIntents.
 
-  | Field         | Type      | Description         |
-  | :------------ | :-------- | :------------------ |
-  | setupIntentId | `string`  |                     |
-  | stripe        | `object`  | Full Stripe object. |
-  | lastSyncedAt  | `float64` |                     |
+| Field         | Type      | Description         |
+| :------------ | :-------- | :------------------ |
+| setupIntentId | `string`  |                     |
+| stripe        | `object`  | Full Stripe object. |
+| lastSyncedAt  | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `bySetupIntentId`: `setupIntentId`
 
 ## `stripeCreditNotes`
-  Stores Stripe stripe credit notes.
+Stores Stripe stripeCreditNotes.
 
-  | Field        | Type      | Description         |
-  | :----------- | :-------- | :------------------ |
-  | creditNoteId | `string`  |                     |
-  | stripe       | `object`  | Full Stripe object. |
-  | lastSyncedAt | `float64` |                     |
+| Field        | Type      | Description         |
+| :----------- | :-------- | :------------------ |
+| creditNoteId | `string`  |                     |
+| stripe       | `object`  | Full Stripe object. |
+| lastSyncedAt | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `byCreditNoteId`: `creditNoteId`
 
 ## `stripeCharges`
-  Stores Stripe stripe charges.
+Stores Stripe stripeCharges.
 
-  | Field        | Type      | Description         |
-  | :----------- | :-------- | :------------------ |
-  | chargeId     | `string`  |                     |
-  | stripe       | `object`  | Full Stripe object. |
-  | lastSyncedAt | `float64` |                     |
+| Field        | Type      | Description         |
+| :----------- | :-------- | :------------------ |
+| chargeId     | `string`  |                     |
+| stripe       | `object`  | Full Stripe object. |
+| lastSyncedAt | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `byChargeId`: `chargeId`
 
 ## `stripePaymentMethods`
-  Stores Stripe stripe payment methods.
+Stores Stripe stripePaymentMethods.
 
-  | Field           | Type      | Description         |
-  | :-------------- | :-------- | :------------------ |
-  | paymentMethodId | `string`  |                     |
-  | stripe          | `object`  | Full Stripe object. |
-  | lastSyncedAt    | `float64` |                     |
-
-
-  Indexes:
-  - ...
-
-## `stripeSubscriptionschedules`
-  Stores Stripe stripe subscription schedules.
-
-  | Field                  | Type      | Description         |
-  | :--------------------- | :-------- | :------------------ |
-  | subscriptionScheduleId | `string`  |                     |
-  | stripe                 | `object`  | Full Stripe object. |
-  | lastSyncedAt           | `float64` |                     |
+| Field           | Type      | Description         |
+| :-------------- | :-------- | :------------------ |
+| paymentMethodId | `string`  |                     |
+| stripe          | `object`  | Full Stripe object. |
+| lastSyncedAt    | `float64` |                     |
 
 
-  Indexes:
-  - ...
+Indexes:
+- `byPaymentMethodId`: `paymentMethodId`
+
+## `stripeSubscriptionSchedules`
+Stores Stripe stripeSubscriptionSchedules.
+
+| Field                  | Type      | Description         |
+| :--------------------- | :-------- | :------------------ |
+| subscriptionScheduleId | `string`  |                     |
+| stripe                 | `object`  | Full Stripe object. |
+| lastSyncedAt           | `float64` |                     |
+
+
+Indexes:
+- `bySubscriptionScheduleId`: `subscriptionScheduleId`

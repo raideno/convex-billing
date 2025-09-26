@@ -110,21 +110,29 @@ export const ChatForm = () => {
                         paddingBottom: 4,
                       }}
                     >
-                      <Flex align="center" gap="2" wrap="wrap">
-                        <Text weight="bold">{m.name}</Text>
-                        <Badge color="blue" radius="full">
-                          {m.planName || "No plan"}
-                        </Badge>
-                        <Badge color="green" radius="full">
-                          payments: {m.successfulPayments}
-                        </Badge>
-                        <Text size="1" color="gray">
-                          {new Date(m._creationTime).toLocaleTimeString()}
+                      <Flex direction={"column"} gap={"2"}>
+                        <Box>
+                          <Flex align="center" gap="2" wrap="wrap">
+                            <Text size="1" color="gray">
+                              {new Date(m._creationTime).toLocaleTimeString()}
+                            </Text>
+                            <Flex align="center" gap="2">
+                              <Badge color="blue" radius="full">
+                                {m.planName || "No plan"}
+                              </Badge>
+                              <Badge color="green" radius="full">
+                                payments: {m.successfulPayments}
+                              </Badge>
+                            </Flex>
+                            <Box>
+                              <Text weight="bold">{m.name}</Text>
+                            </Box>
+                          </Flex>
+                        </Box>
+                        <Text as="div" size="2">
+                          {m.message}
                         </Text>
                       </Flex>
-                      <Text as="div" size="2">
-                        {m.message}
-                      </Text>
                     </Box>
                   ))}
               </Flex>
