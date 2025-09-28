@@ -30,9 +30,9 @@ export default defineConfig({
       insertTypesEntry: true,
       tsconfigPath: "./tsconfig.json",
       outDir: "dist",
-      entryRoot: "src",
-      copyDtsFiles: false,
-      include: ["src/index.ts", "src/server/index.ts"],
+      entryRoot: "src/server",
+      copyDtsFiles: true,
+      include: ["src/server/index.ts", "src/server/**/*.ts"],
     }),
     compileTime(),
     visualizer({

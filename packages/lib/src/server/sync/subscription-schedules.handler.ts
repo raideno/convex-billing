@@ -10,7 +10,7 @@ export const SubscriptionSchedulesSyncImplementation =
     args: v.object({}),
     name: "subscriptionSchedules",
     handler: async (context, args, configuration) => {
-      if (configuration.sync.stripeSubscriptionschedules !== true) return;
+      if (configuration.sync.stripeSubscriptionSchedules !== true) return;
 
       const stripe = new Stripe(configuration.stripe.secret_key, {
         apiVersion: "2025-08-27.basil",
@@ -19,7 +19,7 @@ export const SubscriptionSchedulesSyncImplementation =
       const localSubscriptionSchedulesRes = await storeDispatchTyped(
         {
           operation: "selectAll",
-          table: "stripeSubscriptionschedules",
+          table: "stripeSubscriptionSchedules",
         },
         context,
         configuration
@@ -43,7 +43,7 @@ export const SubscriptionSchedulesSyncImplementation =
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "stripeSubscriptionschedules",
+            table: "stripeSubscriptionSchedules",
             idField: "subscriptionScheduleId",
             data: {
               subscriptionScheduleId: subscriptionSchedule.id,
@@ -63,7 +63,7 @@ export const SubscriptionSchedulesSyncImplementation =
           await storeDispatchTyped(
             {
               operation: "deleteById",
-              table: "stripeSubscriptionschedules",
+              table: "stripeSubscriptionSchedules",
               idField: "subscriptionScheduleId",
               idValue: subscriptionScheduleId,
             },

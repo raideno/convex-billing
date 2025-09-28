@@ -14,7 +14,7 @@ export default defineWebhookHandler({
     "subscription_schedule.updated",
   ],
   handle: async (event, context, configuration) => {
-    if (configuration.sync.stripeSubscriptionschedules !== true) return;
+    if (configuration.sync.stripeSubscriptionSchedules !== true) return;
 
     const subscriptionSchedule = event.data.object;
 
@@ -29,7 +29,7 @@ export default defineWebhookHandler({
         await storeDispatchTyped(
           {
             operation: "upsert",
-            table: "stripeSubscriptionschedules",
+            table: "stripeSubscriptionSchedules",
             idField: "subscriptionScheduleId",
             data: {
               subscriptionScheduleId: subscriptionSchedule.id,

@@ -74,7 +74,7 @@ export const post = mutation({
       (c) => (c as any).stripe.payment_status === "paid"
     ).length;
 
-    const username = user.name || user.email.split("@")[0] || "Unknown";
+    const username = user.name || user.email?.split("@")[0] || "Unknown";
 
     await context.db.insert("messages", {
       userId,

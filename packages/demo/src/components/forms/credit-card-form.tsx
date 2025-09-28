@@ -10,9 +10,9 @@ export interface CreditCardProps {
 export const CreditCard = ({ name, number, cvv, expiry }: CreditCardProps) => {
   return (
     <div className="space-y-16">
-      <div className="max-w-96 w-full h-56 m-auto bg-red-100 rounded-xl relative text-white shadow-2xl transition-transform transform">
+      <div className="max-w-96 w-full h-56 m-auto bg-red-100 rounded-[var(--radius-4)] relative text-white shadow-2xl transition-transform transform">
         <img
-          className="relative object-cover w-full h-full rounded-xl"
+          className="relative object-cover w-full h-full rounded-[var(--radius-4)]"
           src="https://i.imgur.com/kGkSg1v.png"
         />
 
